@@ -1,3 +1,9 @@
+/**
+ *  \file   Communication.h
+ *  \brief  Communication interface
+ *  \author Emre.ARTIS
+ *  \date   13.12.2018
+ * */
 #ifndef AUTONOMOUS_VEHICLE_GTU_COMMUNICATION_H
 #define AUTONOMOUS_VEHICLE_GTU_COMMUNICATION_H
 
