@@ -13,7 +13,8 @@
     #include <exception>
     #include <string>
 
-    #define BUFFER_LENGTH 1024
+    #define BUFFER_LENGTH   1024
+    #define FALSE           -1
     namespace GTU {
         namespace AUTONOMOUS_VEHICLE {
 

@@ -23,8 +23,8 @@ ErrorStatus Client::setup(const std::string & hostName, int port)
     while(point != nullptr)
     {
         setConnection(socket(point->ai_family, point->ai_socktype, point->ai_protocol));
-        if(getConnection() != -1 &&
-            connect(getConnection(), point->ai_addr, point->ai_addrlen) != -1)
+        if(getConnection() != FALSE &&
+            connect(getConnection(), point->ai_addr, point->ai_addrlen) != FALSE)
             break;
         close(getConnection());
         point = point->ai_next;

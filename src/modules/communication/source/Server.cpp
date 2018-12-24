@@ -9,7 +9,7 @@ Server::Server(int portNumber)
 
 ErrorStatus Server::setup(int portNumber)
 {
-    if(getConnection() != -1)
+    if(getConnection() != FALSE)
         stop();
     struct sockaddr_in  serverAddress;    
     serverAddress                   = {0};

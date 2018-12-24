@@ -2,11 +2,11 @@
 using namespace GTU::AUTONOMOUS_VEHICLE;
 ErrorStatus AbstractCommunication::stop()
 {
-    if(getConnection() != -1)
+    if(getConnection() != FALSE)
     {
-        while(shutdown(getConnection(), SHUT_RD) == -1 && errno == EINTR); 
-        while(close(getConnection()) == -1 && errno == EINTR);
-        setConnection(-1);
+        while(shutdown(getConnection(), SHUT_RD) == FALSE && errno == EINTR); 
+        while(close(getConnection()) == FALSE && errno == EINTR);
+        setConnection(FALSE);
         return ErrorStatus::Success;
     }
     return ErrorStatus::Success;
@@ -14,9 +14,9 @@ ErrorStatus AbstractCommunication::stop()
 
 ErrorStatus AbstractCommunication::receive(std::string & message, int length)
 {
-    if(getConnection() == -1)
+    if(getConnection() == FALSE)
         return ErrorStatus::NoSuchConnection;
-    char buffer[255];
+    char buffer[BUFFER_LENGTH];
     if(read(getConnection(), &buffer, length) == 0)
         return ErrorStatus::ReadError;
     message.assign(buffer, 0, length);
@@ -25,7 +25,7 @@ ErrorStatus AbstractCommunication::receive(std::string & message, int length)
 
 ErrorStatus AbstractCommunication::send(const std::string & message, int length)
 {
-    if(getConnection() == -1)
+    if(getConnection() == FALSE)
         return ErrorStatus::NoSuchConnection;
     if(write(getConnection(), message.c_str(), length) < 0)
         return ErrorStatus::WriteError;
