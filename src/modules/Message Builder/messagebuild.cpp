@@ -8,34 +8,31 @@ namespace GTU{
 
         ///Constructor that doesn't initialize message
         MessageBuilder::MessageBuilder() {
-            protocol.len = NULL;
-            protocol.sysid = NULL;
-            protocol.compid = NULL;
-            protocol.msgid = NULL;
+            protocol.len = 0;
+            protocol.sysid = 0;
+            protocol.compid = 0;
+            protocol.msgid = 0;
             protocol.payload = NULL;
         }
 
-        ///Constructor that initializes message
-        MessageBuilder::MessageBuilder(uint16_t len, uint8_t sysid, uint8_t compid, uint16_t msgid, uint8_t *payload) {
-            protocol.len = len;
+        ///Constructor that initializes message's target sysid and compid
+        MessageBuilder::MessageBuilder(uint8_t sysid, uint8_t compid) {
+            protocol.len = 0;
+            protocol.msgid = 0;
+            protocol.payload = NULL;
             protocol.sysid = sysid;
             protocol.compid = compid;
-            protocol.msgid = msgid;
-            protocol.payload = new uint8_t[len];
-            for(uint16_t i=0; i<len; ++i){
-                protocol.payload[i] = payload[i];
-            }
         }
 
         ///Destructor that frees allocated memory for "protocol.payload"
         MessageBuilder::~MessageBuilder(){
-            if(protocol.len != NULL)
+            if(protocol.len != 0)
                 delete protocol.payload;
         }
 
         ///Builds message by previous valued parameters by parameter-constructor
         std::string MessageBuilder::build_message() {
-            if(protocol.len == NULL){
+            if(protocol.len == 0){
                 throw new _exception;
             }
             else{
@@ -53,11 +50,13 @@ namespace GTU{
         }
 
         ///Builds message by given parameters
-        std::string MessageBuilder::build_message(uint16_t len, uint8_t sysid, uint8_t compid, uint16_t msgid, uint8_t *payload) {
+        std::string MessageBuilder::build_message(uint16_t len, uint16_t msgid, uint8_t *payload, uint8_t sysid=protocol.sysid, uint8_t compid=protocol.compid) {
             protocol.len = len;
             protocol.sysid = sysid;
             protocol.compid = compid;
             protocol.msgid = msgid;
+            if(protocol.payload == NULL)
+                delete protocol.payload;
             protocol.payload = new uint8_t[len];
             for(uint16_t i=0; i<len; ++i){
                 protocol.payload[i] = payload[i];

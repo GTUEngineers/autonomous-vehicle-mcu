@@ -27,8 +27,8 @@ namespace GTU{
             ///Constructor that doesn't initialize message
             MessageBuilder();
 
-            ///Constructor that initializes message
-            MessageBuilder(uint16_t len, uint8_t sysid, uint8_t compid, uint16_t msgid, uint8_t *payload);
+            ///Constructor that initializes message's target sysid and compid
+            MessageBuilder(uint8_t sysid, uint8_t compid);
 
             ///Destructor that frees allocated memory for "protocol.payload"
             ~MessageBuilder();
@@ -37,7 +37,7 @@ namespace GTU{
 
             std::string build_message();
             ///Builds message by given parameters
-            std::string build_message(uint16_t len, uint8_t sysid, uint8_t compid, uint16_t msgid, uint8_t *payload);
+            std::string build_message(uint16_t len, uint16_t msgid, uint8_t *payload, uint8_t sysid=protocol.sysid, uint8_t compid=protocol.compid);
         protected:
             Protokol protocol;
 
