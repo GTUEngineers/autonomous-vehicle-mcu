@@ -1,3 +1,5 @@
+#include "../Client.h"
+#include "../Server.h"
 #include <iostream>
 #include <ctime>     // to take current time
 #include <unistd.h>  // for sleep function
@@ -51,7 +53,7 @@ main(int argc, char const *argv[])
 /* if reconnecting and stopping lines ignore, function is working. */
 void
 reconnect_test(char comType) {
-    Communication *server=nullptr, *client=nullptr; // server and client
+    Communication *server{nullptr}, *client{nullptr}; // server and client
     string serverM, clientM;   // server message and client messages
     ErrorStatus st;            // communication status
 
@@ -62,7 +64,7 @@ reconnect_test(char comType) {
     //start conversation according to comType(computer type)
     if(comType=='s' || comType=='S') {
         //create server
-        server= new Server();
+        server = new Server(8080);
         cout<<"----------------------------------\n";
         //[server] receive message
         st=(server->receive(clientM, 25));
