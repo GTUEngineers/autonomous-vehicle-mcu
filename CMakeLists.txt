@@ -1,4 +1,5 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.10.0)
+include(GNUInstallDirs)
 
 ################################################################################
 # path variables
