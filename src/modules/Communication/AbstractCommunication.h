@@ -1,6 +1,7 @@
 #ifndef ABSTRACT_COMMUNICATION
     #define ABSTRACT_COMMUNICATION
-    #include "Communication.h"    
+
+    #include "Communication.h" 
     #include <unistd.h>
     #include <netdb.h>
     #include <iostream>
@@ -15,11 +16,18 @@
                 ErrorStatus receive(std::string & message, int length);
                 ErrorStatus send(const std::string & message, int length);
             protected:
-                inline int setConnection(int input) {return (this->communication = input);};
-                inline int getConnection() {return this->communication;};
+                inline int setConnection(int input) 
+                {
+                    return (this->communication = input);
+                }
+                inline int getConnection() 
+                {
+                    return this->communication;
+                }
             private:
-                int                 communication;
+                int communication;
             };            
         } // AUTONOMOUS_VEHICLE
     } // GTU
+
 #endif

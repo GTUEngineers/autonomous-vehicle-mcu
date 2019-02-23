@@ -7,8 +7,7 @@ Client::Client(const std::string & hostName, int portNumber)
 
 ErrorStatus Client::setup(const std::string & hostName, int port)
 {
-    struct addrinfo hints = {0},
-                    *result;
+    struct addrinfo hints{0}, *result{nullptr};
     hints.ai_addr       = nullptr;
     hints.ai_next       = nullptr;
     hints.ai_family     = AF_INET;

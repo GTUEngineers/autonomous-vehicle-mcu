@@ -31,17 +31,16 @@
                 ConnectionRejected,
                 SocketWasClosed,
                 WriteError
-                //
             };
-            
-            
+
             //  Communication Interface
-            class	Communication {
+            class   Communication {
                 public:
                     virtual ErrorStatus send(const std::string & message, int length) = 0;
                     virtual ErrorStatus receive(std::string & message, int length) = 0;
                     virtual ErrorStatus stop() = 0;
+                    virtual ~Communication() { /*intentionally empty*/ }
             };
-        }    
+        }
     }
 #endif

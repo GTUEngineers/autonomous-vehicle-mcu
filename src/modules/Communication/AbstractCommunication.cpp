@@ -1,5 +1,7 @@
 #include "AbstractCommunication.h"
+
 using namespace GTU::AUTONOMOUS_VEHICLE;
+
 ErrorStatus AbstractCommunication::stop()
 {
     if(getConnection() != FALSE)
