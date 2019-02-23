@@ -1,0 +1,15 @@
+set(TARGET_NAME "Communication")
+PROJECT(${TARGET_NAME} CXX C ASM)
+
+include_directories(${CMAKE_BINARY_DIR}/include ${CMAKE_CURRENT_BINARY_DIR})
+
+SET(SOURCEFILES
+  AbstractCommunication.cpp
+  Client.cpp
+  Server.cpp
+)
+SET(INCLUDEDIRS
+  ${CMAKE_CURRENT_LIST_DIR}
+)
+ADD_LIBRARY(${TARGET_NAME} STATIC ${SOURCEFILES})
+#TARGET_LINK_LIBRARIES(${TARGET_NAME} "")

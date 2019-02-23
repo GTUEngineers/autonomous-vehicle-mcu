@@ -1,4 +1,4 @@
-#include "../header/AbstractCommunication.h"
+#include "AbstractCommunication.h"
 using namespace GTU::AUTONOMOUS_VEHICLE;
 ErrorStatus AbstractCommunication::stop()
 {

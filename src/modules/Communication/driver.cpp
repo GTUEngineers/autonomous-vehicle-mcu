@@ -1,5 +1,5 @@
-#include "header/Server.h"
-#include "header/Client.h"
+#include "Server.h"
+#include "Client.h"
 #include <iostream>
 using namespace GTU::AUTONOMOUS_VEHICLE;
 main(int argc, char const *argv[])
