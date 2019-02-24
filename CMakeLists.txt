@@ -23,6 +23,7 @@ SET(TARGET_NAME      "${OUTPUT_FILENAME}")
 set(SUB_MODULES "")
 LIST(APPEND SUB_MODULES "src/modules/Logger")
 LIST(APPEND SUB_MODULES "src/modules/Communication")
+LIST(APPEND SUB_MODULES "src/modules/Message")
 
 
 FOREACH (_prj ${SUB_MODULES})

@@ -1,4 +1,4 @@
-#include "messagebuild.h"
+#include "messagebuilder.h"
 
 #include <iostream>
 
@@ -33,7 +33,7 @@ namespace GTU{
         ///Builds message by previous valued parameters by parameter-constructor
         std::string MessageBuilder::build_message() {
             if(protocol.len == 0){
-                throw new _exception;
+                throw new std::exception;
             }
             else{
                 message = (std::string)(protocol.len + "");
@@ -50,7 +50,7 @@ namespace GTU{
         }
 
         ///Builds message by given parameters
-        std::string MessageBuilder::build_message(uint16_t len, uint16_t msgid, uint8_t *payload, uint8_t sysid=protocol.sysid, uint8_t compid=protocol.compid) {
+        std::string MessageBuilder::build_message(uint16_t len, uint16_t msgid, uint8_t *payload, uint8_t sysid, uint8_t compid) {
             protocol.len = len;
             protocol.sysid = sysid;
             protocol.compid = compid;
@@ -64,7 +64,7 @@ namespace GTU{
             try{
                 return this->build_message();
             }
-            catch (Exception err){
+            catch (std::exception err){
                 std::cout << "ERROR ---> " << std::endl;
             }
             return "";

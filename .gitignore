@@ -77,3 +77,4 @@ local_build/*
 
 #Clion
 .idea/*
+cmake-build-debug/*

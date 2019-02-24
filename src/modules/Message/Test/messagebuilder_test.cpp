@@ -1,8 +1,11 @@
 #include <iostream>
-#include "messagebuild.h"
+
+#include "messagebuilder.h"
+
 using GTU::AUTONOMOUS_VEHICLE::MessageBuilder;
 
-void tester1(){
+void tester1()
+{
     //Initializing necessary parameters
     uint16_t len = 10;
     uint8_t sysid = 1;
@@ -19,3 +22,8 @@ void tester1(){
     std::cout << "Message's bytes length should be 16 ->" << (std::string)(len + "\0");
 }
 
+int main()
+{
+    tester1();
+    return 0;
+}

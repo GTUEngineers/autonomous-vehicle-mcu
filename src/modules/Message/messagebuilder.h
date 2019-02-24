@@ -37,9 +37,9 @@ namespace GTU{
 
             std::string build_message();
             ///Builds message by given parameters
-            std::string build_message(uint16_t len, uint16_t msgid, uint8_t *payload, uint8_t sysid=protocol.sysid, uint8_t compid=protocol.compid);
+            std::string build_message(uint16_t len, uint16_t msgid, uint8_t *payload, uint8_t sysid=2, uint8_t compid=1);
         protected:
-            Protokol protocol;
+            Protocol protocol;
 
             std::string message;
         };

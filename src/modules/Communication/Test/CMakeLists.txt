@@ -7,7 +7,7 @@ add_executable(
     ${CMAKE_CURRENT_SOURCE_DIR}/../AbstractCommunication.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../Server.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../Client.cpp
-    driver.cpp
+    communication_test.cpp
 )
 
 target_include_directories(communication_test PUBLIC
