@@ -16,7 +16,7 @@ ErrorStatus Client::setup(const std::string & hostName, int port)
 
     if(getaddrinfo(hostName.c_str(), (std::to_string(port)).c_str(), &hints, &result) != 0)
         throw std::exception();
-    
+
     auto point = result;
 
     while(point != nullptr)
@@ -31,6 +31,8 @@ ErrorStatus Client::setup(const std::string & hostName, int port)
     if(point == nullptr)
         throw std::exception();
     freeaddrinfo(result);
+
+    return ErrorStatus::Success;
 }
 
 
