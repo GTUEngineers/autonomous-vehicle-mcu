@@ -6,12 +6,12 @@ include_directories(${CMAKE_BINARY_DIR}/include ${CMAKE_CURRENT_BINARY_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PRJ_OUTPUT_PATH}/${CMAKE_BINARY_DIR}/bin)
 
 SET(SOURCEFILES
-  messagebuilder.cpp
-)
-  
+        messagebuilder.cpp
+        )
+
 SET(INCLUDEDIRS
-  ${CMAKE_CURRENT_LIST_DIR}
-)
+        ${CMAKE_CURRENT_LIST_DIR}
+        )
 ADD_LIBRARY(${TARGET_NAME} STATIC ${SOURCEFILES})
 #TARGET_LINK_LIBRARIES(${TARGET_NAME} "")
 add_subdirectory(Test)

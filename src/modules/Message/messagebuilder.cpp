@@ -1,73 +1,41 @@
-#include "messagebuilder.h"
+/**
+ *  \file   messageBuilder.cpp
+ *  \brief  Message Builder
+ *  \author Ongun.Alp.Baba
+ *  \date   23.02.2019
+ * */
 
 #include <iostream>
+#include <sstream>
+#include <cstdio>
+#include "messagebuilder.h"
 
-namespace GTU{
+namespace GTU {
 
-    namespace AUTONOMOUS_VEHICLE{
+    namespace AUTONOMOUS_VEHICLE {
 
-        ///Constructor that doesn't initialize message
-        MessageBuilder::MessageBuilder() {
-            protocol.len = 0;
-            protocol.sysid = 0;
-            protocol.compid = 0;
-            protocol.msgid = 0;
-            protocol.payload = NULL;
-        }
+        namespace MESSAGE {
 
-        ///Constructor that initializes message's target sysid and compid
-        MessageBuilder::MessageBuilder(uint8_t sysid, uint8_t compid) {
-            protocol.len = 0;
-            protocol.msgid = 0;
-            protocol.payload = NULL;
-            protocol.sysid = sysid;
-            protocol.compid = compid;
-        }
+            const std::string msg_format = "%d,%c,%c,%d,%500c";
 
-        ///Destructor that frees allocated memory for "protocol.payload"
-        MessageBuilder::~MessageBuilder(){
-            if(protocol.len != 0)
-                delete protocol.payload;
-        }
-
-        ///Builds message by previous valued parameters by parameter-constructor
-        std::string MessageBuilder::build_message() {
-            if(protocol.len == 0){
-                throw new std::exception;
-            }
-            else{
-                message = (std::string)(protocol.len + "");
-                message += (char)protocol.sysid
-                        + (char)protocol.compid;
-                message +=(std::string)(protocol.msgid + "");
-    
-                for(uint16_t i=0; i<protocol.len; ++i){
-                    message += (char)protocol.payload[i];
+            ///Builds message by given parameters
+            std::string build_message(const Protocol *protocol) {
+                if (protocol == nullptr) {
+                    return "";
                 }
-                std::cout << message << std::endl;
-                return message;
-            }
-        }
+                std::stringstream buffer;
 
-        ///Builds message by given parameters
-        std::string MessageBuilder::build_message(uint16_t len, uint16_t msgid, uint8_t *payload, uint8_t sysid, uint8_t compid) {
-            protocol.len = len;
-            protocol.sysid = sysid;
-            protocol.compid = compid;
-            protocol.msgid = msgid;
-            if(protocol.payload == NULL)
-                delete protocol.payload;
-            protocol.payload = new uint8_t[len];
-            for(uint16_t i=0; i<len; ++i){
-                protocol.payload[i] = payload[i];
+                buffer << (u_int16_t) protocol->len << "," << (char) protocol->sys_id << ","
+                       << (char) protocol->comp_id << "," << (int16_t) protocol->msg_id << "," << protocol->payload;
+
+                return buffer.str();
             }
-            try{
-                return this->build_message();
+
+            bool parse_message(const std::string &msg, Protocol *protocol) {
+                sscanf(msg.c_str(), msg_format.c_str(), &protocol->len, &protocol->sys_id, &protocol->comp_id,
+                       &protocol->msg_id, protocol->payload);
+                return true;
             }
-            catch (std::exception err){
-                std::cout << "ERROR ---> " << std::endl;
-            }
-            return "";
         }
     }
 }

@@ -1,29 +1,36 @@
-#include <iostream>
+/**
+ *  \file   messageBuilder_test.cpp
+ *  \brief  Message Builder yest
+ *  \author Ongun.Alp.Baba
+ *  \date   23.02.2019
+ * */
 
+
+#include <iostream>
+#include <cassert>
+#include <cstring>
 #include "messagebuilder.h"
 
-using GTU::AUTONOMOUS_VEHICLE::MessageBuilder;
+using namespace GTU::AUTONOMOUS_VEHICLE::MESSAGE;
 
-void tester1()
-{
-    //Initializing necessary parameters
-    uint16_t len = 10;
-    uint8_t sysid = 1;
-    uint8_t compid = 2;
-    uint16_t msgid = 100;
-    uint8_t payload[10] = {0,1,2,3,4,5,6,7,8,9};
+void test_1() {
+    Protocol aProtocol, bProtocol;
+    aProtocol.sys_id = 1;
+    aProtocol.comp_id = 2;
+    aProtocol.msg_id = 3;
+    snprintf(&aProtocol.payload[0], 50, "Test Code %d ", 1);
+    aProtocol.len = 50;
 
-    //Protocol filler constructor called
-    MessageBuilder mes = MessageBuilder(sysid, compid);
+    parse_message(build_message(&aProtocol), &bProtocol);
 
-    //Message built with filled protocol
-    mes.build_message(len, msgid, payload);
-
-    std::cout << "Message's bytes length should be 16 ->" << (std::string)(len + "\0");
+    assert(bProtocol.len == aProtocol.len);
+    assert(bProtocol.msg_id == aProtocol.msg_id);
+    assert(bProtocol.comp_id == aProtocol.comp_id);
+    assert(bProtocol.sys_id == aProtocol.sys_id);
+    assert(strcmp(bProtocol.payload, aProtocol.payload) == 0);
 }
 
-int main()
-{
-    tester1();
+int main() {
+    test_1();
     return 0;
 }

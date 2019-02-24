@@ -1,49 +1,47 @@
-#ifndef MESSAGEBUILD_H
-#define MESSAGEBUILD_H
+/**
+ *  \file   messageBuilder.h
+ *  \brief  Message Builder
+ *  \author Ongun.Alp.Baba
+ *  \date   23.02.2019
+ * */
+
+
+#ifndef AUTONOMOUS_VEHICLE_GTU_ABSTRACT_MESSAGE_H
+#define AUTONOMOUS_VEHICLE_GTU_ABSTRACT_MESSAGE_H
 
 #include <cstdint>
 #include <string>
 
-namespace GTU{
+namespace GTU {
 
-    namespace AUTONOMOUS_VEHICLE{
+    namespace AUTONOMOUS_VEHICLE {
 
-        enum Component{
+        namespace MESSAGE {
 
-        };
+            const u_int16_t PAYLOAD_MAX_SIZE = 500;
 
-        ///A messages structure according to protocol
-        struct Protocol{
-            uint16_t len;               // Length of payload
-            uint8_t sysid;              // ID of message sender system/(car)
-            uint8_t compid;             // ID of the message sender component(car part)
-            uint16_t msgid;             // first 16 bits of the ID of the message
-            uint8_t *payload;           // A maximum of 500 payload bytes
-        };
+            enum Components {
+
+            };
+
+            enum Systems {
+
+            };
+            ///A messages structure according to protocol
+            struct Protocol {
+                uint16_t len;               // Length of payload
+                uint8_t sys_id;              // ID of message sender system(car)
+                uint8_t comp_id;             // ID of the message sender component(car part)
+                uint16_t msg_id;             // first 16 bits of the ID of the message
+                char payload[PAYLOAD_MAX_SIZE];           // A maximum of 500 payload bytes
+            };
 
 
-        class MessageBuilder {
-        public:
-            ///Constructor that doesn't initialize message
-            MessageBuilder();
+            std::string build_message(const Protocol *protocol);
 
-            ///Constructor that initializes message's target sysid and compid
-            MessageBuilder(uint8_t sysid, uint8_t compid);
-
-            ///Destructor that frees allocated memory for "protocol.payload"
-            ~MessageBuilder();
-
-            ///Builds message by previous valued parameters by parameter-constructor
-
-            std::string build_message();
-            ///Builds message by given parameters
-            std::string build_message(uint16_t len, uint16_t msgid, uint8_t *payload, uint8_t sysid=2, uint8_t compid=1);
-        protected:
-            Protocol protocol;
-
-            std::string message;
-        };
+            bool parse_message(const std::string &msg, Protocol *protocol);
+        }
     }
 }
 
-#endif
+#endif // AUTONOMOUS_VEHICLE_GTU_ABSTRACT_MESSAGE_H
