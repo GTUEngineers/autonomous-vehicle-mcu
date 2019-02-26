@@ -6,8 +6,8 @@
  * */
 #include "ConsoleLog.h"
 #include "Syslog.h"
-int main()
-{
+
+int main() {
 
     GTU::AUTONOMOUS_VEHICLE::Syslog::syslog_test();
     GTU::AUTONOMOUS_VEHICLE::ConsoleLog::console_log_test();

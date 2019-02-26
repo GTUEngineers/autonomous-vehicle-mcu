@@ -1,14 +1,14 @@
-set(TARGET_NAME "Communication")
+set(TARGET_NAME "Message")
 PROJECT(${TARGET_NAME} CXX C ASM)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${PROJECT_NAME}/)
 include_directories(${CMAKE_BINARY_DIR}/include ${CMAKE_CURRENT_BINARY_DIR})
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PRJ_OUTPUT_PATH}/${CMAKE_BINARY_DIR}/bin)
+
 SET(SOURCEFILES
-        AbstractCommunication.cpp
-        Client.cpp
-        Server.cpp
+        messagebuilder.cpp
         )
+
 SET(INCLUDEDIRS
         ${CMAKE_CURRENT_LIST_DIR}
         )
