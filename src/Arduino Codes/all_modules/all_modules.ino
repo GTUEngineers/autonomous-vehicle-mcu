@@ -67,35 +67,37 @@ void throttle(int val)
 {
   if(val >= THROTTLE_MIN_VAL && val <= THROTTLE_MAX_VAL)
   {
-    Serial.println(val);
-    analogWrite(throttle_pin,val);//0.65  
+    analogWrite(throttle_pin,val);
   }
 }
 
-void brake(int val){ //New Brake Funcs
-    if(val == LOCK){
-      Serial.print("Rel");
-      Serial.println(val);
+void brake(int val)
+{
+    if(val == LOCK)
+    {
       digitalWrite(relay_in_pin1, HIGH);
       digitalWrite(led1, HIGH);
       digitalWrite(relay_in_pin2, LOW);
       digitalWrite(led2, LOW);
     }
-    if(val == RELEASE){
+    if(val == RELEASE)
+    {
       digitalWrite(relay_in_pin2, HIGH);
       digitalWrite(led2, HIGH);
       digitalWrite(relay_in_pin1, LOW);
       digitalWrite(led1, LOW);
 
     }
-    if(val != LOCK && val != RELEASE){
+    if(val != LOCK && val != RELEASE)
+    {
       digitalWrite(relay_in_pin1, LOW);
       digitalWrite(relay_in_pin2, LOW);
       digitalWrite(led1, LOW);
       digitalWrite(led2, LOW);
     }
 }
-void steerTo(int val){
+void steerTo(int val)
+{
   int dir_val = 0;
   if(last_steering_val > val)
   {  //step
