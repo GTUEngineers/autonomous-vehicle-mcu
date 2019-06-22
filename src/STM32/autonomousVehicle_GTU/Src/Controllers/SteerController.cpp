@@ -16,6 +16,20 @@
 
 void SteerController::set_value (int val)
 {
+    int dir_val = 0;
+    if(last_position > val)
+        dir_val = 1;
+    //sets steer_direction_pin according to dir_val
+    switch(dir_val){
+        case 1:
+            HAL_GPIO_WritePin(GPIOF, steer_direction_pin, GPIO_PIN_SET);
+            break;
+        case 0:
+            HAL_GPIO_WritePin(GPIOF, steer_direction_pin, GPIO_PIN_RESET);
+            break;
+        default:
+            break;
+    }
     last_position = val;
 }
 
