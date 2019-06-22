@@ -12,6 +12,7 @@
 /*------------------------------< Includes >----------------------------------*/
 
 /*------------------------------< Defines >-----------------------------------*/
+#define "stm32fxxx_hal_gpio.h"
 
 /*------------------------------< Typedefs >----------------------------------*/
 
@@ -28,7 +29,10 @@ public:
 
 private:
     void steer_task ( );
+    //last position of the steering
     int last_position;
+    uint32_t steer_direction_pin;
+    uint32_t steer_pulse_pin;
 };
 
 #endif /* CONTROLLERS_STEERCONTROLLER_H_ */
