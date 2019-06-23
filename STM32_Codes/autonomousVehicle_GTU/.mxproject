@@ -1,7 +1,7 @@
 [PreviousGenFiles]
-HeaderPath=C:/Users/Ahmet.Alperen.BULUT/STM32CubeIDE/workspace_1.0.1/autonomousVehicle_GTU/Inc
+HeaderPath="${workspace_loc:/autonomousVehicle_GTU/Inc}"
 HeaderFiles=stm32f4xx_it.h;stm32f4xx_hal_conf.h;main.h;FreeRTOSConfig.h;
-SourcePath=C:/Users/Ahmet.Alperen.BULUT/STM32CubeIDE/workspace_1.0.1/autonomousVehicle_GTU/Src
+SourcePath="${workspace_loc:/autonomousVehicle_GTU/Src}"
 SourceFiles=stm32f4xx_it.c;stm32f4xx_hal_msp.c;main.c;freertos.c;
 
 [PreviousLibFiles]
