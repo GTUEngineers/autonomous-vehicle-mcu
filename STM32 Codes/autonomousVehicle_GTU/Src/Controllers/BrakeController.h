@@ -28,14 +28,18 @@ class BrakeController
 {
 
 public:
+    BrakeController(const BrakeController&) = delete; //copy constructor
+    BrakeController& operator=(const BrakeController &) = delete;//assignment operator
+    BrakeController(BrakeController &&) = delete;//move operator
+    BrakeController & operator=(BrakeController &&) = delete;//move assignment
 
-    BrakeController ( ) = default;
-
+    static BrakeController& get_instance ( );
     void set_value (BRAKE_POSITION val);
     BRAKE_POSITION get_value ( );
     float get_rotatary_position_sensor_value ( );
     static void test ( );
 private:
+    BrakeController ( ) = default;
     void brake_task ( );
 
     BRAKE_POSITION last_position;
