@@ -8,6 +8,8 @@
 
 /*------------------------------< Includes >----------------------------------*/
 #include "BrakeController.h"
+#include "autonomousVehicle_conf.h"
+#include "cmsis_os.h"
 /*------------------------------< Defines >-----------------------------------*/
 
 /*------------------------------< Typedefs >----------------------------------*/
@@ -36,3 +38,23 @@ void BrakeController::brake_task ( )
     };
 }
 
+void BrakeController::test ( )
+{
+    // lock the brake 1 seconds
+    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_1_CONF.GPIOx, BRAKE_RELAY_PIN_1_CONF.GPIO_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_2_CONF.GPIOx, BRAKE_RELAY_PIN_2_CONF.GPIO_Pin,
+            GPIO_PIN_RESET);
+    HAL_Delay(1000);
+    //  wait for 2 seconds
+    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_1_CONF.GPIOx, BRAKE_RELAY_PIN_1_CONF.GPIO_Pin,
+            GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_2_CONF.GPIOx, BRAKE_RELAY_PIN_2_CONF.GPIO_Pin,
+            GPIO_PIN_RESET);
+    HAL_Delay(2000);
+    // release the brake 1 seconds
+    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_1_CONF.GPIOx, BRAKE_RELAY_PIN_1_CONF.GPIO_Pin,
+            GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_2_CONF.GPIOx, BRAKE_RELAY_PIN_2_CONF.GPIO_Pin, GPIO_PIN_SET);
+    HAL_Delay(1000);
+
+}

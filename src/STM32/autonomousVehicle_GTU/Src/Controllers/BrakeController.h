@@ -34,9 +34,10 @@ public:
     void set_value (BRAKE_POSITION val);
     BRAKE_POSITION get_value ( );
     float get_rotatary_position_sensor_value ( );
-
+    static void test ( );
 private:
     void brake_task ( );
+
     BRAKE_POSITION last_position;
 };
 
