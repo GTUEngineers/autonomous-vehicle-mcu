@@ -15,7 +15,7 @@
 
 #define THROTTLE_MIN_VOLTAGE (0.4)
 #define THROTTLE_MAX_VOLTAGE (1.8)
-
+#define STEERING_MAX_VALUE (7500)
 /*------------------------------< Typedefs >----------------------------------*/
 struct s_PinSettings
 {
@@ -29,5 +29,8 @@ typedef struct s_PinSettings pinSettings;
 
 const pinSettings BRAKE_RELAY_PIN_1_CONF = {GPIOF, GPIO_PIN_4};
 const pinSettings BRAKE_RELAY_PIN_2_CONF = {GPIOF, GPIO_PIN_4};
+
+const pinSettings STEER_DIRECTION_PIN_CONF = {GPIOF, GPIO_PIN_6};
+const pinSettings STEER_PULSE_PIN_CONF = {GPIOF, GPIO_PIN_7};
 
 #endif /* AUTONOMOUSVEHICLE_CONF_H_ */
