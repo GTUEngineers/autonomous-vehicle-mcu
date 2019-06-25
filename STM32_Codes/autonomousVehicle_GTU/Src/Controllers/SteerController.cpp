@@ -8,6 +8,8 @@
 
 /*------------------------------< Includes >----------------------------------*/
 #include "SteerController.h"
+#include "autonomousVehicle_conf.h"
+#include "cmsis_os.h"
 /*------------------------------< Defines >-----------------------------------*/
 
 /*------------------------------< Typedefs >----------------------------------*/
@@ -19,13 +21,13 @@ void SteerController::set_value (int val)
     int dir_val = 0;
     if(last_position > val)
         dir_val = 1;
-    //sets steer_direction_pin according to dir_val
+    //sets STEER_DIRECTION_PIN_CONF according to dir_val
     switch(dir_val){
         case 1:
-            HAL_GPIO_WritePin(GPIOF, steer_direction_pin, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(GPIOF, STEER_DIRECTION_PIN_CONF.GPIO_Pin, GPIO_PIN_SET);
             break;
         case 0:
-            HAL_GPIO_WritePin(GPIOF, steer_direction_pin, GPIO_PIN_RESET);
+            HAL_GPIO_WritePin(GPIOF, STEER_DIRECTION_PIN_CONF.GPIO_Pin, GPIO_PIN_RESET);
             break;
         default:
             break;
@@ -47,5 +49,57 @@ void SteerController::steer_task ( )
 {
     while (false)
     {
+		while(get_value() != get_encoder_value()){
+			HAL_GPIO_WritePin(STEER_PULSE_PIN_CONF.GPIOx, STEER_PULSE_PIN_CONF.GPIO_Pin,GPIO_PIN_RESET);
+			HAL_Delay(1); //delayMicroseconds(150); // micros() for non-blocking code
+			HAL_GPIO_WritePin(STEER_PULSE_PIN_CONF.GPIOx, STEER_PULSE_PIN_CONF.GPIO_Pin,GPIO_PIN_SET);
+			HAL_Delay(1); //delayMicroseconds(150); // micros() for non-blocking code
+			if(HAL_GPIO_ReadPin(STEER_PULSE_PIN_CONF.GPIOx, STEER_PULSE_PIN_CONF.GPIO_Pin) == 1)
+				set_value(get_value() - 1);
+			else
+				set_value(get_value() + 1);
+		}
     };
+}
+
+void SteerController::test ( )
+{
+	// 7000 pulse to right
+	HAL_GPIO_WritePin(STEER_DIRECTION_PIN_CONF.GPIOx, STEER_DIRECTION_PIN_CONF.GPIO_Pin, GPIO_PIN_RESET);
+	for(int i=0; i<7000; ++i)
+	{
+		HAL_GPIO_WritePin(STEER_PULSE_PIN_CONF.GPIOx, STEER_PULSE_PIN_CONF.GPIO_Pin,GPIO_PIN_RESET);
+		HAL_Delay(1); //delayMicroseconds(150); // micros() for non-blocking code
+		HAL_GPIO_WritePin(STEER_PULSE_PIN_CONF.GPIOx, STEER_PULSE_PIN_CONF.GPIO_Pin,GPIO_PIN_SET);
+		HAL_Delay(1); //delayMicroseconds(150); // micros() for non-blocking code
+	}
+			
+	// wait 1 second
+    HAL_Delay(1000);
+	
+    // 14000 pulse to left
+	HAL_GPIO_WritePin(STEER_DIRECTION_PIN_CONF.GPIOx, STEER_DIRECTION_PIN_CONF.GPIO_Pin, GPIO_PIN_SET);
+	for(int i=0; i<14000; ++i)
+	{
+		HAL_GPIO_WritePin(STEER_PULSE_PIN_CONF.GPIOx, STEER_PULSE_PIN_CONF.GPIO_Pin,GPIO_PIN_RESET);
+		HAL_Delay(1); //delayMicroseconds(150); // micros() for non-blocking code
+		HAL_GPIO_WritePin(STEER_PULSE_PIN_CONF.GPIOx, STEER_PULSE_PIN_CONF.GPIO_Pin,GPIO_PIN_SET);
+		HAL_Delay(1); //delayMicroseconds(150); // micros() for non-blocking code
+	}
+			
+	// wait 1 second
+    HAL_Delay(1000);
+	
+    // 7000 pulse to right to initial
+	HAL_GPIO_WritePin(STEER_DIRECTION_PIN_CONF.GPIOx, STEER_DIRECTION_PIN_CONF.GPIO_Pin, GPIO_PIN_RESET);
+	for(int i=0; i<7000; ++i)
+	{
+		HAL_GPIO_WritePin(STEER_PULSE_PIN_CONF.GPIOx, STEER_PULSE_PIN_CONF.GPIO_Pin,GPIO_PIN_RESET);
+		HAL_Delay(1); //delayMicroseconds(150); // micros() for non-blocking code
+		HAL_GPIO_WritePin(STEER_PULSE_PIN_CONF.GPIOx, STEER_PULSE_PIN_CONF.GPIO_Pin,GPIO_PIN_SET);
+		HAL_Delay(1); //delayMicroseconds(150); // micros() for non-blocking code
+	}
+	
+	// wait 1 second
+	HAL_Delay(1000);
 }
