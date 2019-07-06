@@ -27,8 +27,7 @@ extern "C" {     /* Make sure we have C-declarations in C++ programs */
 #define THROTTLE_VOLTAGE_MAX_VAL    SPEED_25
 //TODO fix values @ahmet.alperen.bulut
 //Steering pulse values
-#define STEERING_MAX_RIGHT_VALUE (7500)
-#define STEERING_MAX_LEFT_VALUE (-7500)
+#define STEERING_MAX_VALUE (7500)
 /*------------------------------< Typedefs >----------------------------------*/
 
 enum BRAKE_POSITION
