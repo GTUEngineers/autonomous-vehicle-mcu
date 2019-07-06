@@ -9,6 +9,7 @@
 /*------------------------------< Includes >----------------------------------*/
 #include "BrakeController.h"
 #include "cmsis_os.h"
+#include "main.h"
 /*------------------------------< Defines >-----------------------------------*/
 
 /*------------------------------< Typedefs >----------------------------------*/
@@ -39,24 +40,24 @@ float brake_get_rotary_position_sensor_value ( )
 
 void brake_test ( )
 {
-    /*
-    // lock the brake 1 seconds
-    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_1_CONF.GPIOx, BRAKE_RELAY_PIN_1_CONF.GPIO_Pin, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_2_CONF.GPIOx, BRAKE_RELAY_PIN_2_CONF.GPIO_Pin,
-            GPIO_PIN_RESET);
-    osDelay(1000);
 
-    //  wait for 2 seconds
-    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_1_CONF.GPIOx, BRAKE_RELAY_PIN_1_CONF.GPIO_Pin,
-            GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_2_CONF.GPIOx, BRAKE_RELAY_PIN_2_CONF.GPIO_Pin,
-            GPIO_PIN_RESET);
-    osDelay(2000);
+    // lock the brake 1.8 seconds
+    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_1_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_2_Pin, GPIO_PIN_RESET);
+    osDelay(1800);
 
-    // release the brake 1 seconds
-    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_1_CONF.GPIOx, BRAKE_RELAY_PIN_1_CONF.GPIO_Pin,
-            GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_2_CONF.GPIOx, BRAKE_RELAY_PIN_2_CONF.GPIO_Pin, GPIO_PIN_SET);
-    osDelay(1000);
-    */
+    //  wait for 5 seconds
+    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_1_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_2_Pin, GPIO_PIN_RESET);
+    osDelay(5000);
+
+    // release the brake 1.8 seconds
+    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_1_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_2_Pin, GPIO_PIN_SET);
+    osDelay(1800);
+
+    //  wait for 5 seconds
+    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_1_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_2_Pin, GPIO_PIN_RESET);
+    osDelay(5000);
 }
