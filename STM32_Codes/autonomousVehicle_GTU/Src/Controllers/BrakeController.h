@@ -16,7 +16,8 @@ extern "C" {     /* Make sure we have C-declarations in C++ programs */
 /*------------------------------< Includes >----------------------------------*/
 #include "autonomousVehicle_conf.h"
 /*------------------------------< Defines >-----------------------------------*/
-
+//Connect BRAKE_RELAY_PIN_1_Pin to Relay in 1
+//Connect BRAKE_RELAY_PIN_2_Pin to Relay in 2
 /*------------------------------< Typedefs >----------------------------------*/
 
 /*------------------------------< Constants >---------------------------------*/
