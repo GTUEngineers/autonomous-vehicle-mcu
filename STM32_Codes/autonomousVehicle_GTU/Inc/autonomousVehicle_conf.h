@@ -14,7 +14,7 @@ extern "C" {     /* Make sure we have C-declarations in C++ programs */
 #endif
 
 /*------------------------------< Includes >----------------------------------*/
-
+#include "stm32f4xx_hal.h"
 /*------------------------------< Defines >-----------------------------------*/
 //Throttle Voltage Values
 #define SPEED_0                     (0.4)
@@ -26,7 +26,9 @@ extern "C" {     /* Make sure we have C-declarations in C++ programs */
 #define THROTTLE_VOLTAGE_MIN_VAL    SPEED_0
 #define THROTTLE_VOLTAGE_MAX_VAL    SPEED_25
 //TODO fix values @ahmet.alperen.bulut
-
+//Steering pulse values
+#define STEERING_MAX_RIGHT_VALUE (7500)
+#define STEERING_MAX_LEFT_VALUE (-7500)
 /*------------------------------< Typedefs >----------------------------------*/
 
 enum BRAKE_POSITION
@@ -37,6 +39,13 @@ enum BRAKE_POSITION
 };
 typedef enum BRAKE_POSITION BrakePosition;
 
+struct s_PinSettings
+{
+    GPIO_TypeDef* GPIOx;
+    uint16_t GPIO_Pin;
+};
+
+typedef struct s_PinSettings pinSettings;
 /*------------------------------< Constants >---------------------------------*/
 
 /*------------------------------< Prototypes >--------------------------------*/
