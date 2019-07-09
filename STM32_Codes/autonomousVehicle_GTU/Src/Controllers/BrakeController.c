@@ -17,10 +17,69 @@
 /*------------------------------< Constants >---------------------------------*/
 
 /*------------------------------< Variables >---------------------------------*/
-BrakePosition brake_current_position = RELEASE;
-/*------------------------------< Prototypes >--------------------------------*/
+static StaticSemaphore_t xSemaphoreBuffer;
+static SemaphoreHandle_t xSemaphore;
 
+BrakePosition brake_current_position = STOP;
+BrakePosition brake_next_position = STOP;
+
+osThreadId brakeTaskHandle;
+uint32_t brakeTaskBuffer[512];
+osStaticThreadDef_t brakeTaskControlBlock;
+/*------------------------------< Prototypes >--------------------------------*/
+void brake_task (void const * argument);
+void brake_lock ( );
+void brake_release ( );
+void brake_stop ( );
 /*------------------------------< Functions >---------------------------------*/
+
+void brake_init ( )
+{
+    brake_stop( ); // set GPIO pin initial value
+    xSemaphore = xSemaphoreCreateCountingStatic(1, 0, &xSemaphoreBuffer);
+
+    osThreadStaticDef(BrakeTask, brake_task, osPriorityNormal, 0, 512, brakeTaskBuffer,
+            &brakeTaskControlBlock);
+    brakeTaskHandle = osThreadCreate(osThread(BrakeTask), NULL);
+}
+
+void brake_task (void const * argument)
+{
+
+    while (1)
+    {
+        if (osSemaphoreWait(xSemaphore, osWaitForever) >= 0)
+        {
+            switch (brake_next_position)
+            {
+                case STOP:
+                    brake_stop( );
+                    break;
+                case RELEASE:
+                    brake_release( );
+                    osDelay(1800);//TODO fix it
+                    brake_stop( );
+                    break;
+                case HALF:
+
+                    break;
+                case LOCK:
+                    brake_lock( );
+                    osDelay(1800);
+                    brake_stop( );
+                    break;
+                default:
+                    //TODO add logger
+                    break;
+            }
+            brake_current_position = brake_next_position;
+        }
+        else
+        {
+            //TODO logger
+        }
+    }
+}
 
 BrakePosition brake_get_value ( )
 {
@@ -29,8 +88,34 @@ BrakePosition brake_get_value ( )
 
 void brake_set_value (BrakePosition val)
 {
-    brake_current_position = val;
-    //TODO set GPIO @ahmet.alperen.bulut
+    if (val == brake_next_position)
+    {
+        return ;
+    }
+    brake_next_position = val;
+    osSemaphoreRelease(xSemaphore);
+
+}
+
+void brake_lock ( )
+{
+    //Brake motor lock to brake
+    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_1_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_2_Pin, GPIO_PIN_RESET);
+}
+
+void brake_release ( )
+{
+    //Brake motor release to brake
+    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_1_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_2_Pin, GPIO_PIN_SET);
+}
+
+void brake_stop ( )
+{
+    //Brake motor stop current position
+    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_1_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_2_Pin, GPIO_PIN_RESET);
 }
 
 float brake_get_rotary_position_sensor_value ( )
@@ -40,24 +125,16 @@ float brake_get_rotary_position_sensor_value ( )
 
 void brake_test ( )
 {
-
     // lock the brake 1.8 seconds
-    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_1_Pin, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_2_Pin, GPIO_PIN_RESET);
-    osDelay(1800);
-
+    brake_set_value(LOCK);
+    osDelay(1000);
     //  wait for 5 seconds
-    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_1_Pin, GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_2_Pin, GPIO_PIN_RESET);
+    brake_set_value(STOP);
     osDelay(5000);
-
     // release the brake 1.8 seconds
-    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_1_Pin, GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_2_Pin, GPIO_PIN_SET);
-    osDelay(1800);
-
+    brake_set_value(RELEASE);
+    osDelay(1000);
     //  wait for 5 seconds
-    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_1_Pin, GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_2_Pin, GPIO_PIN_RESET);
+    brake_set_value(STOP);
     osDelay(5000);
 }
