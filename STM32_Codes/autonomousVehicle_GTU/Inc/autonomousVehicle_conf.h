@@ -34,8 +34,10 @@ enum BRAKE_POSITION
 {
     RELEASE = 0,
     HALF = 1,
-    LOCK = 2
+    LOCK = 2,
+    STOP = 3
 };
+
 typedef enum BRAKE_POSITION BrakePosition;
 
 struct s_PinSettings

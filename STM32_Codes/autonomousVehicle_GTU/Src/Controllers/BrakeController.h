@@ -23,6 +23,8 @@ extern "C" {     /* Make sure we have C-declarations in C++ programs */
 /*------------------------------< Constants >---------------------------------*/
 
 /*------------------------------< Prototypes >--------------------------------*/
+
+void brake_init ( );
 BrakePosition brake_get_value ( );
 void brake_set_value (BrakePosition val);
 float brake_get_rotary_position_sensor_value ( );

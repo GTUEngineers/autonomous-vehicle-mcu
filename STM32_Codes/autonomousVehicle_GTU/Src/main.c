@@ -50,12 +50,6 @@ SPI_HandleTypeDef hspi1;
 osThreadId defaultTaskHandle;
 uint32_t defaultTaskBuffer[512];
 osStaticThreadDef_t defaultTaskControlBlock;
-osThreadId myTask02Handle;
-uint32_t myTask02Buffer[512];
-osStaticThreadDef_t myTask02ControlBlock;
-osThreadId myTask03Handle;
-uint32_t myTask03Buffer[512];
-osStaticThreadDef_t myTask03ControlBlock;
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -66,8 +60,6 @@ static void MX_GPIO_Init (void);
 static void MX_I2C1_Init (void);
 static void MX_SPI1_Init (void);
 void StartDefaultTask (void const * argument);
-void StartTask02 (void const * argument);
-void StartTask03 (void const * argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -134,20 +126,10 @@ int main (void)
             &defaultTaskControlBlock);
     defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
-    /* definition and creation of myTask02 */
-    osThreadStaticDef(myTask02, StartTask02, osPriorityNormal, 0, 512, myTask02Buffer,
-            &myTask02ControlBlock);
-    myTask02Handle = osThreadCreate(osThread(myTask02), NULL);
-
-    /* definition and creation of myTask03 */
-    osThreadStaticDef(myTask03, StartTask03, osPriorityNormal, 0, 512, myTask03Buffer,
-            &myTask03ControlBlock);
-    myTask03Handle = osThreadCreate(osThread(myTask03), NULL);
-
     /* USER CODE BEGIN RTOS_THREADS */
     /* add threads, ... */
     /* USER CODE END RTOS_THREADS */
-
+    brake_init();
     /* Start scheduler */
     osKernelStart( );
 
@@ -387,46 +369,10 @@ void StartDefaultTask (void const * argument)
     /* Infinite loop */
     for (;;)
     {
-
+        brake_test();
         osDelay(1);
     }
     /* USER CODE END 5 */
-}
-
-/* USER CODE BEGIN Header_StartTask02 */
-/**
- * @brief Function implementing the myTask02 thread.
- * @param argument: Not used
- * @retval None
- */
-/* USER CODE END Header_StartTask02 */
-void StartTask02 (void const * argument)
-{
-    /* USER CODE BEGIN StartTask02 */
-    /* Infinite loop */
-    for (;;)
-    {
-        osDelay(1);
-    }
-    /* USER CODE END StartTask02 */
-}
-
-/* USER CODE BEGIN Header_StartTask03 */
-/**
- * @brief Function implementing the myTask03 thread.
- * @param argument: Not used
- * @retval None
- */
-/* USER CODE END Header_StartTask03 */
-void StartTask03 (void const * argument)
-{
-    /* USER CODE BEGIN StartTask03 */
-    /* Infinite loop */
-    for (;;)
-    {
-        osDelay(1);
-    }
-    /* USER CODE END StartTask03 */
 }
 
 /**
