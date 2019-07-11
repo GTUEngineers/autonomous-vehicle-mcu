@@ -14,7 +14,7 @@ extern "C" {     /* Make sure we have C-declarations in C++ programs */
 #endif
 
 /*------------------------------< Includes >----------------------------------*/
-
+#include <stdint.h>
 /*------------------------------< Defines >-----------------------------------*/
 
 /*------------------------------< Typedefs >----------------------------------*/
@@ -23,8 +23,8 @@ extern "C" {     /* Make sure we have C-declarations in C++ programs */
 
 /*------------------------------< Prototypes >--------------------------------*/
 
-float throttle_get_value ( );
-void throttle_set_value (float val);
+uint32_t throttle_get_value ( );
+void throttle_set_value (uint32_t val);
 
 #if defined(__cplusplus)
 }                /* Make sure we have C-declarations in C++ programs */

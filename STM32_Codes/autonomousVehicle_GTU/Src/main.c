@@ -43,6 +43,8 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+DAC_HandleTypeDef hdac;
+
 I2C_HandleTypeDef hi2c1;
 
 SPI_HandleTypeDef hspi1;
@@ -59,6 +61,7 @@ void SystemClock_Config (void);
 static void MX_GPIO_Init (void);
 static void MX_I2C1_Init (void);
 static void MX_SPI1_Init (void);
+static void MX_DAC_Init (void);
 void StartDefaultTask (void const * argument);
 
 /* USER CODE BEGIN PFP */
@@ -100,8 +103,9 @@ int main (void)
     MX_GPIO_Init( );
     MX_I2C1_Init( );
     MX_SPI1_Init( );
+    MX_DAC_Init( );
     /* USER CODE BEGIN 2 */
-
+    HAL_DAC_Start(&hdac, DAC_CHANNEL_1);
     /* USER CODE END 2 */
 
     /* USER CODE BEGIN RTOS_MUTEX */
@@ -128,8 +132,9 @@ int main (void)
 
     /* USER CODE BEGIN RTOS_THREADS */
     /* add threads, ... */
+    brake_init( );
     /* USER CODE END RTOS_THREADS */
-    brake_init();
+
     /* Start scheduler */
     osKernelStart( );
 
@@ -187,6 +192,44 @@ void SystemClock_Config (void)
     {
         Error_Handler( );
     }
+}
+
+/**
+ * @brief DAC Initialization Function
+ * @param None
+ * @retval None
+ */
+static void MX_DAC_Init (void)
+{
+
+    /* USER CODE BEGIN DAC_Init 0 */
+
+    /* USER CODE END DAC_Init 0 */
+
+    DAC_ChannelConfTypeDef sConfig = { 0 };
+
+    /* USER CODE BEGIN DAC_Init 1 */
+
+    /* USER CODE END DAC_Init 1 */
+    /** DAC Initialization
+     */
+    hdac.Instance = DAC;
+    if (HAL_DAC_Init(&hdac) != HAL_OK)
+    {
+        Error_Handler( );
+    }
+    /** DAC channel OUT1 config
+     */
+    sConfig.DAC_Trigger = DAC_TRIGGER_NONE;
+    sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_ENABLE;
+    if (HAL_DAC_ConfigChannel(&hdac, &sConfig, DAC_CHANNEL_1) != HAL_OK)
+    {
+        Error_Handler( );
+    }
+    /* USER CODE BEGIN DAC_Init 2 */
+
+    /* USER CODE END DAC_Init 2 */
+
 }
 
 /**
@@ -369,7 +412,7 @@ void StartDefaultTask (void const * argument)
     /* Infinite loop */
     for (;;)
     {
-        brake_test();
+        brake_test( );
         osDelay(1);
     }
     /* USER CODE END 5 */
