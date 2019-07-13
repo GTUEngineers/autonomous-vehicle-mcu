@@ -21,10 +21,12 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
-#include "Controllers/BrakeController.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "Controllers/BrakeController.h"
+#include "Controllers/ThrottleController.h"
+#include "autonomousVehicle_conf.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -133,6 +135,8 @@ int main (void)
     /* USER CODE BEGIN RTOS_THREADS */
     /* add threads, ... */
     brake_init( );
+    throttle_set_value(SPEED_0);
+    throttle_set_lock(THROTTLE_LOCK);
     /* USER CODE END RTOS_THREADS */
 
     /* Start scheduler */
@@ -331,7 +335,7 @@ static void MX_GPIO_Init (void)
     HAL_GPIO_WritePin(CS_I2C_SPI_GPIO_Port, CS_I2C_SPI_Pin, GPIO_PIN_RESET);
 
     /*Configure GPIO pin Output Level */
-    HAL_GPIO_WritePin(OTG_FS_PowerSwitchOn_GPIO_Port, OTG_FS_PowerSwitchOn_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOC, OTG_FS_PowerSwitchOn_Pin | THROTTLE_LOCK_PIN_Pin, GPIO_PIN_SET);
 
     /*Configure GPIO pin Output Level */
     HAL_GPIO_WritePin(GPIOA, BRAKE_RELAY_PIN_1_Pin | BRAKE_RELAY_PIN_2_Pin, GPIO_PIN_RESET);
@@ -365,6 +369,13 @@ static void MX_GPIO_Init (void)
     GPIO_InitStruct.Pull = GPIO_PULLDOWN;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+    /*Configure GPIO pin : THROTTLE_LOCK_PIN_Pin */
+    GPIO_InitStruct.Pin = THROTTLE_LOCK_PIN_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(THROTTLE_LOCK_PIN_GPIO_Port, &GPIO_InitStruct);
 
     /*Configure GPIO pin : BOOT1_Pin */
     GPIO_InitStruct.Pin = BOOT1_Pin;
@@ -413,7 +424,8 @@ void StartDefaultTask (void const * argument)
     for (;;)
     {
         brake_test( );
-        osDelay(1);
+        throttle_test();
+        osDelay(4000);
     }
     /* USER CODE END 5 */
 }
