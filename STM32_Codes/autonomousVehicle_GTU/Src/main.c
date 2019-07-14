@@ -27,6 +27,7 @@
 #include "Controllers/BrakeController.h"
 #include "Controllers/ThrottleController.h"
 #include "autonomousVehicle_conf.h"
+#include "stm32f4xx.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -463,6 +464,10 @@ void StartDefaultTask (void const * argument)
         brake_test( );
         throttle_test( );
         osDelay(4000);
+
+#ifdef DEBUG_LOG
+      _write(0,"fatih",5);
+#endif
     }
     /* USER CODE END 5 */
 }
