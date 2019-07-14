@@ -20,8 +20,8 @@
 static StaticSemaphore_t xSemaphoreBuffer;
 static SemaphoreHandle_t xSemaphore;
 
-BrakePosition brake_current_position = STOP;
-BrakePosition brake_next_position = STOP;
+BrakePosition brake_current_position = BRAKE_RELEASE;
+BrakePosition brake_next_position = BRAKE_RELEASE;
 
 osThreadId brakeTaskHandle;
 uint32_t brakeTaskBuffer[512];
@@ -35,7 +35,13 @@ void brake_stop ( );
 
 void brake_init ( )
 {
-    brake_stop( ); // set GPIO pin initial value
+    brake_stop( );     // set GPIO pin initial value
+/*    brake_lock( );
+    HAL_Delay(2050);
+    brake_stop( );
+    brake_release( );
+    HAL_Delay(1600);     //TODO fix it
+    brake_stop( );*/
     xSemaphore = xSemaphoreCreateCountingStatic(1, 0, &xSemaphoreBuffer);
 
     osThreadStaticDef(BrakeTask, brake_task, osPriorityNormal, 0, 512, brakeTaskBuffer,
@@ -52,20 +58,20 @@ void brake_task (void const * argument)
         {
             switch (brake_next_position)
             {
-                case STOP:
+                case BRAKE_STOP:
                     brake_stop( );
                     break;
-                case RELEASE:
+                case BRAKE_RELEASE:
                     brake_release( );
-                    osDelay(1800);//TODO fix it
+                    osDelay(1600);     //TODO fix it
                     brake_stop( );
                     break;
-                case HALF:
+                case BRAKE_HALF:
 
                     break;
-                case LOCK:
+                case BRAKE_LOCK:
                     brake_lock( );
-                    osDelay(1800);
+                    osDelay(2050);
                     brake_stop( );
                     break;
                 default:
@@ -88,9 +94,9 @@ BrakePosition brake_get_value ( )
 
 void brake_set_value (BrakePosition val)
 {
-    if (val == brake_next_position)
+    if (val == brake_next_position || val == brake_current_position)
     {
-        return ;
+        return;
     }
     brake_next_position = val;
     osSemaphoreRelease(xSemaphore);
@@ -125,16 +131,16 @@ float brake_get_rotary_position_sensor_value ( )
 
 void brake_test ( )
 {
-    // lock the brake 1.8 seconds
-    brake_set_value(LOCK);
+    // lock the brake 1 seconds
+    brake_set_value(BRAKE_LOCK);
     osDelay(1000);
     //  wait for 5 seconds
-    brake_set_value(STOP);
+    brake_set_value(BRAKE_STOP);
     osDelay(5000);
-    // release the brake 1.8 seconds
-    brake_set_value(RELEASE);
+    // release the brake 1 seconds
+    brake_set_value(BRAKE_RELEASE);
     osDelay(1000);
     //  wait for 5 seconds
-    brake_set_value(STOP);
+    brake_set_value(BRAKE_STOP);
     osDelay(5000);
 }

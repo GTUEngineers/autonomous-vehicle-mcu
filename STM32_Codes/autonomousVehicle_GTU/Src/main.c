@@ -21,10 +21,12 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
-#include "Controllers/BrakeController.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "Controllers/BrakeController.h"
+#include "Controllers/ThrottleController.h"
+#include "autonomousVehicle_conf.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -43,6 +45,8 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+DAC_HandleTypeDef hdac;
+
 I2C_HandleTypeDef hi2c1;
 
 SPI_HandleTypeDef hspi1;
@@ -59,6 +63,7 @@ void SystemClock_Config (void);
 static void MX_GPIO_Init (void);
 static void MX_I2C1_Init (void);
 static void MX_SPI1_Init (void);
+static void MX_DAC_Init (void);
 void StartDefaultTask (void const * argument);
 
 /* USER CODE BEGIN PFP */
@@ -100,8 +105,9 @@ int main (void)
     MX_GPIO_Init( );
     MX_I2C1_Init( );
     MX_SPI1_Init( );
+    MX_DAC_Init( );
     /* USER CODE BEGIN 2 */
-
+    HAL_DAC_Start(&hdac, DAC_CHANNEL_1);
     /* USER CODE END 2 */
 
     /* USER CODE BEGIN RTOS_MUTEX */
@@ -128,8 +134,11 @@ int main (void)
 
     /* USER CODE BEGIN RTOS_THREADS */
     /* add threads, ... */
+    brake_init( );
+    throttle_set_value(SPEED_0);
+    throttle_set_lock(THROTTLE_LOCK);
     /* USER CODE END RTOS_THREADS */
-    brake_init();
+
     /* Start scheduler */
     osKernelStart( );
 
@@ -187,6 +196,44 @@ void SystemClock_Config (void)
     {
         Error_Handler( );
     }
+}
+
+/**
+ * @brief DAC Initialization Function
+ * @param None
+ * @retval None
+ */
+static void MX_DAC_Init (void)
+{
+
+    /* USER CODE BEGIN DAC_Init 0 */
+
+    /* USER CODE END DAC_Init 0 */
+
+    DAC_ChannelConfTypeDef sConfig = { 0 };
+
+    /* USER CODE BEGIN DAC_Init 1 */
+
+    /* USER CODE END DAC_Init 1 */
+    /** DAC Initialization
+     */
+    hdac.Instance = DAC;
+    if (HAL_DAC_Init(&hdac) != HAL_OK)
+    {
+        Error_Handler( );
+    }
+    /** DAC channel OUT1 config
+     */
+    sConfig.DAC_Trigger = DAC_TRIGGER_NONE;
+    sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_ENABLE;
+    if (HAL_DAC_ConfigChannel(&hdac, &sConfig, DAC_CHANNEL_1) != HAL_OK)
+    {
+        Error_Handler( );
+    }
+    /* USER CODE BEGIN DAC_Init 2 */
+
+    /* USER CODE END DAC_Init 2 */
+
 }
 
 /**
@@ -288,7 +335,7 @@ static void MX_GPIO_Init (void)
     HAL_GPIO_WritePin(CS_I2C_SPI_GPIO_Port, CS_I2C_SPI_Pin, GPIO_PIN_RESET);
 
     /*Configure GPIO pin Output Level */
-    HAL_GPIO_WritePin(OTG_FS_PowerSwitchOn_GPIO_Port, OTG_FS_PowerSwitchOn_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOC, OTG_FS_PowerSwitchOn_Pin | THROTTLE_LOCK_PIN_Pin, GPIO_PIN_SET);
 
     /*Configure GPIO pin Output Level */
     HAL_GPIO_WritePin(GPIOA, BRAKE_RELAY_PIN_1_Pin | BRAKE_RELAY_PIN_2_Pin, GPIO_PIN_RESET);
@@ -322,6 +369,13 @@ static void MX_GPIO_Init (void)
     GPIO_InitStruct.Pull = GPIO_PULLDOWN;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+    /*Configure GPIO pin : THROTTLE_LOCK_PIN_Pin */
+    GPIO_InitStruct.Pin = THROTTLE_LOCK_PIN_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(THROTTLE_LOCK_PIN_GPIO_Port, &GPIO_InitStruct);
 
     /*Configure GPIO pin : BOOT1_Pin */
     GPIO_InitStruct.Pin = BOOT1_Pin;
@@ -369,8 +423,9 @@ void StartDefaultTask (void const * argument)
     /* Infinite loop */
     for (;;)
     {
-        brake_test();
-        osDelay(1);
+        brake_test( );
+        throttle_test();
+        osDelay(4000);
     }
     /* USER CODE END 5 */
 }
