@@ -111,7 +111,7 @@ void Error_Handler(void);
 #define MEMS_INT2_Pin GPIO_PIN_1
 #define MEMS_INT2_GPIO_Port GPIOE
 /* USER CODE BEGIN Private defines */
-
+#define DEBUG_LOG 1
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
