@@ -73,9 +73,12 @@ doc/_build/*
 doc/_build/
 
 #Build
-local_build/*
+Linux_Codes/local_build/*
+Linux_Codes/build/*
 
 #Clion
 .idea/*
 cmake-build-debug/*
 .vscode/*
+
+
