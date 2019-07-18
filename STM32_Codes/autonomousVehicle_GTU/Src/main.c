@@ -52,6 +52,8 @@ I2C_HandleTypeDef hi2c1;
 
 SPI_HandleTypeDef hspi1;
 
+TIM_HandleTypeDef htim3;
+
 UART_HandleTypeDef huart1;
 
 osThreadId defaultTaskHandle;
@@ -67,6 +69,7 @@ static void MX_GPIO_Init (void);
 static void MX_I2C1_Init (void);
 static void MX_SPI1_Init (void);
 static void MX_DAC_Init (void);
+static void MX_TIM3_Init (void);
 static void MX_USART1_UART_Init (void);
 void StartDefaultTask (void const * argument);
 
@@ -110,9 +113,11 @@ int main (void)
     MX_I2C1_Init( );
     MX_SPI1_Init( );
     MX_DAC_Init( );
+    MX_TIM3_Init( );
     MX_USART1_UART_Init( );
     /* USER CODE BEGIN 2 */
     HAL_DAC_Start(&hdac, DAC_CHANNEL_1);
+    HAL_TIM_Base_Start_IT(&htim3);
     /* USER CODE END 2 */
 
     /* USER CODE BEGIN RTOS_MUTEX */
@@ -314,6 +319,51 @@ static void MX_SPI1_Init (void)
 }
 
 /**
+ * @brief TIM3 Initialization Function
+ * @param None
+ * @retval None
+ */
+static void MX_TIM3_Init (void)
+{
+
+    /* USER CODE BEGIN TIM3_Init 0 */
+
+    /* USER CODE END TIM3_Init 0 */
+
+    TIM_ClockConfigTypeDef sClockSourceConfig = { 0 };
+    TIM_MasterConfigTypeDef sMasterConfig = { 0 };
+
+    /* USER CODE BEGIN TIM3_Init 1 */
+
+    /* USER CODE END TIM3_Init 1 */
+    htim3.Instance = TIM3;
+    htim3.Init.Prescaler = 32300;//33600 0.4 ms tutmanı sağlar biz biraz daha erken calısmak icin hızlandırdım. 3.84ms olacak
+    htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
+    htim3.Init.Period = 1;     //min 1 ms zaman tutulabilir formul: 0.4ms + 0.4 * X
+    htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+    htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+    if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
+    {
+        Error_Handler( );
+    }
+    sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+    if (HAL_TIM_ConfigClockSource(&htim3, &sClockSourceConfig) != HAL_OK)
+    {
+        Error_Handler( );
+    }
+    sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+    sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+    if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
+    {
+        Error_Handler( );
+    }
+    /* USER CODE BEGIN TIM3_Init 2 */
+
+    /* USER CODE END TIM3_Init 2 */
+
+}
+
+/**
  * @brief USART1 Initialization Function
  * @param None
  * @retval None
@@ -444,7 +494,13 @@ static void MX_GPIO_Init (void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
+{
+    if (htim->Instance == TIM3)
+    {
+        HAL_GPIO_TogglePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_1_Pin);//For test
+    }
+}
 /* USER CODE END 4 */
 
 /* USER CODE BEGIN Header_StartDefaultTask */
@@ -466,7 +522,7 @@ void StartDefaultTask (void const * argument)
         osDelay(4000);
 
 #ifdef DEBUG_LOG
-      _write(0,"fatih",5);
+        _write(0, "fatih", 5);
 #endif
     }
     /* USER CODE END 5 */
