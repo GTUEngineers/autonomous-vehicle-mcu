@@ -54,8 +54,6 @@ SPI_HandleTypeDef hspi1;
 
 TIM_HandleTypeDef htim3;
 
-UART_HandleTypeDef huart1;
-
 osThreadId defaultTaskHandle;
 uint32_t defaultTaskBuffer[512];
 osStaticThreadDef_t defaultTaskControlBlock;
@@ -70,7 +68,6 @@ static void MX_I2C1_Init (void);
 static void MX_SPI1_Init (void);
 static void MX_DAC_Init (void);
 static void MX_TIM3_Init (void);
-static void MX_USART1_UART_Init (void);
 void StartDefaultTask (void const * argument);
 
 /* USER CODE BEGIN PFP */
@@ -114,7 +111,6 @@ int main (void)
     MX_SPI1_Init( );
     MX_DAC_Init( );
     MX_TIM3_Init( );
-    MX_USART1_UART_Init( );
     /* USER CODE BEGIN 2 */
     HAL_DAC_Start(&hdac, DAC_CHANNEL_1);
     HAL_TIM_Base_Start_IT(&htim3);
@@ -334,12 +330,14 @@ static void MX_TIM3_Init (void)
     TIM_MasterConfigTypeDef sMasterConfig = { 0 };
 
     /* USER CODE BEGIN TIM3_Init 1 */
-
+//Prescaler 33600 0.4 ms de bir interrupt uretmeni saglar
+//Biraz daha erken interrupt olusması icin 3.84ms icin 32300 ayarlandı. TODO check et
+//Formul 0.4ms + 0.4ms * X Period icin
     /* USER CODE END TIM3_Init 1 */
     htim3.Instance = TIM3;
-    htim3.Init.Prescaler = 32300;//33600 0.4 ms tutmanı sağlar biz biraz daha erken calısmak icin hızlandırdım. 3.84ms olacak
+    htim3.Init.Prescaler = 32300;
     htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-    htim3.Init.Period = 1;     //min 1 ms zaman tutulabilir formul: 0.4ms + 0.4 * X
+    htim3.Init.Period = 1;
     htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
     if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
@@ -360,39 +358,6 @@ static void MX_TIM3_Init (void)
     /* USER CODE BEGIN TIM3_Init 2 */
 
     /* USER CODE END TIM3_Init 2 */
-
-}
-
-/**
- * @brief USART1 Initialization Function
- * @param None
- * @retval None
- */
-static void MX_USART1_UART_Init (void)
-{
-
-    /* USER CODE BEGIN USART1_Init 0 */
-
-    /* USER CODE END USART1_Init 0 */
-
-    /* USER CODE BEGIN USART1_Init 1 */
-
-    /* USER CODE END USART1_Init 1 */
-    huart1.Instance = USART1;
-    huart1.Init.BaudRate = 115200;
-    huart1.Init.WordLength = UART_WORDLENGTH_8B;
-    huart1.Init.StopBits = UART_STOPBITS_1;
-    huart1.Init.Parity = UART_PARITY_NONE;
-    huart1.Init.Mode = UART_MODE_TX_RX;
-    huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-    huart1.Init.OverSampling = UART_OVERSAMPLING_16;
-    if (HAL_UART_Init(&huart1) != HAL_OK)
-    {
-        Error_Handler( );
-    }
-    /* USER CODE BEGIN USART1_Init 2 */
-
-    /* USER CODE END USART1_Init 2 */
 
 }
 
@@ -423,10 +388,10 @@ static void MX_GPIO_Init (void)
     HAL_GPIO_WritePin(CS_I2C_SPI_GPIO_Port, CS_I2C_SPI_Pin, GPIO_PIN_RESET);
 
     /*Configure GPIO pin Output Level */
-    HAL_GPIO_WritePin(GPIOC, OTG_FS_PowerSwitchOn_Pin | THROTTLE_LOCK_PIN_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOA, BRAKE_RELAY_PIN_1_Pin | BRAKE_RELAY_PIN_2_Pin, GPIO_PIN_RESET);
 
     /*Configure GPIO pin Output Level */
-    HAL_GPIO_WritePin(GPIOA, BRAKE_RELAY_PIN_1_Pin | BRAKE_RELAY_PIN_2_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(THROTTLE_LOCK_PIN_GPIO_Port, THROTTLE_LOCK_PIN_Pin, GPIO_PIN_SET);
 
     /*Configure GPIO pin Output Level */
     HAL_GPIO_WritePin(GPIOD, LD4_Pin | LD3_Pin | LD5_Pin | LD6_Pin | Audio_RST_Pin, GPIO_PIN_RESET);
@@ -437,13 +402,6 @@ static void MX_GPIO_Init (void)
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(CS_I2C_SPI_GPIO_Port, &GPIO_InitStruct);
-
-    /*Configure GPIO pin : OTG_FS_PowerSwitchOn_Pin */
-    GPIO_InitStruct.Pin = OTG_FS_PowerSwitchOn_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    HAL_GPIO_Init(OTG_FS_PowerSwitchOn_GPIO_Port, &GPIO_InitStruct);
 
     /*Configure GPIO pin : B1_Pin */
     GPIO_InitStruct.Pin = B1_Pin;
@@ -479,12 +437,6 @@ static void MX_GPIO_Init (void)
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
-    /*Configure GPIO pin : OTG_FS_OverCurrent_Pin */
-    GPIO_InitStruct.Pin = OTG_FS_OverCurrent_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(OTG_FS_OverCurrent_GPIO_Port, &GPIO_InitStruct);
-
     /*Configure GPIO pin : MEMS_INT2_Pin */
     GPIO_InitStruct.Pin = MEMS_INT2_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_EVT_RISING;
@@ -498,8 +450,21 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
 {
     if (htim->Instance == TIM3)
     {
-        HAL_GPIO_TogglePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_1_Pin);//For test
+        HAL_GPIO_TogglePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_1_Pin);     //For test
     }
+}
+
+int _write (int file, char *ptr, int len)
+{
+    int DataIdx;
+
+    for (DataIdx = 0; DataIdx < len; DataIdx++)
+    {
+        /*__io_putchar(*ptr++);*/
+        ITM_SendChar(*ptr++);
+
+    }
+    return len;
 }
 /* USER CODE END 4 */
 
@@ -517,12 +482,12 @@ void StartDefaultTask (void const * argument)
     /* Infinite loop */
     for (;;)
     {
-        brake_test( );
-        throttle_test( );
-        osDelay(4000);
-
+        /*  brake_test( );
+         throttle_test( );
+         osDelay(4000);
+         */
 #ifdef DEBUG_LOG
-        _write(0, "fatih", 5);
+        _write(0, "Debug", 5);
 #endif
     }
     /* USER CODE END 5 */
