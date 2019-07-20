@@ -26,6 +26,7 @@
 /* USER CODE BEGIN Includes */
 #include "Controllers/BrakeController.h"
 #include "Controllers/ThrottleController.h"
+#include "Controllers/SteerController.h"
 #include "autonomousVehicle_conf.h"
 #include "stm32f4xx.h"
 /* USER CODE END Includes */
@@ -116,8 +117,9 @@ int main (void)
     MX_TIM3_Init( );
     /* USER CODE BEGIN 2 */
     HAL_DAC_Start(&hdac, DAC_CHANNEL_1);
-    HAL_TIM_Base_Start_IT(&htim3);
-    HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+    /* HAL_TIM_Base_Start_IT(&htim3);
+     HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+     */
     /* USER CODE END 2 */
 
     /* USER CODE BEGIN RTOS_MUTEX */
@@ -144,9 +146,9 @@ int main (void)
 
     /* USER CODE BEGIN RTOS_THREADS */
     /* add threads, ... */
-    brake_init( );
-    throttle_set_value(SPEED_0);
-    throttle_set_lock(THROTTLE_LOCK);
+    /*brake_init( );
+     throttle_set_value(SPEED_0);
+     throttle_set_lock(THROTTLE_LOCK);*/
     /* USER CODE END RTOS_THREADS */
 
     /* Start scheduler */
@@ -393,14 +395,13 @@ static void MX_TIM3_Init (void)
     TIM_MasterConfigTypeDef sMasterConfig = { 0 };
 
     /* USER CODE BEGIN TIM3_Init 1 */
-//Prescaler 33600 0.4 ms de bir interrupt uretmeni saglar
-//Biraz daha erken interrupt olusması icin 3.84ms icin 32300 ayarlandı. TODO check et
-//Formul 0.4ms + 0.4ms * X Period icin
+//Prescaler 16800 0.2 ms de bir interrupt uretmeni saglar
+//Formul 0.2ms + 0.2ms * X Period icin
     /* USER CODE END TIM3_Init 1 */
     htim3.Instance = TIM3;
-    htim3.Init.Prescaler = 32;
+    htim3.Init.Prescaler = 16800;
     htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-    htim3.Init.Period = 100;
+    htim3.Init.Period = 49;     // ex : 49 verirsen 25 adım(high) sonra interrupt olusturuyor.
     htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
     if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
@@ -451,6 +452,9 @@ static void MX_GPIO_Init (void)
     HAL_GPIO_WritePin(CS_I2C_SPI_GPIO_Port, CS_I2C_SPI_Pin, GPIO_PIN_RESET);
 
     /*Configure GPIO pin Output Level */
+    HAL_GPIO_WritePin(STEER_DIR_PIN_GPIO_Port, STEER_DIR_PIN_Pin, GPIO_PIN_RESET);
+
+    /*Configure GPIO pin Output Level */
     HAL_GPIO_WritePin(GPIOA, BRAKE_RELAY_PIN_1_Pin | BRAKE_RELAY_PIN_2_Pin, GPIO_PIN_RESET);
 
     /*Configure GPIO pin Output Level */
@@ -466,6 +470,13 @@ static void MX_GPIO_Init (void)
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(CS_I2C_SPI_GPIO_Port, &GPIO_InitStruct);
 
+    /*Configure GPIO pins : STEER_DIR_PIN_Pin THROTTLE_LOCK_PIN_Pin */
+    GPIO_InitStruct.Pin = STEER_DIR_PIN_Pin | THROTTLE_LOCK_PIN_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
     /*Configure GPIO pin : B1_Pin */
     GPIO_InitStruct.Pin = B1_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_EVT_RISING;
@@ -478,13 +489,6 @@ static void MX_GPIO_Init (void)
     GPIO_InitStruct.Pull = GPIO_PULLDOWN;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-    /*Configure GPIO pin : THROTTLE_LOCK_PIN_Pin */
-    GPIO_InitStruct.Pin = THROTTLE_LOCK_PIN_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-    GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    HAL_GPIO_Init(THROTTLE_LOCK_PIN_GPIO_Port, &GPIO_InitStruct);
 
     /*Configure GPIO pin : BOOT1_Pin */
     GPIO_InitStruct.Pin = BOOT1_Pin;
@@ -513,7 +517,11 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
 {
     if (htim->Instance == TIM3)
     {
-        HAL_GPIO_TogglePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_1_Pin);     //For test
+        //HAL_GPIO_TogglePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_1_Pin);     //For test
+
+        HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_1);
+        HAL_TIM_Base_Stop(&htim3);
+
     }
 }
 
@@ -545,10 +553,11 @@ void StartDefaultTask (void const * argument)
     /* Infinite loop */
     for (;;)
     {
-        /*  brake_test( );
-         throttle_test( );
-         osDelay(4000);
-         */
+ //       brake_test( );
+   //     throttle_test( );
+        steer_test( );
+        osDelay(4000);
+
 #ifdef DEBUG_LOG
         _write(0, "Debug", 5);
 #endif

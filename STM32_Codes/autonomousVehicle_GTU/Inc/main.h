@@ -38,6 +38,8 @@ extern "C" {
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
 extern DAC_HandleTypeDef hdac;
+extern TIM_HandleTypeDef htim2;
+extern TIM_HandleTypeDef htim3;
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
@@ -70,6 +72,8 @@ void Error_Handler(void);
 #define PH0_OSC_IN_GPIO_Port GPIOH
 #define PH1_OSC_OUT_Pin GPIO_PIN_1
 #define PH1_OSC_OUT_GPIO_Port GPIOH
+#define STEER_DIR_PIN_Pin GPIO_PIN_0
+#define STEER_DIR_PIN_GPIO_Port GPIOC
 #define B1_Pin GPIO_PIN_0
 #define B1_GPIO_Port GPIOA
 #define BRAKE_RELAY_PIN_1_Pin GPIO_PIN_2
@@ -100,6 +104,8 @@ void Error_Handler(void);
 #define SWDIO_GPIO_Port GPIOA
 #define SWCLK_Pin GPIO_PIN_14
 #define SWCLK_GPIO_Port GPIOA
+#define STEER_PWM_PIN_Pin GPIO_PIN_15
+#define STEER_PWM_PIN_GPIO_Port GPIOA
 #define Audio_RST_Pin GPIO_PIN_4
 #define Audio_RST_GPIO_Port GPIOD
 #define Audio_SCL_Pin GPIO_PIN_6
@@ -109,7 +115,7 @@ void Error_Handler(void);
 #define MEMS_INT2_Pin GPIO_PIN_1
 #define MEMS_INT2_GPIO_Port GPIOE
 /* USER CODE BEGIN Private defines */
-#define DEBUG_LOG 1
+//#define DEBUG_LOG 1
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

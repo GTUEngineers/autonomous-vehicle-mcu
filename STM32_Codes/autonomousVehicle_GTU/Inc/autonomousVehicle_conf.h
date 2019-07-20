@@ -28,6 +28,7 @@ extern "C" {     /* Make sure we have C-declarations in C++ programs */
 //TODO fix values @ahmet.alperen.bulut
 //Steering pulse values
 #define STEERING_MAX_VALUE (7500)
+#define STEERING_MIN_VALUE (-7500)
 /*------------------------------< Typedefs >----------------------------------*/
 
 enum BRAKE_POSITION
@@ -48,13 +49,6 @@ enum THROTTLE_LOCK_POSITION
 
 typedef enum THROTTLE_LOCK_POSITION ThrottleLockPosition;
 
-struct s_PinSettings
-{
-    GPIO_TypeDef* GPIOx;
-    uint16_t GPIO_Pin;
-};
-
-typedef struct s_PinSettings pinSettings;
 /*------------------------------< Constants >---------------------------------*/
 
 /*------------------------------< Prototypes >--------------------------------*/
