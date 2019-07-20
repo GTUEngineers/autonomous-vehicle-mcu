@@ -54,6 +54,7 @@ void throttle_test ( )
 {
     brake_set_value(BRAKE_RELEASE);
     osDelay(2000);
+    brake_set_value(BRAKE_STOP);
     throttle_set_lock(THROTTLE_RELEASE);
     throttle_set_value(SPEED_0);
     osDelay(2000);
@@ -74,7 +75,9 @@ void throttle_test ( )
     throttle_set_value(SPEED_0);
     osDelay(3000);
     brake_set_value(BRAKE_LOCK);
-    osDelay(2000);
+    osDelay(3000);
+    brake_set_value(BRAKE_RELEASE);
+    osDelay(3000);
     throttle_set_lock(THROTTLE_LOCK);
     return;
 }

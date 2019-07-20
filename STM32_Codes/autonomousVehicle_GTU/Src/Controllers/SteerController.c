@@ -38,7 +38,7 @@ void steer_set_value (int val)
         return;
     }
     HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_1);
-    HAL_TIM_Base_Stop(&htim3);
+    HAL_TIM_Base_Stop(&htim3);     //check it
     if (position > val)
     {
         HAL_GPIO_WritePin(STEER_DIR_PIN_GPIO_Port, STEER_DIR_PIN_Pin, GPIO_PIN_SET);
@@ -51,7 +51,6 @@ void steer_set_value (int val)
     uint32_t abs_val = abs(position - val);
 
     TIM3->ARR = 2 * abs_val - 1;
-    htim3.Init.Period = 2 * abs_val - 1;
     position = val;
 
     HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
@@ -67,17 +66,21 @@ int steer_get_value ( )
 void steer_test ( )
 {
 
-    steer_set_value(1500);
-    osDelay(5000);
-    steer_set_value(2500);
-    osDelay(5000);
-
     steer_set_value(3500);
-    osDelay(5000);
+    osDelay(3000);
+
+    steer_set_value(5000);
+    osDelay(3000);
+
+    steer_set_value(7000);
+    osDelay(3000);
 
     steer_set_value(-3500);
     osDelay(5000);
 
     steer_set_value(-7000);
+    osDelay(3000);
+
+    steer_set_value(0);
     osDelay(5000);
 }

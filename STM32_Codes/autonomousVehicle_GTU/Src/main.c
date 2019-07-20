@@ -117,9 +117,9 @@ int main (void)
     MX_TIM3_Init( );
     /* USER CODE BEGIN 2 */
     HAL_DAC_Start(&hdac, DAC_CHANNEL_1);
-    /* HAL_TIM_Base_Start_IT(&htim3);
-     HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
-     */
+    HAL_TIM_Base_Start_IT(&htim3);
+    HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+
     /* USER CODE END 2 */
 
     /* USER CODE BEGIN RTOS_MUTEX */
@@ -146,9 +146,9 @@ int main (void)
 
     /* USER CODE BEGIN RTOS_THREADS */
     /* add threads, ... */
-    /*brake_init( );
-     throttle_set_value(SPEED_0);
-     throttle_set_lock(THROTTLE_LOCK);*/
+    brake_init( );
+    throttle_set_value(SPEED_0);
+    throttle_set_lock(THROTTLE_LOCK);
     /* USER CODE END RTOS_THREADS */
 
     /* Start scheduler */
@@ -401,7 +401,7 @@ static void MX_TIM3_Init (void)
     htim3.Instance = TIM3;
     htim3.Init.Prescaler = 16800;
     htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-    htim3.Init.Period = 49;     // ex : 49 verirsen 25 adım(high) sonra interrupt olusturuyor.
+    htim3.Init.Period = 1;     // ex : 49 verirsen 25 adım(high) sonra interrupt olusturuyor.
     htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
     if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
@@ -521,6 +521,7 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
 
         HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_1);
         HAL_TIM_Base_Stop(&htim3);
+        HAL_GPIO_WritePin(STEER_PWM_PIN_GPIO_Port, STEER_PWM_PIN_Pin, GPIO_PIN_RESET);
 
     }
 }
@@ -551,12 +552,13 @@ void StartDefaultTask (void const * argument)
 
     /* USER CODE BEGIN 5 */
     /* Infinite loop */
+    steer_init( );
     for (;;)
     {
- //       brake_test( );
-   //     throttle_test( );
+        osDelay(3000);
+        brake_test( );
+        throttle_test( );
         steer_test( );
-        osDelay(4000);
 
 #ifdef DEBUG_LOG
         _write(0, "Debug", 5);

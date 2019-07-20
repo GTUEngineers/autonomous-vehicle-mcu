@@ -136,11 +136,11 @@ void brake_test ( )
     osDelay(1000);
     //  wait for 5 seconds
     brake_set_value(BRAKE_STOP);
-    osDelay(5000);
+    osDelay(3000);
     // release the brake 1 seconds
     brake_set_value(BRAKE_RELEASE);
     osDelay(1000);
     //  wait for 5 seconds
     brake_set_value(BRAKE_STOP);
-    osDelay(5000);
+    osDelay(3000);
 }
