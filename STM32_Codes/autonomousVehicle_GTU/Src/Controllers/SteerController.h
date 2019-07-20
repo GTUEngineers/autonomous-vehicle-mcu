@@ -2,7 +2,7 @@
  * \file        SteerController.h
  * \brief       A brief description one line.
  *
- * \author      tolga
+ * \author      ahmet.alperen.bulut
  * \date        6 Tem 2019
  */
 
@@ -20,18 +20,13 @@ extern "C" {     /* Make sure we have C-declarations in C++ programs */
 /*------------------------------< Typedefs >----------------------------------*/
 
 /*------------------------------< Constants >---------------------------------*/
-pinSettings STEER_DIRECTION_PIN_CONF = { GPIOF, GPIO_PIN_6 };
-pinSettings STEER_PULSE_PIN_CONF = { GPIOF, GPIO_PIN_7 };
+
 /*------------------------------< Prototypes >--------------------------------*/
 
-//initialization function of steering
-void steer_construct ( );
-//deletes mutex MIGHT BE RENAMED
-void steer_deconstruct ( );
-void set_value (int val);
-int get_value ( );
-float get_encoder_value ( );
-void test ( );
+void steer_init ( );
+void steer_set_value (int val);
+int steer_get_value ( );
+void steer_test ( );
 
 #if defined(__cplusplus)
 }                /* Make sure we have C-declarations in C++ programs */
