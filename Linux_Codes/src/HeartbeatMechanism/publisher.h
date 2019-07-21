@@ -20,7 +20,7 @@ class Publisher: ComBase
 {
 public:
     Publisher (bool is_server);
-    virtual void connect (const std::string &ip, int port);
+    virtual void connect (int port = 5623, const std::string &ip = "127.0.0.1");
     virtual void disconnect ( );
     bool publish (const std::string &topic, zmq::message_t &msg);
 };

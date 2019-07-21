@@ -35,7 +35,7 @@ class Subscriber: ComBase
 {
 public:
     Subscriber (bool is_server);
-    virtual void connect (const std::string &ip, int port);
+    virtual void connect (int port = 5623, const std::string &ip = "127.0.0.1");
     virtual void disconnect ( );
     void subscribe (const std::string &topic);
     void unsubscribe (const std::string &topic);

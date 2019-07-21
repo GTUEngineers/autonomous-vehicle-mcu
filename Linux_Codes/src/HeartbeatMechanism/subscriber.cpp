@@ -20,7 +20,7 @@ Subscriber::Subscriber (bool is_server) :
 
 }
 
-void Subscriber::connect (const std::string &ip, int port)
+void Subscriber::connect (int port, const std::string &ip)
 {
     std::string addr;
     m_ip = ip;

@@ -20,7 +20,7 @@ Publisher::Publisher (bool is_server) :
 
 }
 
-void Publisher::connect (const std::string &ip, int port)
+void Publisher::connect (int port, const std::string &ip)
 {
     std::string addr;
     m_ip = ip;
