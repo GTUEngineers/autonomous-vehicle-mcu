@@ -63,7 +63,7 @@ void brake_task (void const * argument)
                     break;
                 case BRAKE_RELEASE:
                     brake_release( );
-                    osDelay(1600);     //TODO fix it
+                    osDelay(1550);     //TODO fix it
                     brake_stop( );
                     break;
                 case BRAKE_HALF:
