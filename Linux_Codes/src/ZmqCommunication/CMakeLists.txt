@@ -1,4 +1,3 @@
-cmake_minimum_required(VERSION 3.10)
 set(TARGET_NAME "ZmqCommunication")
 PROJECT(${TARGET_NAME} CXX C ASM)
 
