@@ -20,30 +20,6 @@ Publisher::Publisher (bool is_server) :
 
 }
 
-void Publisher::connect (int port, const std::string &ip)
-{
-    std::string addr;
-    m_ip = ip;
-    m_port = port;
-    if (m_is_server)
-    {
-        addr = "tcp://*:" + std::to_string(port);
-        m_socket->bind(addr.c_str( ));
-    }
-    else
-    {
-        addr = "tcp://" + ip + ":" + std::to_string(port);
-        m_socket->connect(addr.c_str( ));
-    }
-}
-void Publisher::disconnect ( )
-{
-    if (!m_is_server)
-    {
-        std::string addr = "tcp://" + m_ip + ":" + std::to_string(m_port);
-        m_socket->disconnect(addr.c_str( ));
-    }
-}
 bool Publisher::publish (const std::string &topic, zmq::message_t &msg)
 {
     bool retval = true;

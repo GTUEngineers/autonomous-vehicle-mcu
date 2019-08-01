@@ -31,12 +31,11 @@ struct PollItem
 };
 /*------------------------------< Class  >------------------------------------*/
 
-class Subscriber: ComBase
+class Subscriber: public ComBase
 {
 public:
     Subscriber (bool is_server);
-    virtual void connect (int port = 5623, const std::string &ip = "127.0.0.1");
-    virtual void disconnect ( );
+    
     void subscribe (const std::string &topic);
     void unsubscribe (const std::string &topic);
     bool recv (std::string &topic, zmq::message_t &msg, long timeout = -1);

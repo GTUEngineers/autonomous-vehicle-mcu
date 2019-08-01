@@ -23,7 +23,7 @@
 
 class HeartbeatsMechanisim{
     public:
-    HeartbeatsMechanisim ();
+    HeartbeatsMechanisim (std::string ipNum,int portNumSub, int portNumPub, bool isServer );
     private:
     void listen();
     void publish();

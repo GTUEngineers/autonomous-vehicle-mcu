@@ -20,31 +20,6 @@ Subscriber::Subscriber (bool is_server) :
 
 }
 
-void Subscriber::connect (int port, const std::string &ip)
-{
-    std::string addr;
-    m_ip = ip;
-    m_port = port;
-    if (m_is_server)
-    {
-        addr = "tcp://*:" + std::to_string(port);
-        m_socket->bind(addr.c_str( ));
-    }
-    else
-    {
-        addr = "tcp://" + ip + ":" + std::to_string(port);
-        m_socket->connect(addr.c_str( ));
-    }
-}
-void Subscriber::disconnect ( )
-{
-    if (!m_is_server)
-    {
-        std::string addr = "tcp://" + m_ip + ":" + std::to_string(m_port);
-        m_socket->disconnect(addr.c_str( ));
-    }
-}
-
 void Subscriber::subscribe (const std::string &topic)
 {
     m_socket->setsockopt(ZMQ_SUBSCRIBE, topic.c_str( ), topic.size( ));
