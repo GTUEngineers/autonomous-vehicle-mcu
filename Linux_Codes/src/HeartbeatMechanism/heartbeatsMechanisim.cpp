@@ -13,7 +13,8 @@
 
 
 /*------------------------------< Defines >-----------------------------------*/
-
+#define MAX_COUNT (3)
+#define RECEIVE_TIMEOUT (1000)
 /*------------------------------< Typedefs >----------------------------------*/
 
 /*------------------------------< Namespaces >--------------------------------*/
@@ -41,11 +42,11 @@ bool is_rcv {false};
 
          while (1)
          {
-            is_rcv = subscriber.recv(topic,msg,1000);
+            is_rcv = subscriber.recv(topic,msg,RECEIVE_TIMEOUT);
             if(!is_rcv){
                 
                 ++counter;
-                if(counter==5&&!carstopped){
+                if(counter==MAX_COUNT&&!carstopped){
                 cout<<"Unable to connect"<<endl;// MCU YU DURDUER
                 carstopped=true;
             }
