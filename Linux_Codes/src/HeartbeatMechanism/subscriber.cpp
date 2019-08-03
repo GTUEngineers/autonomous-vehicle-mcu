@@ -29,7 +29,7 @@ void Subscriber::unsubscribe(const std::string &topic)
     m_socket->setsockopt(ZMQ_UNSUBSCRIBE, topic.c_str(), topic.size());
 }
 
-bool Subscriber::recv(std::string &topic, zmq::message_t &msg, long timeout)throw()
+bool Subscriber::recv(std::string &topic, zmq::message_t &msg, long timeout)
 {
     bool retval = false;
     zmq::message_t topic_msg;
