@@ -491,7 +491,7 @@ static void MX_GPIO_Init (void)
     HAL_GPIO_WritePin(CS_I2C_SPI_GPIO_Port, CS_I2C_SPI_Pin, GPIO_PIN_RESET);
 
     /*Configure GPIO pin Output Level */
-    HAL_GPIO_WritePin(STEER_DIR_PIN_GPIO_Port, STEER_DIR_PIN_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOC, STEER_DIR_PIN_Pin | HCSR04_TRIG_Pin, GPIO_PIN_RESET);
 
     /*Configure GPIO pin Output Level */
     HAL_GPIO_WritePin(GPIOA, BRAKE_RELAY_PIN_1_Pin | BRAKE_RELAY_PIN_2_Pin, GPIO_PIN_RESET);
@@ -515,6 +515,19 @@ static void MX_GPIO_Init (void)
     GPIO_InitStruct.Pull = GPIO_PULLDOWN;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+    /*Configure GPIO pin : HCSR04_TRIG_Pin */
+    GPIO_InitStruct.Pin = HCSR04_TRIG_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(HCSR04_TRIG_GPIO_Port, &GPIO_InitStruct);
+
+    /*Configure GPIO pin : HCSR04_ECHO_Pin */
+    GPIO_InitStruct.Pin = HCSR04_ECHO_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(HCSR04_ECHO_GPIO_Port, &GPIO_InitStruct);
 
     /*Configure GPIO pin : B1_Pin */
     GPIO_InitStruct.Pin = B1_Pin;
@@ -598,6 +611,7 @@ void StartDefaultTask (void const * argument)
         brake_test( );
         throttle_test( );
         steer_test( );
+        hcsr04( );
 
 #ifdef DEBUG_LOG
         _write(0, "Debug", 5);
