@@ -5,22 +5,22 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PRJ_OUTPUT_PATH}/${PROJECT_NAME}/test/)
 add_executable(
         heartbeatMechanism_test_station
         ${CMAKE_CURRENT_SOURCE_DIR}/../comBase.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/../heartbeatsMechanisim.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../heartbeatsMechanism_station.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/../publisher.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../subscriber.cpp
-        main_server.cpp
+        main_station.cpp
 )
 
 add_executable(
-        heartbeatMechanism_test_arac
+        heartbeatMechanism_test_car
         ${CMAKE_CURRENT_SOURCE_DIR}/../comBase.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/../heartbeatsMechanisim.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../heartbeatsMechanism_car.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/../publisher.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../subscriber.cpp
-        main_arac.cpp
+        main_car.cpp
 )
 
-target_include_directories(heartbeatMechanism_test_arac PUBLIC
+target_include_directories(heartbeatMechanism_test_car PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/../)
 
 
@@ -28,4 +28,4 @@ target_include_directories(heartbeatMechanism_test_station PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/../)
 
 TARGET_LINK_LIBRARIES(heartbeatMechanism_test_station "zmq" "pthread")
-TARGET_LINK_LIBRARIES(heartbeatMechanism_test_arac "zmq" "pthread")
+TARGET_LINK_LIBRARIES(heartbeatMechanism_test_car "zmq" "pthread")

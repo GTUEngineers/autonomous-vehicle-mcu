@@ -1,40 +1,38 @@
 
 /**
- * \file        subscriber.h
+ * \file        heartbeatsMechanism.h
  * \brief       A brief description one line.
  *
- * \author      sumeyye
- * \date        Jul 20, 2019
+ * \author      fatih
+ * \date        Aug 3, 2019
  */
 
 #ifndef INC_HEARTBEATSMECHANISIM_H_
 #define INC_HEARTBEATSMECHANISIM_H_
-
 
 /*------------------------------< Includes >----------------------------------*/
 #include "comBase.h"
 #include "subscriber.h"
 #include "publisher.h"
 #include <thread>
+#include <exception>
 /*------------------------------< Defines >-----------------------------------*/
 
 /*------------------------------< Typedefs >----------------------------------*/
 
+class HeartbeatsMechanism
+{
+public:
+    HeartbeatsMechanism(std::string ipNum, int portNumSub, int portNumPub, bool isServer);
 
-class HeartbeatsMechanisim{
-    public:
-    HeartbeatsMechanisim (std::string ipNum,int portNumSub, int portNumPub, bool isServer );
-    private:
+private:
     void listen();
     void publish();
 
-    Subscriber subscriber; 
+    Subscriber subscriber;
     Publisher publisher;
     std::thread subscriber_thread;
     std::thread publisher_thread;
-
 };
-
-
 
 #endif

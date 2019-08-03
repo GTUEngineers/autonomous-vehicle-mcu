@@ -9,7 +9,8 @@ SET(SOURCEFILES
         comBase.cpp
 	publisher.cpp
 	subscriber.cpp
-	heartbeatsMechanisim.cpp
+	heartbeatsMechanism_car.cpp
+	heartbeatsMechanism_station.cpp
         )
 SET(INCLUDEDIRS
         ${CMAKE_CURRENT_LIST_DIR}
