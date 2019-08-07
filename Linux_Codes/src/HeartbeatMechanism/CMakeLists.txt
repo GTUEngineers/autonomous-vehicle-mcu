@@ -8,10 +8,14 @@ SET(SOURCEFILES
         comBase.cpp
 	publisher.cpp
 	subscriber.cpp
+	heartbeatsMechanism_car.cpp
+	heartbeatsMechanism_station.cpp
         )
 SET(INCLUDEDIRS
         ${CMAKE_CURRENT_LIST_DIR}
+	        "${CMAKE_SOURCE_DIR}/src/Logger"
         )
+include_directories(${INCLUDEDIRS})
 ADD_LIBRARY(${TARGET_NAME} STATIC ${SOURCEFILES})
-#TARGET_LINK_LIBRARIES(${TARGET_NAME} "")
-#add_subdirectory(Test)
+TARGET_LINK_LIBRARIES(${TARGET_NAME} "zmq" "pthread")
+add_subdirectory(Test)
