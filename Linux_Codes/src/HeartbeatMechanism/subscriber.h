@@ -31,18 +31,17 @@ struct PollItem
 };
 /*------------------------------< Class  >------------------------------------*/
 
-class Subscriber: ComBase
+class Subscriber : public ComBase
 {
 public:
-    Subscriber (bool is_server);
-    virtual void connect (const std::string &ip, int port);
-    virtual void disconnect ( );
-    void subscribe (const std::string &topic);
-    void unsubscribe (const std::string &topic);
-    bool recv (std::string &topic, zmq::message_t &msg, long timeout = -1);
-private:
+    Subscriber(bool is_server);
 
-    int poll (PollItem &data, int timeout);
+    void subscribe(const std::string &topic);
+    void unsubscribe(const std::string &topic);
+    bool recv(std::string &topic, zmq::message_t &msg, long timeout = -1);
+
+private:
+    int poll(PollItem &data, int timeout);
 };
 
 #endif /* INC_SUBSCRIBER_H_ */

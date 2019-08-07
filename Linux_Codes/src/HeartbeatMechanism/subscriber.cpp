@@ -14,69 +14,43 @@
 
 /*------------------------------< Namespaces >--------------------------------*/
 
-Subscriber::Subscriber (bool is_server) :
-                ComBase(ZMQ_SUB, is_server)
+Subscriber::Subscriber(bool is_server) : ComBase(ZMQ_SUB, is_server)
 {
-
+    
 }
 
-void Subscriber::connect (const std::string &ip, int port)
+void Subscriber::subscribe(const std::string &topic)
 {
-    std::string addr;
-    m_ip = ip;
-    m_port = port;
-    if (m_is_server)
-    {
-        addr = "tcp://*:" + std::to_string(port);
-        m_socket->bind(addr.c_str( ));
-    }
-    else
-    {
-        addr = "tcp://" + ip + ":" + std::to_string(port);
-        m_socket->connect(addr.c_str( ));
-    }
-}
-void Subscriber::disconnect ( )
-{
-    if (!m_is_server)
-    {
-        std::string addr = "tcp://" + m_ip + ":" + std::to_string(m_port);
-        m_socket->disconnect(addr.c_str( ));
-    }
+    m_socket->setsockopt(ZMQ_SUBSCRIBE, topic.c_str(), topic.size());
 }
 
-void Subscriber::subscribe (const std::string &topic)
+void Subscriber::unsubscribe(const std::string &topic)
 {
-    m_socket->setsockopt(ZMQ_SUBSCRIBE, topic.c_str( ), topic.size( ));
+    m_socket->setsockopt(ZMQ_UNSUBSCRIBE, topic.c_str(), topic.size());
 }
 
-void Subscriber::unsubscribe (const std::string &topic)
-{
-    m_socket->setsockopt(ZMQ_UNSUBSCRIBE, topic.c_str( ), topic.size( ));
-}
-
-bool Subscriber::recv (std::string &topic, zmq::message_t &msg, long timeout)
+bool Subscriber::recv(std::string &topic, zmq::message_t &msg, long timeout)
 {
     bool retval = false;
     zmq::message_t topic_msg;
-    PollItem poll_item = { this, PollEventType::POLLIN, PollEventType::NO };
+    PollItem poll_item = {this, PollEventType::POLLIN, PollEventType::NO};
 
     poll(poll_item, timeout);
     if (poll_item.revents & PollEventType::POLLIN)
     {
         if ((retval = this->m_socket->recv(&topic_msg)))
         {
-            topic.assign((const char*) topic_msg.data( ), topic_msg.size( ));
+            topic.assign((const char *)topic_msg.data(), topic_msg.size());
             retval = this->m_socket->recv(&msg);
         }
     }
     return retval;
 }
 
-int Subscriber::poll (PollItem &data, int timeout)
+int Subscriber::poll(PollItem &data, int timeout)
 {
     int retval = 0;
-    zmq::pollitem_t item = { *data.base->m_socket, 0, data.events, data.revents };
+    zmq::pollitem_t item = {*data.base->m_socket, 0, data.events, data.revents};
 
     retval = zmq::poll(&item, 1, timeout);
 
@@ -102,5 +76,4 @@ int Subscriber::poll (PollItem &data, int timeout)
     }
 
     return retval;
-}
-;
+};
