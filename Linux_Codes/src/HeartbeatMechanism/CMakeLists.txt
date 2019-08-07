@@ -13,7 +13,9 @@ SET(SOURCEFILES
         )
 SET(INCLUDEDIRS
         ${CMAKE_CURRENT_LIST_DIR}
+	        "${CMAKE_SOURCE_DIR}/src/Logger"
         )
+include_directories(${INCLUDEDIRS})
 ADD_LIBRARY(${TARGET_NAME} STATIC ${SOURCEFILES})
 TARGET_LINK_LIBRARIES(${TARGET_NAME} "zmq" "pthread")
 add_subdirectory(Test)

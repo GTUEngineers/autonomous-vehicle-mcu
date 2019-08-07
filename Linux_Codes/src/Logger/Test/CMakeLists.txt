@@ -4,10 +4,10 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PRJ_OUTPUT_PATH}/${PROJECT_NAME}/test/)
 
 add_executable(
         logger_test
-        ${CMAKE_CURRENT_SOURCE_DIR}/../ConsoleLog.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/../Syslog.cpp
         logger_test.cpp
 )
 
 target_include_directories(logger_test PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/../)
+
+TARGET_LINK_LIBRARIES(logger_test "Logger")
