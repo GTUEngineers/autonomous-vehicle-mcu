@@ -52,10 +52,10 @@ extern TIM_HandleTypeDef htim3;
 
 /* USER CODE END EM */
 
-void HAL_TIM_MspPostInit (TIM_HandleTypeDef *htim);
+void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 
 /* Exported functions prototypes ---------------------------------------------*/
-void Error_Handler (void);
+void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
 
@@ -74,6 +74,10 @@ void Error_Handler (void);
 #define PH1_OSC_OUT_GPIO_Port GPIOH
 #define STEER_DIR_PIN_Pin GPIO_PIN_0
 #define STEER_DIR_PIN_GPIO_Port GPIOC
+#define HCSR04_TRIG_Pin GPIO_PIN_1
+#define HCSR04_TRIG_GPIO_Port GPIOC
+#define HCSR04_ECHO_Pin GPIO_PIN_3
+#define HCSR04_ECHO_GPIO_Port GPIOC
 #define B1_Pin GPIO_PIN_0
 #define B1_GPIO_Port GPIOA
 #define BRAKE_RELAY_PIN_1_Pin GPIO_PIN_2
@@ -115,7 +119,7 @@ void Error_Handler (void);
 #define MEMS_INT2_Pin GPIO_PIN_1
 #define MEMS_INT2_GPIO_Port GPIOE
 /* USER CODE BEGIN Private defines */
-//#define DEBUG_LOG 1
+#define DEBUG_LOG 1
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

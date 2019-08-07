@@ -56,6 +56,8 @@ SPI_HandleTypeDef hspi1;
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 
+UART_HandleTypeDef huart2;
+
 osThreadId defaultTaskHandle;
 uint32_t defaultTaskBuffer[512];
 osStaticThreadDef_t defaultTaskControlBlock;
@@ -71,6 +73,7 @@ static void MX_SPI1_Init (void);
 static void MX_DAC_Init (void);
 static void MX_TIM2_Init (void);
 static void MX_TIM3_Init (void);
+static void MX_USART2_UART_Init (void);
 void StartDefaultTask (void const * argument);
 
 /* USER CODE BEGIN PFP */
@@ -115,6 +118,7 @@ int main (void)
     MX_DAC_Init( );
     MX_TIM2_Init( );
     MX_TIM3_Init( );
+    MX_USART2_UART_Init( );
     /* USER CODE BEGIN 2 */
     HAL_DAC_Start(&hdac, DAC_CHANNEL_1);
     HAL_TIM_Base_Start_IT(&htim3);
@@ -337,10 +341,11 @@ static void MX_TIM2_Init (void)
     TIM_OC_InitTypeDef sConfigOC = { 0 };
 
     /* USER CODE BEGIN TIM2_Init 1 */
-
+//Prescaler 207 4KHz
+//Prescaler 332 2.5kHz
     /* USER CODE END TIM2_Init 1 */
     htim2.Instance = TIM2;
-    htim2.Init.Prescaler = 332;
+    htim2.Init.Prescaler = 207;
     htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
     htim2.Init.Period = 100;
     htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -395,13 +400,14 @@ static void MX_TIM3_Init (void)
     TIM_MasterConfigTypeDef sMasterConfig = { 0 };
 
     /* USER CODE BEGIN TIM3_Init 1 */
-//Prescaler 16800 0.2 ms de bir interrupt uretmeni saglar
-//Formul 0.2ms + 0.2ms * X Period icin
+//Prescaler 2*X -1 tane pwm adımına denk gelir
+    //10500 2KHz
+    //16800 1.25 KHz
     /* USER CODE END TIM3_Init 1 */
     htim3.Instance = TIM3;
-    htim3.Init.Prescaler = 16800;
+    htim3.Init.Prescaler = 10500;
     htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-    htim3.Init.Period = 1;     // ex : 49 verirsen 25 adım(high) sonra interrupt olusturuyor.
+    htim3.Init.Period = 1;
     htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
     if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
@@ -422,6 +428,39 @@ static void MX_TIM3_Init (void)
     /* USER CODE BEGIN TIM3_Init 2 */
 
     /* USER CODE END TIM3_Init 2 */
+
+}
+
+/**
+ * @brief USART2 Initialization Function
+ * @param None
+ * @retval None
+ */
+static void MX_USART2_UART_Init (void)
+{
+
+    /* USER CODE BEGIN USART2_Init 0 */
+
+    /* USER CODE END USART2_Init 0 */
+
+    /* USER CODE BEGIN USART2_Init 1 */
+
+    /* USER CODE END USART2_Init 1 */
+    huart2.Instance = USART2;
+    huart2.Init.BaudRate = 115200;
+    huart2.Init.WordLength = UART_WORDLENGTH_8B;
+    huart2.Init.StopBits = UART_STOPBITS_1;
+    huart2.Init.Parity = UART_PARITY_NONE;
+    huart2.Init.Mode = UART_MODE_TX_RX;
+    huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+    huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+    if (HAL_UART_Init(&huart2) != HAL_OK)
+    {
+        Error_Handler( );
+    }
+    /* USER CODE BEGIN USART2_Init 2 */
+
+    /* USER CODE END USART2_Init 2 */
 
 }
 
@@ -452,7 +491,7 @@ static void MX_GPIO_Init (void)
     HAL_GPIO_WritePin(CS_I2C_SPI_GPIO_Port, CS_I2C_SPI_Pin, GPIO_PIN_RESET);
 
     /*Configure GPIO pin Output Level */
-    HAL_GPIO_WritePin(STEER_DIR_PIN_GPIO_Port, STEER_DIR_PIN_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOC, STEER_DIR_PIN_Pin | HCSR04_TRIG_Pin, GPIO_PIN_RESET);
 
     /*Configure GPIO pin Output Level */
     HAL_GPIO_WritePin(GPIOA, BRAKE_RELAY_PIN_1_Pin | BRAKE_RELAY_PIN_2_Pin, GPIO_PIN_RESET);
@@ -476,6 +515,19 @@ static void MX_GPIO_Init (void)
     GPIO_InitStruct.Pull = GPIO_PULLDOWN;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+    /*Configure GPIO pin : HCSR04_TRIG_Pin */
+    GPIO_InitStruct.Pin = HCSR04_TRIG_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(HCSR04_TRIG_GPIO_Port, &GPIO_InitStruct);
+
+    /*Configure GPIO pin : HCSR04_ECHO_Pin */
+    GPIO_InitStruct.Pin = HCSR04_ECHO_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(HCSR04_ECHO_GPIO_Port, &GPIO_InitStruct);
 
     /*Configure GPIO pin : B1_Pin */
     GPIO_InitStruct.Pin = B1_Pin;
@@ -559,9 +611,11 @@ void StartDefaultTask (void const * argument)
         brake_test( );
         throttle_test( );
         steer_test( );
+        hcsr04( );
 
 #ifdef DEBUG_LOG
         _write(0, "Debug", 5);
+        HAL_UART_Transmit(&huart2, (uint8_t *) "DEBUG", 5, 10);
 #endif
     }
     /* USER CODE END 5 */

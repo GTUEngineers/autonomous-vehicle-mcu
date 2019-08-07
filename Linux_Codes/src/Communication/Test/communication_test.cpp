@@ -10,7 +10,7 @@
 #include <unistd.h>  // for sleep function
 #include <string>
 #include <exception>
-
+#include "Syslog.h"
 #include "../Client.h"
 #include "../Server.h"
 
@@ -32,6 +32,7 @@ void comm_status(ErrorStatus st);
 
 int
 main(int argc, char const *argv[]) {
+     GTU::AUTONOMOUS_VEHICLE::Syslog::syslog_test();
     int choice;
 
     cout << "Please choose a test type.\n"
