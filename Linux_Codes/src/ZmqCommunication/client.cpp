@@ -1,6 +1,6 @@
 #include "client.h"
 #include <unistd.h>
-namespace communication
+namespace ZMQCommunication
 {
     Client::Client(const std::string &ip, int port)
     : ComBase(ZMQ_REQ, false)
@@ -27,34 +27,6 @@ namespace communication
         }
         return returnVal;
     }
-    int Client::poll(PollItem &data, int timeout)
-    {
-        int retval = 0;
-        zmq::pollitem_t item = {*data.base->m_socket, 0, data.events, data.revents};
-
-        retval = zmq::poll(&item, 1, timeout);
-
-        if (item.revents & ZMQ_POLLIN)
-        {
-            data.revents = PollEventType::POLLIN;
-        }
-        else if (item.revents & ZMQ_POLLOUT)
-        {
-            data.revents = PollEventType::POLLOUT;
-        }
-        else if (item.revents & ZMQ_POLLERR)
-        {
-            data.revents = PollEventType::POLLERR;
-        }
-        else if (item.revents & ZMQ_POLLPRI)
-        {
-            data.revents = PollEventType::POLLPRI;
-        }
-        else
-        {
-            data.revents = PollEventType::NO;
-        }
-
-        return retval;
-    }
+    
+  
 }

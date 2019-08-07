@@ -13,7 +13,7 @@
 /*------------------------------< Typedefs >----------------------------------*/
 
 /*------------------------------< Namespaces >--------------------------------*/
-
+namespace ZMQCommunication{
 Subscriber::Subscriber(bool is_server) : ComBase(ZMQ_SUB, is_server)
 {
     
@@ -47,33 +47,5 @@ bool Subscriber::recv(std::string &topic, zmq::message_t &msg, long timeout)
     return retval;
 }
 
-int Subscriber::poll(PollItem &data, int timeout)
-{
-    int retval = 0;
-    zmq::pollitem_t item = {*data.base->m_socket, 0, data.events, data.revents};
 
-    retval = zmq::poll(&item, 1, timeout);
-
-    if (item.revents & ZMQ_POLLIN)
-    {
-        data.revents = PollEventType::POLLIN;
-    }
-    else if (item.revents & ZMQ_POLLOUT)
-    {
-        data.revents = PollEventType::POLLOUT;
-    }
-    else if (item.revents & ZMQ_POLLERR)
-    {
-        data.revents = PollEventType::POLLERR;
-    }
-    else if (item.revents & ZMQ_POLLPRI)
-    {
-        data.revents = PollEventType::POLLPRI;
-    }
-    else
-    {
-        data.revents = PollEventType::NO;
-    }
-
-    return retval;
-};
+}

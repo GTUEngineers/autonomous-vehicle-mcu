@@ -3,8 +3,9 @@
 
 #include "comBase.h"
 
-namespace communication
+namespace ZMQCommunication
 {
+
     class Server: public ComBase
     {
     public:
@@ -13,6 +14,7 @@ namespace communication
         ~Server();
         bool recv(zmq::message_t &msg, long timeout = -1);
         bool send(const zmq::message_t &msg);
+
     };
 
 }

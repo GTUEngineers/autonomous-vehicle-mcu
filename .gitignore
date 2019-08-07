@@ -79,6 +79,6 @@ Linux_Codes/build/*
 #Clion
 .idea/*
 cmake-build-debug/*
-.vscode/*
+
 
 

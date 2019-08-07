@@ -1,6 +1,6 @@
 #include "server.h"
 
-namespace communication
+namespace ZMQCommunication
 {
     Server::Server(const std::string &ip, int port)
     : ComBase(ZMQ_REP, true)
@@ -10,17 +10,22 @@ namespace communication
 
     Server::~Server(){}
 
-    bool Server::recv(zmq::message_t &msg, long timeout)
+
+bool Server::recv(zmq::message_t &msg, long timeout)
+{
+    bool retval = false;
+    zmq::message_t topic_msg;
+    PollItem poll_item = {this, PollEventType::POLLIN, PollEventType::NO};
+
+    poll(poll_item, timeout);
+    if (poll_item.revents & PollEventType::POLLIN)
     {
-        bool returnVal = false;
-        zmq::pollitem_t pItems[] = {{*m_socket, 0, ZMQ_POLLIN, 0}};
-        zmq::poll(pItems, 1, timeout);
-        if(pItems[0].revents & ZMQ_POLLIN)
-        {
-            returnVal = this->m_socket->recv((zmq::message_t *)&msg);
-        }
-        return returnVal;
+
+            retval = this->m_socket->recv(&msg);
+        
     }
+    return retval;
+}
 
     bool Server::send(const zmq::message_t &msg)
     {

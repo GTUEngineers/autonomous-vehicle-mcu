@@ -16,6 +16,8 @@
 /*------------------------------< Typedefs >----------------------------------*/
 
 /*------------------------------< Class  >------------------------------------*/
+
+namespace ZMQCommunication{
 class Publisher : public ComBase
 {
 public:
@@ -23,5 +25,5 @@ public:
 
     bool publish(const std::string &topic, zmq::message_t &msg);
 };
-
+}
 #endif /* INC_PUBLISHER_H_ */

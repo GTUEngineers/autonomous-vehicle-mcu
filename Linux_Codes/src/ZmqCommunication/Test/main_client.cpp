@@ -4,7 +4,7 @@
 #include <unistd.h>
 
 int main(){
-    communication::Client client("127.0.0.1", 5555);
+    ZMQCommunication::Client client("127.0.0.1", 5555);
     client.connect(5555, "127.0.0.1");
     int counter = 0;
     while (true)

@@ -29,8 +29,8 @@ private:
     void listen();
     void publish();
 
-    Subscriber subscriber;
-    Publisher publisher;
+    ZMQCommunication::Subscriber subscriber;
+    ZMQCommunication::Publisher publisher;
     std::thread subscriber_thread;
     std::thread publisher_thread;
 };

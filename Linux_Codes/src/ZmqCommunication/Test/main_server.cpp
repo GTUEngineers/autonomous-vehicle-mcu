@@ -4,7 +4,7 @@
 #include <zmq.hpp>
 
 int main(){
-    communication::Server server("127.0.0.1", 5555);
+    ZMQCommunication::Server server("127.0.0.1", 5555);
     server.connect(5555, "127.0.0.1");
     int counter = 0;
     while (true) {

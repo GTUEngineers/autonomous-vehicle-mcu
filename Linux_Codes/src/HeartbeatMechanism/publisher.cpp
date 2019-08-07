@@ -13,7 +13,7 @@
 /*------------------------------< Typedefs >----------------------------------*/
 
 /*------------------------------< Namespaces >--------------------------------*/
-
+namespace ZMQCommunication{
 Publisher::Publisher(bool is_server) : ComBase(ZMQ_PUB, is_server)
 {
 }
@@ -26,4 +26,6 @@ bool Publisher::publish(const std::string &topic, zmq::message_t &msg)
 		return retval;
 	retval = this->m_socket->send(*(zmq::message_t *)&msg);
 	return retval;
+}
+
 }
