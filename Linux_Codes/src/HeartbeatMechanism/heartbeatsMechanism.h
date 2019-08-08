@@ -12,16 +12,15 @@
 
 /*------------------------------< Includes >----------------------------------*/
 #include "comBase.h"
-#include "subscriber.h"
 #include "publisher.h"
-#include <thread>
+#include "subscriber.h"
 #include <exception>
+#include <thread>
 /*------------------------------< Defines >-----------------------------------*/
 
 /*------------------------------< Typedefs >----------------------------------*/
 
-class HeartbeatsMechanism
-{
+class HeartbeatsMechanism {
 public:
     HeartbeatsMechanism(std::string ipNum, int portNumSub, int portNumPub, bool isServer);
 

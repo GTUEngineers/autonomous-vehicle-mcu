@@ -3,18 +3,14 @@
 
 #include "comBase.h"
 
+namespace ZMQCommunication {
 
-namespace ZMQCommunication
-{
-
-    class Client: public ComBase
-    {
-    public:
-        Client(const std::string &ip, int port);
-        ~Client();
-        bool reqrep(zmq::message_t &req, zmq::message_t &rep, long timeout = -1);
-    };
-}
-
+class Client : public ComBase {
+public:
+    Client(const std::string& ip, int port);
+    ~Client();
+    bool reqrep(zmq::message_t& req, zmq::message_t& rep, long timeout = -1);
+};
+} // namespace ZMQCommunication
 
 #endif

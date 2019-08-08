@@ -17,13 +17,12 @@
 
 /*------------------------------< Class  >------------------------------------*/
 
-namespace ZMQCommunication{
-class Publisher : public ComBase
-{
+namespace ZMQCommunication {
+class Publisher : public ComBase {
 public:
     Publisher(bool is_server);
 
-    bool publish(const std::string &topic, zmq::message_t &msg);
+    bool publish(const std::string& topic, zmq::message_t& msg);
 };
 }
 #endif /* INC_PUBLISHER_H_ */
