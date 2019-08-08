@@ -1,22 +1,27 @@
 #include "client.h"
 #include <iostream>
+#include <memory>
 #include <unistd.h>
-#include <zmq.hpp>
 
 int main()
 {
-    ZMQCommunication::Client client("127.0.0.1", 5555);
-    client.connect(5555, "127.0.0.1");
+    std::unique_ptr<ZMQCommunication::Client> client(new ZMQCommunication::Client);
+    client->connect(5555, "127.0.0.1");
     int counter = 0;
     while (true) {
-        zmq::message_t request(5);
+        zmq::message_t request("alperen", 7);
         std::cout << "Sending Hello: " << counter << std::endl;
-        zmq::message_t reply(5);
-        if (client.reqrep(request, reply, 2))
+        zmq::message_t reply;
+        if (client->reqrep(request, reply, 3)) {
             std::cout << "Received from server: " << counter << std::endl;
+        } else {
+            client.reset(new ZMQCommunication::Client);
+
+            client->connect(5555, "127.0.0.1");
+        }
         sleep(1);
         ++counter;
     }
-    client.disconnect();
+
     return 0;
 }

@@ -1,7 +1,7 @@
 #include "server.h"
 
 namespace ZMQCommunication {
-Server::Server(const std::string& ip, int port)
+Server::Server()
     : ComBase(ZMQ_REP, true)
 {
 }

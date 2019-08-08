@@ -1,0 +1,16 @@
+{
+    "window.zoomLevel": 0,
+    "clang-format.executable": "/usr/bin/clang-format",
+    "editor.formatOnSave": true,
+    "[cpp]": {
+        "editor.defaultFormatter": "xaver.clang-format"
+    },
+    "clang-format.fallbackStyle": "WebKit",
+    "C_Cpp.default.cppStandard": "c++11",
+    "C_Cpp.default.cStandard": "c99",
+    "files.associations": {
+        "type_traits": "cpp",
+        "iostream": "cpp",
+        "optional": "cpp"
+    }
+}
