@@ -68,4 +68,5 @@ int ComBase::poll(PollItem& data, int timeout)
 
     return retval;
 }
+
 }
