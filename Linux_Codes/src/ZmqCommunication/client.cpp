@@ -1,6 +1,22 @@
+/**
+ * \file        client.cpp
+ * \brief       A brief description one line.
+ *
+ * \author      alperenbulut
+ * \date        Aug 10, 2019
+ */
+
+/*------------------------------< Includes >----------------------------------*/
 #include "client.h"
 #include <unistd.h>
-namespace ZMQCommunication {
+/*------------------------------< Defines >-----------------------------------*/
+
+/*------------------------------< Typedefs >----------------------------------*/
+
+/*------------------------------< Namespaces >--------------------------------*/
+using namespace zmqbase;
+namespace seqreqrep {
+
 Client::Client()
     : ComBase(ZMQ_REQ, false)
 {
@@ -35,4 +51,4 @@ bool Client::reqrep(zmq::message_t& req, zmq::message_t& rep, long timeout)
     }
     return returnVal;
 }
-} // namespace ZMQCommunication
+} // namespace seqreqrep

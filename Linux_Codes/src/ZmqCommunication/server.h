@@ -1,13 +1,27 @@
-#ifndef SERVER_H
-#define SERVER_H
+/**
+ * \file        server.h
+ * \brief       A brief description one line.
+ *
+ * \author      alperenbulut
+ * \date        Aug 10, 2019
+ */
 
+#ifndef SRC_ZMQCOMMUNICATION_SERVER_H_
+#define SRC_ZMQCOMMUNICATION_SERVER_H_
+
+/*------------------------------< Includes >----------------------------------*/
 #include "comBase.h"
+/*------------------------------< Defines >-----------------------------------*/
+
+/*------------------------------< Typedefs >----------------------------------*/
+
+/*------------------------------< Class  >------------------------------------*/
 
 //namespace that is used for all ZMQCommunication parts
-namespace ZMQCommunication {
+namespace seqreqrep {
 
 //Server class that is server part of the sequential request-reply mechanism.
-class Server : public ComBase {
+class Server : public zmqbase::ComBase {
 public:
     //Constructor of the class.
     Server();
@@ -22,4 +36,4 @@ public:
 }; //end class
 } //namespace ZMQCommunication
 
-#endif
+#endif /* SRC_ZMQCOMMUNICATION_SERVER_H_ */

@@ -1,6 +1,22 @@
-#include "server.h"
+/**
+ * \file        server.cpp
+ * \brief       A brief description one line.
+ *
+ * \author      alperenbulut
+ * \date        Aug 10, 2019
+ */
 
-namespace ZMQCommunication {
+/*------------------------------< Includes >----------------------------------*/
+#include "server.h"
+/*------------------------------< Defines >-----------------------------------*/
+
+/*------------------------------< Typedefs >----------------------------------*/
+
+/*------------------------------< Namespaces >--------------------------------*/
+
+using namespace zmqbase;
+
+namespace seqreqrep {
 
 Server::Server()
     : ComBase(ZMQ_REP, true)
@@ -15,7 +31,7 @@ bool Server::recv(zmq::message_t& msg, long timeout)
     bool retval = false;
 
     //sets poll_item as ZMQ_POLLIN
-    PollItem poll_item = {this, PollEventType::POLLIN, PollEventType::NO};
+    PollItem poll_item = { this, PollEventType::POLLIN, PollEventType::NO };
     poll(poll_item, timeout);
     //if poll operation is ZMQ_POLLIN
     if (poll_item.revents & PollEventType::POLLIN) {
@@ -30,5 +46,4 @@ bool Server::send(const zmq::message_t& msg)
     //sends given message to given socket
     return this->m_socket->send(*(zmq::message_t*)&msg);
 }
-
 }

@@ -10,6 +10,7 @@ Welcome to GTU-Autonomous-Vehicle's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   HowToInstall.rst
 
 Indices and tables
 ==================

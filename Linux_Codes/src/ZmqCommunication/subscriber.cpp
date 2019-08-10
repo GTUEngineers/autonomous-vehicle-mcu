@@ -3,7 +3,7 @@
  * \brief       A brief description one line.
  *
  * \author      alperenbulut
- * \date        Jul 16, 2019
+ * \date        Aug 10, 2019
  */
 
 /*------------------------------< Includes >----------------------------------*/
@@ -13,7 +13,9 @@
 /*------------------------------< Typedefs >----------------------------------*/
 
 /*------------------------------< Namespaces >--------------------------------*/
-namespace ZMQCommunication {
+
+using namespace zmqbase;
+namespace pubsub {
 Subscriber::Subscriber(bool is_server)
     : ComBase(ZMQ_SUB, is_server)
 {

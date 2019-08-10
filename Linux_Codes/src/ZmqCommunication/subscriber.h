@@ -3,11 +3,11 @@
  * \brief       A brief description one line.
  *
  * \author      alperenbulut
- * \date        Jul 16, 2019
+ * \date        Aug 10, 2019
  */
 
-#ifndef INC_SUBSCRIBER_H_
-#define INC_SUBSCRIBER_H_
+#ifndef SRC_ZMQCOMMUNICATION_SUBSCRIBER_H_
+#define SRC_ZMQCOMMUNICATION_SUBSCRIBER_H_
 
 /*------------------------------< Includes >----------------------------------*/
 #include "comBase.h"
@@ -16,8 +16,8 @@
 /*------------------------------< Typedefs >----------------------------------*/
 
 /*------------------------------< Class  >------------------------------------*/
-namespace ZMQCommunication {
-class Subscriber : public ComBase {
+namespace pubsub {
+class Subscriber : public zmqbase::ComBase {
 public:
     Subscriber(bool is_server);
 
@@ -27,4 +27,4 @@ public:
 };
 }
 
-#endif /* INC_SUBSCRIBER_H_ */
+#endif /* SRC_ZMQCOMMUNICATION_SUBSCRIBER_H_ */

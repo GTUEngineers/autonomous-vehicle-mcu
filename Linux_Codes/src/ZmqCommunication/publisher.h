@@ -3,11 +3,11 @@
  * \brief       A brief description one line.
  *
  * \author      alperenbulut
- * \date        Jul 16, 2019
+ * \date        Aug 10, 2019
  */
 
-#ifndef INC_PUBLISHER_H_
-#define INC_PUBLISHER_H_
+#ifndef SRC_ZMQCOMMUNICATION_PUBLISHER_H_
+#define SRC_ZMQCOMMUNICATION_PUBLISHER_H_
 
 /*------------------------------< Includes >----------------------------------*/
 #include "comBase.h"
@@ -17,12 +17,12 @@
 
 /*------------------------------< Class  >------------------------------------*/
 
-namespace ZMQCommunication {
-class Publisher : public ComBase {
+namespace pubsub {
+class Publisher : public zmqbase::ComBase {
 public:
     Publisher(bool is_server);
 
     bool publish(const std::string& topic, zmq::message_t& msg);
 };
 }
-#endif /* INC_PUBLISHER_H_ */
+#endif /* SRC_ZMQCOMMUNICATION_PUBLISHER_H_ */
