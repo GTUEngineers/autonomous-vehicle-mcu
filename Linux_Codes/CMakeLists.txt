@@ -20,7 +20,9 @@ SET(TARGET_NAME "${OUTPUT_FILENAME}")
 ################################################################################
 # configure project sources and build target
 
+
 set(SUB_MODULES "")
+LIST(APPEND SUB_MODULES "src/ProtoFiles")
 LIST(APPEND SUB_MODULES "src/Logger")
 LIST(APPEND SUB_MODULES "src/Communication")
 LIST(APPEND SUB_MODULES "src/Message")
