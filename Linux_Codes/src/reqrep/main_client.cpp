@@ -11,6 +11,9 @@
 #include "station_car.pb.h"
 #include <iostream>
 #include <memory>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/syslog_sink.h>
+#include <spdlog/spdlog.h>
 #include <unistd.h>
 /*------------------------------< Defines >-----------------------------------*/
 
@@ -51,7 +54,9 @@ bool parse_cmd_rep(std::string& rep, ReturnCode& retCode)
 //Driver file for Client
 int main()
 {
+    std::shared_ptr<spdlog::logger> m_logger{ spdlog::stdout_color_mt("REQREP_Client") };
 
+    m_logger->set_level(spdlog::level::debug);
     std::unique_ptr<seqreqrep::Client> client(new seqreqrep::Client);
     //connects to tcp://127.0.0.1:5555 socket
     client->connect(5555, "127.0.0.1");
@@ -67,10 +72,12 @@ int main()
             ReturnCode retCode;
             std::string rep((char*)reply.data(), reply.size());
             parse_cmd_rep(rep, retCode);
-            std::cerr << "Server Rep:" << retCode << std::endl;
+
+            m_logger->debug("Server Rep: {}", retCode);
         }
         //if it is broken
         else {
+            m_logger->critical("Connection was Broken");
             //resets client
             client.reset(new seqreqrep::Client);
             //reconnects

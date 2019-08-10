@@ -10,6 +10,9 @@
 #include "server.h"
 #include "station_car.pb.h"
 #include <iostream>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/syslog_sink.h>
+#include <spdlog/spdlog.h>
 #include <unistd.h>
 #include <zmq.hpp>
 /*------------------------------< Defines >-----------------------------------*/
@@ -50,6 +53,9 @@ std::string create_cmd_rep(const ReturnCode& retcode)
 int main()
 {
     seqreqrep::Server server;
+    std::shared_ptr<spdlog::logger> m_logger{ spdlog::stdout_color_mt("REQREP_Server") };
+
+    m_logger->set_level(spdlog::level::debug);
     //binds to localhost with port 5555
     server.connect(5555, "127.0.0.1");
     //a counter to counts requests and replies
@@ -63,7 +69,7 @@ int main()
             cmd_enum cmd;
             std::string retstr((char*)request.data(), request.size());
             parse_cmd_req(retstr, cmd);
-            std::cout << "Received from client: " << cmd << std::endl;
+            m_logger->debug("Clint Req: {}", cmd);
             std::string rep = create_cmd_rep(ReturnCode::OK);
 
             zmq::message_t reply((char*)rep.data(), rep.size());

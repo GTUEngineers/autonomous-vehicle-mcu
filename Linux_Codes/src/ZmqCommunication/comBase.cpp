@@ -64,7 +64,7 @@ void ComBase::disconnect()
 
 int ComBase::poll(PollItem& data, int timeout)
 {
-    int retval = 0;
+    int retval{ 0 };
     zmq::pollitem_t item = { *data.base->m_socket, 0, data.events, data.revents };
 
     retval = zmq::poll(&item, 1, timeout);

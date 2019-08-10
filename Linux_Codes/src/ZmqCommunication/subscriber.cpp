@@ -33,7 +33,7 @@ void Subscriber::unsubscribe(const std::string& topic)
 
 bool Subscriber::recv(std::string& topic, zmq::message_t& msg, long timeout)
 {
-    bool retval = false;
+    bool retval{ false };
     zmq::message_t topic_msg;
     PollItem poll_item = { this, PollEventType::POLLIN, PollEventType::NO };
 

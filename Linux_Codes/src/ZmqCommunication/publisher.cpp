@@ -23,7 +23,7 @@ Publisher::Publisher(bool is_server)
 
 bool Publisher::publish(const std::string& topic, zmq::message_t& msg)
 {
-    bool retval = true;
+    bool retval{ true };
     retval = this->m_socket->send(topic.c_str(), topic.size(), ZMQ_SNDMORE);
     if (!retval)
         return retval;

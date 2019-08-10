@@ -27,7 +27,7 @@ Client::~Client()
 bool Client::reqrep(zmq::message_t& req, zmq::message_t& rep, long timeout)
 {
     //return value of function that is default false
-    bool returnVal = false;
+    bool returnVal{ false };
 
     //sets pollout as a ZMQ_POLLOUT
     PollItem pollout = { this, PollEventType::POLLOUT, PollEventType::NO };
