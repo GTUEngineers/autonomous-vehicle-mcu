@@ -1,0 +1,29 @@
+syntax="proto3";
+import "common.proto";
+
+enum cmd_enum {
+    START= 0;//Ok
+    STOP = 1;//Not Ok
+  }
+
+message Command_req {
+  cmd_enum cmd=1;
+}
+   
+message Command_rep {
+  ReturnCode retVal=1 ;
+}
+
+message Commands {
+     oneof messages {
+    Command_req req = 1;
+    Command_rep rep = 2;
+  }
+}
+message seq_req_rep {
+  oneof messages {
+  Commands cmd_msg = 1;
+  }
+}
+ 
+  
