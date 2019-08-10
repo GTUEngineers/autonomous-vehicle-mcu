@@ -14,9 +14,11 @@
 #include "publisher.h"
 #include "subscriber.h"
 #include <exception>
+#include <spdlog/spdlog.h>
 #include <thread>
 /*------------------------------< Defines >-----------------------------------*/
-
+#define CAR_HB_TOPIC ("car/hb")
+#define STATION_HB_TOPIC ("station/hb")
 /*------------------------------< Typedefs >----------------------------------*/
 
 /*------------------------------< Class  >------------------------------------*/
@@ -29,10 +31,11 @@ private:
     void listen();
     void publish();
 
-    pubsub::Subscriber subscriber;
-    pubsub::Publisher publisher;
-    std::thread subscriber_thread;
-    std::thread publisher_thread;
+    pubsub::Subscriber m_subscriber;
+    pubsub::Publisher m_publisher;
+    std::thread m_subscriber_thread;
+    std::thread m_publisher_thread;
+    std::shared_ptr<spdlog::logger> m_logger;
 };
 
 #endif /* SRC_HEARTBEATMECHANISM_HEARTBEATMECHANISM_H_ */

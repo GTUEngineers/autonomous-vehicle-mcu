@@ -28,7 +28,7 @@ Server::~Server() {}
 bool Server::recv(zmq::message_t& msg, long timeout)
 {
     //return value of the function default false
-    bool retval = false;
+    bool retval{ false };
 
     //sets poll_item as ZMQ_POLLIN
     PollItem poll_item = { this, PollEventType::POLLIN, PollEventType::NO };
