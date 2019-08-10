@@ -1,12 +1,26 @@
+/**
+ * \file        server.cpp
+ * \brief       A brief description one line.
+ *
+ * \author      alperenbulut
+ * \date        Aug 10, 2019
+ */
+
+/*------------------------------< Includes >----------------------------------*/
 #include "server.h"
 #include <iostream>
 #include <unistd.h>
 #include <zmq.hpp>
+/*------------------------------< Defines >-----------------------------------*/
+
+/*------------------------------< Typedefs >----------------------------------*/
+
+/*------------------------------< Namespaces >--------------------------------*/
 
 //Driver file for Server
 int main()
 {
-    ZMQCommunication::Server server;
+    seqreqrep::Server server;
     //binds to localhost with port 5555
     server.connect(5555, "127.0.0.1");
     //a counter to counts requests and replies

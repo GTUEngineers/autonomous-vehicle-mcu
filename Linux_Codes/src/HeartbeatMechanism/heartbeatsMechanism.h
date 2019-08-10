@@ -1,14 +1,13 @@
-
 /**
- * \file        heartbeatsMechanism.h
+ * \file        heartbeatMechanism.h
  * \brief       A brief description one line.
  *
- * \author      fatih
- * \date        Aug 3, 2019
+ * \author      fatihyakar
+ * \date        Aug 10, 2019
  */
 
-#ifndef INC_HEARTBEATSMECHANISIM_H_
-#define INC_HEARTBEATSMECHANISIM_H_
+#ifndef SRC_HEARTBEATMECHANISM_HEARTBEATMECHANISM_H_
+#define SRC_HEARTBEATMECHANISM_HEARTBEATMECHANISM_H_
 
 /*------------------------------< Includes >----------------------------------*/
 #include "comBase.h"
@@ -20,6 +19,8 @@
 
 /*------------------------------< Typedefs >----------------------------------*/
 
+/*------------------------------< Class  >------------------------------------*/
+
 class HeartbeatsMechanism {
 public:
     HeartbeatsMechanism(std::string ipNum, int portNumSub, int portNumPub, bool isServer);
@@ -28,10 +29,10 @@ private:
     void listen();
     void publish();
 
-    ZMQCommunication::Subscriber subscriber;
-    ZMQCommunication::Publisher publisher;
+    pubsub::Subscriber subscriber;
+    pubsub::Publisher publisher;
     std::thread subscriber_thread;
     std::thread publisher_thread;
 };
 
-#endif
+#endif /* SRC_HEARTBEATMECHANISM_HEARTBEATMECHANISM_H_ */

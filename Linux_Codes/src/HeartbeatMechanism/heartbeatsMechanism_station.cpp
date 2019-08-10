@@ -1,16 +1,15 @@
 /**
- * \file        heartbeatsMechanism_station.cpp
+ * \file        heartbeatMechanism_station.cpp
  * \brief       A brief description one line.
  *
- * \author      fatih
- * \date        Aug 3, 2019
+ * \author      fatihyakar,sumeyyetaskan
+ * \date        Aug 10, 2019
  */
 
 /*------------------------------< Includes >----------------------------------*/
 #include "heartbeatsMechanism.h"
 #include <iostream>
 #include <unistd.h>
-
 /*------------------------------< Defines >-----------------------------------*/
 #define MAX_COUNT (3)
 #define RECEIVE_TIMEOUT (2000)
@@ -18,7 +17,8 @@
 
 /*------------------------------< Namespaces >--------------------------------*/
 
-HeartbeatsMechanism::HeartbeatsMechanism(std::string ipNum, int portNumSub, int portNumPub, bool isServer)
+HeartbeatsMechanism::HeartbeatsMechanism(std::string ipNum, int portNumSub, int portNumPub,
+    bool isServer)
     : subscriber{ isServer }
     , publisher(isServer)
 {
@@ -55,7 +55,9 @@ void HeartbeatsMechanism::listen()
             }
         }
     } catch (std::exception e) {
-        std::cerr << e.what() << " there is a problem in heartbeatsMechanism_station.cpp void HeartbeatsMechanism::listen() function" << std::endl;
+        std::cerr << e.what()
+                  << " there is a problem in heartbeatsMechanism_station.cpp void HeartbeatsMechanism::listen() function"
+                  << std::endl;
     }
 }
 

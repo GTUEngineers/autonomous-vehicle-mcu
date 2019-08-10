@@ -1,23 +1,24 @@
 /**
- * \file        comBase.cpp
+ * \file        heartbeatMechanism_car.cpp
  * \brief       A brief description one line.
  *
- * \author      alperenbulut
- * \date        Jul 16, 2019
+ * \author      fatihyakar,sumeyyetaskan
+ * \date        Aug 10, 2019
  */
 
 /*------------------------------< Includes >----------------------------------*/
 #include "heartbeatsMechanism.h"
 #include <iostream>
 #include <unistd.h>
-
 /*------------------------------< Defines >-----------------------------------*/
 #define MAX_COUNT (3)
 #define RECEIVE_TIMEOUT (1000)
 /*------------------------------< Typedefs >----------------------------------*/
 
 /*------------------------------< Namespaces >--------------------------------*/
-HeartbeatsMechanism::HeartbeatsMechanism(std::string ipNum, int portNumSub, int portNumPub, bool isServer)
+
+HeartbeatsMechanism::HeartbeatsMechanism(std::string ipNum, int portNumSub, int portNumPub,
+    bool isServer)
     : subscriber{ isServer }
     , publisher(isServer)
 {
@@ -63,7 +64,9 @@ void HeartbeatsMechanism::listen()
             }
         }
     } catch (std::exception e) {
-        std::cerr << e.what() << "there is a problem in heartbeatsMechanism_car.cpp void HeartbeatsMechanism::listen() function" << std::endl;
+        std::cerr << e.what()
+                  << "there is a problem in heartbeatsMechanism_car.cpp void HeartbeatsMechanism::listen() function"
+                  << std::endl;
     }
 }
 

@@ -1,14 +1,28 @@
+/**
+ * \file        client.cpp
+ * \brief       A brief description one line.
+ *
+ * \author      alperenbulut
+ * \date        Aug 10, 2019
+ */
+
+/*------------------------------< Includes >----------------------------------*/
 #include "client.h"
 #include "station_car.pb.h"
 #include <iostream>
 #include <memory>
 #include <unistd.h>
+/*------------------------------< Defines >-----------------------------------*/
+
+/*------------------------------< Typedefs >----------------------------------*/
+
+/*------------------------------< Namespaces >--------------------------------*/
 
 //Driver file for Client
 int main()
 {
 
-    std::unique_ptr<ZMQCommunication::Client> client(new ZMQCommunication::Client);
+    std::unique_ptr<seqreqrep::Client> client(new seqreqrep::Client);
     //connects to tcp://127.0.0.1:5555 socket
     client->connect(5555, "127.0.0.1");
     //a counter to counts requests and responses
@@ -34,7 +48,7 @@ int main()
         //if it is broken
         else {
             //resets client
-            client.reset(new ZMQCommunication::Client);
+            client.reset(new seqreqrep::Client);
             //reconnects
             client->connect(5555, "127.0.0.1");
         }

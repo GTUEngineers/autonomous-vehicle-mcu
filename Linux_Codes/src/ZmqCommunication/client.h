@@ -1,13 +1,28 @@
-#ifndef CLIENT_H
-#define CLIENT_H
+/**
+ * \file        client.h
+ * \brief       A brief description one line.
+ *
+ * \author      alperenbulut
+ * \date        Aug 10, 2019
+ */
 
+#ifndef SRC_ZMQCOMMUNICATION_CLIENT_H_
+#define SRC_ZMQCOMMUNICATION_CLIENT_H_
+
+/*------------------------------< Includes >----------------------------------*/
 #include "comBase.h"
 
-//namespace that is used for all ZMQCommunication parts 
-namespace ZMQCommunication {
+/*------------------------------< Defines >-----------------------------------*/
+
+/*------------------------------< Typedefs >----------------------------------*/
+
+/*------------------------------< Class  >------------------------------------*/
+
+//namespace that is used for all ZMQCommunication parts
+namespace seqreqrep {
 
 //Client class that is client part of the sequential request-reply mechanism.
-class Client : public ComBase {
+class Client : public zmqbase::ComBase {
 public:
     //Constructor of the class.
     Client();
@@ -17,6 +32,6 @@ public:
     //Returns true if it is successful, false otherwise.
     bool reqrep(zmq::message_t& req, zmq::message_t& rep, long timeout = -1);
 };
-} // namespace ZMQCommunication
+} // namespace seqreqrep
 
-#endif
+#endif /* SRC_ZMQCOMMUNICATION_CLIENT_H_ */

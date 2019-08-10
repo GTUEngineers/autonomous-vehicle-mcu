@@ -1,11 +1,24 @@
-#ifndef INC_COMBASE_H_
-#define INC_COMBASE_H_
+/**
+ * \file        comBase.h
+ * \brief       A brief description one line.
+ *
+ * \author      alperenbulut
+ * \date        Aug 10, 2019
+ */
 
+#ifndef SRC_ZMQCOMMUNICATION_COMBASE_H_
+#define SRC_ZMQCOMMUNICATION_COMBASE_H_
+
+/*------------------------------< Includes >----------------------------------*/
 #include <iostream>
 #include <memory>
 #include <zmq.hpp>
+/*------------------------------< Defines >-----------------------------------*/
 
-namespace ZMQCommunication {
+/*------------------------------< Typedefs >----------------------------------*/
+
+/*------------------------------< Class  >------------------------------------*/
+namespace zmqbase {
 class ComBase;
 
 enum PollEventType {
@@ -41,4 +54,5 @@ protected:
     bool m_is_server;
 };
 }
-#endif /* INC_COMBASE_H_ */
+
+#endif /* SRC_ZMQCOMMUNICATION_COMBASE_H_ */
