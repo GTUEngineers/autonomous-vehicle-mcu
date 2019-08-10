@@ -8,15 +8,17 @@ include_directories(${CMAKE_BINARY_DIR}/include ${CMAKE_CURRENT_BINARY_DIR})
 
 SET(SOURCEFILES
         comBase.cpp
-	    server.cpp
-	    client.cpp
+	server.cpp
+        client.cpp
+	publisher.cpp
+	subscriber.cpp
     )
 SET(INCLUDEDIRS
         ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_BINARY_DIR}/src/ProtoFiles
         )
 
 include_directories(${INCLUDEDIRS})
-        message("${CMAKE_BINARY_DIR}")
+
 ADD_LIBRARY(${TARGET_NAME} STATIC ${SOURCEFILES})
 TARGET_LINK_LIBRARIES(${TARGET_NAME} "zmq"  "ProtoFiles")
-add_subdirectory(Test)
+

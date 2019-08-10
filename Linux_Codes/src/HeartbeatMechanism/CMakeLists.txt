@@ -5,9 +5,6 @@ PROJECT(${TARGET_NAME} CXX C ASM)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PRJ_OUTPUT_PATH}/${PROJECT_NAME}/)
 
 SET(SOURCEFILES
-        
-	publisher.cpp
-	subscriber.cpp
 	heartbeatsMechanism_car.cpp
 	heartbeatsMechanism_station.cpp
         )
