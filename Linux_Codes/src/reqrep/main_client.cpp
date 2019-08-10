@@ -18,6 +18,36 @@
 
 /*------------------------------< Namespaces >--------------------------------*/
 
+std::string create_cmd_req(cmd_enum cmd)
+{
+    std::string ret_str;
+    seq_req_rep reqrep;
+    std::unique_ptr<Commands> commands(new Commands);
+    std::unique_ptr<Command_req> cmd_req(new Command_req);
+
+    cmd_req->set_cmd(cmd);
+
+    commands->set_allocated_req(cmd_req.release());
+    reqrep.set_allocated_cmd_msg(commands.release());
+
+    reqrep.SerializeToString(&ret_str);
+    return ret_str;
+}
+
+bool parse_cmd_rep(std::string& rep, ReturnCode& retCode)
+{
+    seq_req_rep reqrep;
+    if (reqrep.ParseFromArray(rep.data(), rep.size())) {
+        if (reqrep.has_cmd_msg()) {
+            if (reqrep.cmd_msg().has_rep()) {
+                retCode = reqrep.cmd_msg().rep().retval();
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 //Driver file for Client
 int main()
 {
@@ -26,24 +56,18 @@ int main()
     //connects to tcp://127.0.0.1:5555 socket
     client->connect(5555, "127.0.0.1");
     //a counter to counts requests and responses
-    int counter = 0;
+
     while (true) {
+        std::string req = create_cmd_req(cmd_enum::START);
+        zmq::message_t request(req.c_str(), req.size());
 
-        std::string adinisenkoy;
-        seq_req_rep reqrep;
-        std::unique_ptr<Commands> commands(new Commands);
-        std::unique_ptr<Command_req> cmd_req(new Command_req);
-        cmd_req->set_cmd(cmd_enum::STOP);
-        commands->set_allocated_req(cmd_req.release());
-        reqrep.set_allocated_cmd_msg(commands.release());
-        reqrep.SerializeToString(&adinisenkoy);
-
-        zmq::message_t request(adinisenkoy.c_str(), adinisenkoy.size());
-        std::cout << "Sending Hello: " << counter << std::endl;
         zmq::message_t reply;
         //if connection is not broken
         if (client->reqrep(request, reply, 3)) {
-            std::cout << "Received from server: " << counter << std::endl;
+            ReturnCode retCode;
+            std::string rep((char*)reply.data(), reply.size());
+            parse_cmd_rep(rep, retCode);
+            std::cerr << "Server Rep:" << retCode << std::endl;
         }
         //if it is broken
         else {
@@ -53,7 +77,7 @@ int main()
             client->connect(5555, "127.0.0.1");
         }
         sleep(1);
-        ++counter;
     }
+
     return 0;
 }

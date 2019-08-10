@@ -1,6 +1,6 @@
 include(GNUInstallDirs)
 set(TARGET_NAME "ReqRep")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PRJ_OUTPUT_PATH}/${PROJECT_NAME})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PRJ_OUTPUT_PATH}/${TARGET_NAME})
 find_package(Protobuf REQUIRED)
 add_executable(
         client_test

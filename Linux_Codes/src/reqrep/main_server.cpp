@@ -8,6 +8,7 @@
 
 /*------------------------------< Includes >----------------------------------*/
 #include "server.h"
+#include "station_car.pb.h"
 #include <iostream>
 #include <unistd.h>
 #include <zmq.hpp>
@@ -16,7 +17,35 @@
 /*------------------------------< Typedefs >----------------------------------*/
 
 /*------------------------------< Namespaces >--------------------------------*/
+bool parse_cmd_req(std::string& req, cmd_enum& cmd)
+{
+    seq_req_rep reqrep;
+    if (reqrep.ParseFromArray(req.data(), req.size())) {
+        if (reqrep.has_cmd_msg()) {
+            if (reqrep.cmd_msg().has_req()) {
+                cmd = reqrep.cmd_msg().req().cmd();
+                return true;
+            }
+        }
+    }
+    return false;
+}
 
+std::string create_cmd_rep(const ReturnCode& retcode)
+{
+    std::string ret_str;
+    seq_req_rep reqrep;
+    std::unique_ptr<Commands> commands(new Commands);
+    std::unique_ptr<Command_rep> cmd_rep(new Command_rep);
+
+    cmd_rep->set_retval(retcode);
+
+    commands->set_allocated_rep(cmd_rep.release());
+    reqrep.set_allocated_cmd_msg(commands.release());
+
+    reqrep.SerializeToString(&ret_str);
+    return ret_str;
+}
 //Driver file for Server
 int main()
 {
@@ -24,18 +53,23 @@ int main()
     //binds to localhost with port 5555
     server.connect(5555, "127.0.0.1");
     //a counter to counts requests and replies
-    int counter = 0;
+
     while (true) {
         zmq::message_t request;
         //Wait for next request from client
         //if receives a message
-        if (server.recv(request))
+        if (server.recv(request)) {
             //prints
-            std::cout << "Received from client: " << counter << std::endl;
-        ++counter;
-        zmq::message_t reply("alper", 5);
-        //  Send reply back to client
-        server.send(reply);
+            cmd_enum cmd;
+            std::string retstr((char*)request.data(), request.size());
+            parse_cmd_req(retstr, cmd);
+            std::cout << "Received from client: " << cmd << std::endl;
+            std::string rep = create_cmd_rep(ReturnCode::OK);
+
+            zmq::message_t reply((char*)rep.data(), rep.size());
+            //  Send reply back to client
+            server.send(reply);
+        }
     }
     return 0;
 }
