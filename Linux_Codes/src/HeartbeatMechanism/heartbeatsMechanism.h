@@ -12,16 +12,15 @@
 
 /*------------------------------< Includes >----------------------------------*/
 #include "comBase.h"
-#include "subscriber.h"
 #include "publisher.h"
-#include <thread>
+#include "subscriber.h"
 #include <exception>
+#include <thread>
 /*------------------------------< Defines >-----------------------------------*/
 
 /*------------------------------< Typedefs >----------------------------------*/
 
-class HeartbeatsMechanism
-{
+class HeartbeatsMechanism {
 public:
     HeartbeatsMechanism(std::string ipNum, int portNumSub, int portNumPub, bool isServer);
 
@@ -29,8 +28,8 @@ private:
     void listen();
     void publish();
 
-    Subscriber subscriber;
-    Publisher publisher;
+    ZMQCommunication::Subscriber subscriber;
+    ZMQCommunication::Publisher publisher;
     std::thread subscriber_thread;
     std::thread publisher_thread;
 };

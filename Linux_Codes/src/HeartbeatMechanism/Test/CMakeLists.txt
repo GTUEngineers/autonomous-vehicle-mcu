@@ -19,5 +19,5 @@ target_include_directories(heartbeatMechanism_test_car PUBLIC
 target_include_directories(heartbeatMechanism_test_station PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/../)
 
-TARGET_LINK_LIBRARIES(heartbeatMechanism_test_station "HeartbeatMechanism")
-TARGET_LINK_LIBRARIES(heartbeatMechanism_test_car "HeartbeatMechanism")
+TARGET_LINK_LIBRARIES(heartbeatMechanism_test_station "HeartbeatMechanism" )
+TARGET_LINK_LIBRARIES(heartbeatMechanism_test_car "HeartbeatMechanism" )

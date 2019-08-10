@@ -8,8 +8,8 @@
 
 /*------------------------------< Includes >----------------------------------*/
 #include "heartbeatsMechanism.h"
-#include <unistd.h>
 #include <iostream>
+#include <unistd.h>
 
 /*------------------------------< Defines >-----------------------------------*/
 #define MAX_COUNT (3)
@@ -19,7 +19,8 @@
 /*------------------------------< Namespaces >--------------------------------*/
 
 HeartbeatsMechanism::HeartbeatsMechanism(std::string ipNum, int portNumSub, int portNumPub, bool isServer)
-    : subscriber{isServer}, publisher(isServer)
+    : subscriber{ isServer }
+    , publisher(isServer)
 {
     subscriber.m_ip = ipNum;
     subscriber.m_port = portNumSub;
@@ -31,37 +32,30 @@ HeartbeatsMechanism::HeartbeatsMechanism(std::string ipNum, int portNumSub, int 
 
 void HeartbeatsMechanism::listen()
 {
-    try
-    {
+    try {
         subscriber.connect();
         subscriber.subscribe("arac/hb");
         std::string topic;
         zmq::message_t msg(10);
-        bool change_control{false};
-        bool is_rcv{false};
+        bool change_control{ false };
+        bool is_rcv{ false };
 
-        while (1)
-        {
+        while (1) {
             change_control = is_rcv;
 
             is_rcv = subscriber.recv(topic, msg, RECEIVE_TIMEOUT);
 
-            if (!is_rcv)
-            {
+            if (!is_rcv) {
                 std::cerr << "Unable to connect." << std::endl;
-            }
-            else
-            {
+            } else {
                 if (!change_control && is_rcv)
                     std::cout << "Connected" << std::endl;
-                std::string message = std::string((char *)msg.data(), msg.size());
+                std::string message = std::string((char*)msg.data(), msg.size());
                 std::cout << "Topic:" << topic << " Message:" << message << std::endl;
             }
         }
-    }
-    catch (std::exception e)
-    {
-        std::cerr << e.what()<<" there is a problem in heartbeatsMechanism_station.cpp void HeartbeatsMechanism::listen() function"<<std::endl;
+    } catch (std::exception e) {
+        std::cerr << e.what() << " there is a problem in heartbeatsMechanism_station.cpp void HeartbeatsMechanism::listen() function" << std::endl;
     }
 }
 
@@ -69,8 +63,7 @@ void HeartbeatsMechanism::publish()
 {
     publisher.connect();
 
-    while (1)
-    {
+    while (1) {
         zmq::message_t msg("taskan", 10);
         publisher.publish("arac/hb", msg);
         //  std::cout << "pubpub" << std::endl;
