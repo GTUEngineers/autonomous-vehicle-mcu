@@ -40,6 +40,7 @@ extern "C" {
 extern DAC_HandleTypeDef hdac;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
+extern uint8_t is_started;
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
@@ -96,6 +97,9 @@ void Error_Handler(void);
 #define THROTTLE_LOCK_PIN_GPIO_Port GPIOC
 #define BOOT1_Pin GPIO_PIN_2
 #define BOOT1_GPIO_Port GPIOB
+#define START_BUTTON_Pin GPIO_PIN_7
+#define START_BUTTON_GPIO_Port GPIOE
+#define START_BUTTON_EXTI_IRQn EXTI9_5_IRQn
 #define LD4_Pin GPIO_PIN_12
 #define LD4_GPIO_Port GPIOD
 #define LD3_Pin GPIO_PIN_13

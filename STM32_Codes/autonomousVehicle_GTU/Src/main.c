@@ -27,6 +27,7 @@
 #include "Controllers/BrakeController.h"
 #include "Controllers/ThrottleController.h"
 #include "Controllers/SteerController.h"
+#include "Sensors/hcsr04.h"
 #include "autonomousVehicle_conf.h"
 #include "stm32f4xx.h"
 /* USER CODE END Includes */
@@ -61,6 +62,7 @@ UART_HandleTypeDef huart2;
 osThreadId defaultTaskHandle;
 uint32_t defaultTaskBuffer[512];
 osStaticThreadDef_t defaultTaskControlBlock;
+uint8_t is_started;
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -92,7 +94,7 @@ void StartDefaultTask (void const * argument);
 int main (void)
 {
     /* USER CODE BEGIN 1 */
-
+    is_started = 0; // set according interrupt or uart data
     /* USER CODE END 1 */
 
     /* MCU Configuration--------------------------------------------------------*/
@@ -548,6 +550,12 @@ static void MX_GPIO_Init (void)
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(BOOT1_GPIO_Port, &GPIO_InitStruct);
 
+    /*Configure GPIO pin : START_BUTTON_Pin */
+    GPIO_InitStruct.Pin = START_BUTTON_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+    GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+    HAL_GPIO_Init(START_BUTTON_GPIO_Port, &GPIO_InitStruct);
+
     /*Configure GPIO pins : LD4_Pin LD3_Pin LD5_Pin LD6_Pin
      Audio_RST_Pin */
     GPIO_InitStruct.Pin = LD4_Pin | LD3_Pin | LD5_Pin | LD6_Pin | Audio_RST_Pin;
@@ -561,6 +569,10 @@ static void MX_GPIO_Init (void)
     GPIO_InitStruct.Mode = GPIO_MODE_EVT_RISING;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(MEMS_INT2_GPIO_Port, &GPIO_InitStruct);
+
+    /* EXTI interrupt init*/
+    HAL_NVIC_SetPriority(EXTI9_5_IRQn, 5, 0);
+    HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 
 }
 
