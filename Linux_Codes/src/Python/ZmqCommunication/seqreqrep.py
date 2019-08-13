@@ -27,22 +27,13 @@ class Client(ComBase):
         self.poller.register(self.socket, zmq.POLLIN | zmq.POLLOUT)
         
 
-    def reqrep(self, req, timeout):
-        socks = dict(self.poller.poll(timeout))
+    def reqrep(self, req, timeout = -1):
+        socks = dict(self.poller.poll(timeout*1000))
         if self.socket in socks and socks[self.socket] == zmq.POLLOUT:
             self.socket.send(req)
             socks = dict(self.poller.poll(timeout))
 
-        if self.socket in socks and socks[self.socket] == zmq.POLLIN:
-            message = self.socket.recv()
-            return message
+            if self.socket in socks and socks[self.socket] == zmq.POLLIN:
+                message = self.socket.recv()
+                return message
         return None
-
-
-a = Client()
-a.connect(ComBase.TCP.format("127.0.0.1",5555))
-while(True):
-    b = "%d %s" % (1, "alperen")
-    c = a.reqrep(bytes(b,'UTF-16'), 1000)
-    print(c)
-    time.sleep(1)

@@ -27,6 +27,17 @@ HeartbeatsMechanism::HeartbeatsMechanism(std::string ipNum, int portNumSub, int 
 
     m_logger = spdlog::stdout_color_mt("HeartbeatsMechanism_CAR");
     m_logger->set_level(spdlog::level::debug);
+
+    std::string addr;
+    addr.resize(50);
+    sprintf(&addr.front(), zmqbase::TCP_CONNECTION.c_str(), ipNum.c_str(), portNumSub);
+    m_logger->info("Subscriber addr:{}", addr);
+    m_subscriber.connect(addr);
+    addr.clear();
+    addr.resize(50);
+    sprintf(&addr.front(), zmqbase::TCP_CONNECTION.c_str(), ipNum.c_str(), portNumPub);
+    m_publisher.connect(addr);
+    m_logger->info("Publisher addr:{}", addr);
     m_subscriber_thread = std::thread(&HeartbeatsMechanism::listen, this);
     m_publisher_thread = std::thread(&HeartbeatsMechanism::publish, this);
 }
@@ -35,11 +46,6 @@ void HeartbeatsMechanism::listen()
 {
     try {
 
-        std::string addr;
-        addr.resize(50);
-        sprintf(&addr.front(), zmqbase::TCP_CONNECTION.c_str(), "127.0.0.1", 5557);
-
-        m_subscriber.connect(addr);
         m_subscriber.subscribe(STATION_HB_TOPIC);
         std::string topic;
         zmq::message_t msg;
@@ -63,6 +69,7 @@ void HeartbeatsMechanism::listen()
 
                 std::string message((char*)msg.data(), msg.size());
                 m_logger->debug("Topic:{} Message:{}", topic, message);
+
             } else {
                 counter = 0;
                 std::string message((char*)msg.data(), msg.size());
@@ -76,10 +83,6 @@ void HeartbeatsMechanism::listen()
 
 void HeartbeatsMechanism::publish()
 {
-    std::string addr;
-    addr.resize(50);
-    sprintf(&addr.front(), zmqbase::TCP_CONNECTION.c_str(), "127.0.0.1", 5557);
-    m_publisher.connect(addr);
 
     while (1) {
         zmq::message_t msg("1", 1);
