@@ -19,6 +19,10 @@
 
 /*------------------------------< Class  >------------------------------------*/
 namespace zmqbase {
+
+extern const std::string TCP_CONNECTION;
+extern const std::string PROC_CONNECTION;
+
 class ComBase;
 
 enum PollEventType {
@@ -39,12 +43,10 @@ class ComBase {
 public:
     ComBase(int s_type, bool is_server = false);
     virtual ~ComBase() = 0;
-    virtual void connect();
-    virtual void connect(int port, const std::string& ip);
+    virtual void connect(const std::string& addr);
 
     void disconnect();
-    std::string m_ip;
-    int m_port;
+    std::string addr;
 
 protected:
     int poll(PollItem& data, int timeout);

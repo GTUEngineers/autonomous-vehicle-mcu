@@ -57,7 +57,10 @@ int main()
 
     m_logger->set_level(spdlog::level::debug);
     //binds to localhost with port 5555
-    server.connect(5555, "127.0.0.1");
+    std::string addr;
+    addr.resize(50);
+    sprintf(&addr.front(), zmqbase::TCP_CONNECTION.c_str(), "127.0.0.1", 5555);
+    server.connect(addr);
     //a counter to counts requests and replies
 
     while (true) {

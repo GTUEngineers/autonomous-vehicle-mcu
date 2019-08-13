@@ -3,6 +3,9 @@
 import zmq
 
 class ComBase():
+    TCP = "tcp://{}:{}"
+    PROC = "inproc://{}"
+
     def __init__(self, socket_type, is_server):
         self.context = zmq.Context().instance()
         self.socket = self.context.socket(socket_type)
@@ -11,17 +14,11 @@ class ComBase():
         self.port = None
         self.label = None
         self.addr = None
+        self.poller = zmq.Poller()
+        
 
-    def connect_tcp(self, port, ip=None):
-        if self.is_server:
-            self.addr = "tcp://*:" + str(port)
-            self.socket.bind(self.addr)
-        else:
-            self.addr = "tcp://" + str(ip) + ":" + str(port)
-            self.socket.connect(self.addr)
-
-    def connect_proc(self, label):
-        self.addr = "inproc://" + str(label)
+    def connect(self, addr):
+        self.addr = addr
         if self.is_server:
             self.socket.bind(self.addr)
         else:

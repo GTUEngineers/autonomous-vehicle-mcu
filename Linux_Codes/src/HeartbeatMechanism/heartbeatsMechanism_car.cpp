@@ -24,10 +24,7 @@ HeartbeatsMechanism::HeartbeatsMechanism(std::string ipNum, int portNumSub, int 
     : m_subscriber{ isServer }
     , m_publisher(isServer)
 {
-    m_subscriber.m_ip = ipNum;
-    m_subscriber.m_port = portNumSub;
-    m_publisher.m_ip = ipNum;
-    m_publisher.m_port = portNumPub;
+
     m_logger = spdlog::stdout_color_mt("HeartbeatsMechanism_CAR");
     m_logger->set_level(spdlog::level::debug);
     m_subscriber_thread = std::thread(&HeartbeatsMechanism::listen, this);
@@ -37,7 +34,12 @@ HeartbeatsMechanism::HeartbeatsMechanism(std::string ipNum, int portNumSub, int 
 void HeartbeatsMechanism::listen()
 {
     try {
-        m_subscriber.connect();
+
+        std::string addr;
+        addr.resize(50);
+        sprintf(&addr.front(), zmqbase::TCP_CONNECTION.c_str(), "127.0.0.1", 5557);
+
+        m_subscriber.connect(addr);
         m_subscriber.subscribe(STATION_HB_TOPIC);
         std::string topic;
         zmq::message_t msg;
@@ -74,7 +76,10 @@ void HeartbeatsMechanism::listen()
 
 void HeartbeatsMechanism::publish()
 {
-    m_publisher.connect();
+    std::string addr;
+    addr.resize(50);
+    sprintf(&addr.front(), zmqbase::TCP_CONNECTION.c_str(), "127.0.0.1", 5557);
+    m_publisher.connect(addr);
 
     while (1) {
         zmq::message_t msg("1", 1);

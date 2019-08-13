@@ -15,6 +15,8 @@
 /*------------------------------< Namespaces >--------------------------------*/
 
 namespace zmqbase {
+const std::string TCP_CONNECTION = "tcp://%s:%d";
+const std::string PROC_CONNECTION = "inproc://%s";
 
 ComBase::ComBase(int s_type, bool is_server)
     : m_context(new zmq::context_t())
@@ -28,28 +30,11 @@ ComBase::~ComBase()
 {
 }
 
-void ComBase::connect(int port, const std::string& ip)
+void ComBase::connect(const std::string& addr)
 {
-    std::string addr;
-    m_ip = ip;
-    m_port = port;
     if (m_is_server) {
-        addr = "tcp://*:" + std::to_string(port);
         m_socket->bind(addr.c_str());
     } else {
-        addr = "tcp://" + ip + ":" + std::to_string(port);
-        m_socket->connect(addr.c_str());
-    }
-}
-
-void ComBase::connect()
-{
-    std::string addr;
-    if (m_is_server) {
-        addr = "tcp://*:" + std::to_string(m_port);
-        m_socket->bind(addr.c_str());
-    } else {
-        addr = "tcp://" + m_ip + ":" + std::to_string(m_port);
         m_socket->connect(addr.c_str());
     }
 }
@@ -57,7 +42,6 @@ void ComBase::connect()
 void ComBase::disconnect()
 {
     if (!m_is_server) {
-        std::string addr = "tcp://" + m_ip + ":" + std::to_string(m_port);
         m_socket->disconnect(addr.c_str());
     }
 }
@@ -65,7 +49,7 @@ void ComBase::disconnect()
 int ComBase::poll(PollItem& data, int timeout)
 {
     int retval{ 0 };
-    zmq::pollitem_t item = { *data.base->m_socket, 0, data.events, data.revents };
+    zmq::pollitem_t item = { *data.base->m_socket.get(), 0, data.events, data.revents };
 
     retval = zmq::poll(&item, 1, timeout);
 
