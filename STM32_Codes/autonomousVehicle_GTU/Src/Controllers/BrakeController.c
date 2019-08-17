@@ -36,12 +36,6 @@ void brake_stop ( );
 void brake_init ( )
 {
     brake_stop( );     // set GPIO pin initial value
-/*    brake_lock( );
-    HAL_Delay(2050);
-    brake_stop( );
-    brake_release( );
-    HAL_Delay(1600);     //TODO fix it
-    brake_stop( );*/
     xSemaphore = xSemaphoreCreateCountingStatic(1, 0, &xSemaphoreBuffer);
 
     osThreadStaticDef(BrakeTask, brake_task, osPriorityNormal, 0, 512, brakeTaskBuffer,
