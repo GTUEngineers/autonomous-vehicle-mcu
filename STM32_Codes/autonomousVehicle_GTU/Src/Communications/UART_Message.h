@@ -1,36 +1,47 @@
 /**
- * \file        Communication_Mechanism.h
+ * \file        UART_Message.h
  * \brief       A brief description one line.
  *
  * \author      ahmet.alperen.bulut
  * \date        Aug 17, 2019
  */
 
-#ifndef COMMUNICATIONS_COMMUNICATION_MECHANISM_H_
-#define COMMUNICATIONS_COMMUNICATION_MECHANISM_H_
+#ifndef COMMUNICATIONS_UART_MESSAGE_H_
+#define COMMUNICATIONS_UART_MESSAGE_H_
 
 #if defined(__cplusplus)
 extern "C" {     /* Make sure we have C-declarations in C++ programs */
 #endif
 
 /*------------------------------< Includes >----------------------------------*/
-#include "UART_Message.h"
-#include "autonomousVehicle_conf.h"
+
 /*------------------------------< Defines >-----------------------------------*/
 
 /*------------------------------< Typedefs >----------------------------------*/
+struct UART_generic_message
+{
+    uint8_t msg[9];
+}__attribute__((packed, aligned(1)));
 
+struct UART_gps_message
+{
+    uint8_t header;
+    float latitude;
+    float longitude;
+}__attribute__((packed, aligned(1)));
+
+union u_uart_message
+{
+    struct UART_generic_message generic_msg;
+    struct UART_gps_message gps_msg;
+};
+typedef union u_uart_message uart_message;
 /*------------------------------< Constants >---------------------------------*/
 
 /*------------------------------< Prototypes >--------------------------------*/
-
-void communication_init ( );
-Return_Status communication_get_msg (uart_message* msg);
-uint8_t communication_get_queue_length ( );
-void communication_send_msg (uart_message* msg);
 
 #if defined(__cplusplus)
 }                /* Make sure we have C-declarations in C++ programs */
 #endif
 
-#endif /* COMMUNICATIONS_COMMUNICATION_MECHANISM_H_ */
+#endif /* COMMUNICATIONS_UART_MESSAGE_H_ */

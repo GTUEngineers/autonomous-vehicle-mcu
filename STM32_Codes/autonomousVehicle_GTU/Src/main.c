@@ -94,7 +94,7 @@ void StartDefaultTask (void const * argument);
 int main (void)
 {
     /* USER CODE BEGIN 1 */
-    is_started = 0; // set according interrupt or uart data
+    is_started = 0;     // set according interrupt or uart data
     /* USER CODE END 1 */
 
     /* MCU Configuration--------------------------------------------------------*/

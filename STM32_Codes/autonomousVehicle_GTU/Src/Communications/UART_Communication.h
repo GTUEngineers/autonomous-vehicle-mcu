@@ -14,7 +14,7 @@ extern "C" {     /* Make sure we have C-declarations in C++ programs */
 #endif
 
 /*------------------------------< Includes >----------------------------------*/
-
+#include "autonomousVehicle_conf.h"
 /*------------------------------< Defines >-----------------------------------*/
 #define UART_TRANSMIT_TIMEOUT (2)
 #define UART_RECEIVE_TIMEOUT (2)
@@ -25,7 +25,7 @@ extern "C" {     /* Make sure we have C-declarations in C++ programs */
 /*------------------------------< Prototypes >--------------------------------*/
 void uart_init ( );
 void uart_transmit (uint8_t * msg, uint8_t msg_len);
-void uart_receive (uint8_t * msg);
+Return_Status uart_receive (uint8_t * msg, uint8_t msg_len);
 
 #if defined(__cplusplus)
 }                /* Make sure we have C-declarations in C++ programs */
