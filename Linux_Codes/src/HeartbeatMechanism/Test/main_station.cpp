@@ -6,7 +6,7 @@
 
 int main()
 {
-    HeartbeatsMechanism smy("127.0.0.1", 2564, 2563, false);
+    HeartbeatsMechanism smy("127.0.0.1", 5557, 5556, false);
     sleep(1000);
 
     return 0;

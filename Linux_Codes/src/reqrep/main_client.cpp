@@ -59,7 +59,12 @@ int main()
     m_logger->set_level(spdlog::level::debug);
     std::unique_ptr<seqreqrep::Client> client(new seqreqrep::Client);
     //connects to tcp://127.0.0.1:5555 socket
-    client->connect(5555, "127.0.0.1");
+
+    std::string addr;
+    addr.resize(50);
+    sprintf(&addr.front(), zmqbase::TCP_CONNECTION.c_str(), "127.0.0.1", 5555);
+
+    client->connect(addr);
     //a counter to counts requests and responses
 
     while (true) {
@@ -81,7 +86,7 @@ int main()
             //resets client
             client.reset(new seqreqrep::Client);
             //reconnects
-            client->connect(5555, "127.0.0.1");
+            client->connect(addr);
         }
         sleep(1);
     }
