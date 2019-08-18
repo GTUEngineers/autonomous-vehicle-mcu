@@ -1,29 +1,60 @@
 syntax="proto3";
 import "common.proto";
 
-enum cmd_enum {
+enum startstop_enum {
     START= 0;//Ok
-    STOP = 1;//Not Ok
+    STOP = 1;//Not Ok  
   }
 
-message Command_req {
-    cmd_enum cmd = 1;
-  }
-   
-message Command_rep {
-    ReturnCode retVal = 1 ;
+enum steering_enum {
+    LEFT  = 0;
+    RIGHT = 1;
   }
 
-message Commands {
-    oneof messages {
-      Command_req req = 1;
-      Command_rep rep = 2;
+enum stateWorking_enum {
+    ACTIVE   = 0 ;
+    INACTIVE = 1 ;
+    ERROR    = 2 ;
+}
+
+message StartStop_req {
+    startstop_enum cmd = 1;
   }
+
+message Steering_req  {
+    steering_enum cmd = 1;
+    double angle      = 2;
+}
+
+message Throttle_req  {
+    uint32 throttleValue  = 1;
+}
+
+message Brake_req     {
+    bool brakeValue     = 1;       
+}
+
+message StateWorking  {
+    stateWorking_enum cmd = 1;
+}
+
+message HCSR4         {
+    double distance = 1;
+}
+
+message GPS           { 
+    float  latitude  = 1;
+    float  longitude = 2;
 }
 message seq_req_rep {
-  oneof messages {
-    Commands cmd_msg = 1;
+    oneof messages {
+      StartStop_req startstop = 1;
+      Throttle_req  throttle  = 2;
+      Steering_req steering  = 3; 
+      Brake_req     brake     = 4;
+      StateWorking  statework = 5;
+      HCSR4         hcsr4_dis = 6;
+      GPS           location  = 7;
+      
   }
 }
- 
-  
