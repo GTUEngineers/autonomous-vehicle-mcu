@@ -41,6 +41,7 @@ extern DAC_HandleTypeDef hdac;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
 extern uint8_t is_started;
+extern UART_HandleTypeDef huart2;
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
@@ -123,7 +124,7 @@ void Error_Handler(void);
 #define MEMS_INT2_Pin GPIO_PIN_1
 #define MEMS_INT2_GPIO_Port GPIOE
 /* USER CODE BEGIN Private defines */
-#define DEBUG_LOG 1
+#define DEBUG_LOG 0
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
