@@ -15,7 +15,9 @@
 /*------------------------------< Defines >-----------------------------------*/
 #define QUEUE_LENGTH    (10) // 10
 #define ITEM_SIZE       (sizeof(uart_message)) //9 byte
-#define QUEUE_SEND_TIMEOUT  (2)
+#define QUEUE_SEND_TIMEOUT  (200)
+#define REQ_SIZE            (2)
+#define REP_SIZE            (9)
 /*------------------------------< Typedefs >----------------------------------*/
 
 /*------------------------------< Constants >---------------------------------*/
@@ -66,7 +68,7 @@ void communication_receive_task (void const * argument)
     }
     while (1)
     {
-        if (uart_receive(data.generic_msg.msg, sizeof(uart_message)) == OK)
+        if (uart_receive(data.generic_msg.msg, REQ_SIZE) == OK)
         {
             xQueueSend(xQueue_receive, &data, QUEUE_SEND_TIMEOUT);
         }
@@ -74,6 +76,7 @@ void communication_receive_task (void const * argument)
         {
             //TODO error
         }
+        osDelay(50);
     }
 }
 
@@ -88,8 +91,9 @@ void communication_transmit_task (void const * argument)
     {
         if (xQueueReceive(xQueue_transmit, &(data), (TickType_t) portMAX_DELAY) == pdTRUE)
         {
-            uart_transmit(data.generic_msg.msg, sizeof(uart_message));
+            uart_transmit(data.generic_msg.msg, REP_SIZE);
         }
+        osDelay(10);
     }
 }
 
@@ -108,7 +112,11 @@ uint8_t communication_get_queue_length ( )
     return uxQueueMessagesWaiting(xQueue_receive);
 }
 
-void communication_send_msg (uart_message* msg)
+Return_Status communication_send_msg (uart_message* msg)
 {
-    xQueueSend(xQueue_transmit, msg, 0);
+    if(xQueueSend(xQueue_transmit, msg, QUEUE_SEND_TIMEOUT) == pdTRUE)
+    {
+        return OK;
+    }
+    return NOK;
 }

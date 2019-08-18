@@ -16,8 +16,8 @@ extern "C" {     /* Make sure we have C-declarations in C++ programs */
 /*------------------------------< Includes >----------------------------------*/
 #include "autonomousVehicle_conf.h"
 /*------------------------------< Defines >-----------------------------------*/
-#define UART_TRANSMIT_TIMEOUT (2)
-#define UART_RECEIVE_TIMEOUT (2)
+#define UART_TRANSMIT_TIMEOUT (500)
+#define UART_RECEIVE_TIMEOUT (700)
 /*------------------------------< Typedefs >----------------------------------*/
 
 /*------------------------------< Constants >---------------------------------*/
