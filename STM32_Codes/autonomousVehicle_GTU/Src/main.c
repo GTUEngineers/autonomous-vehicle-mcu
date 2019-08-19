@@ -28,6 +28,8 @@
 #include "Controllers/ThrottleController.h"
 #include "Controllers/SteerController.h"
 #include "Sensors/hcsr04.h"
+#include "Communications/Communication_Mechanism.h"
+#include "Communications/UART_Communication.h"
 #include "autonomousVehicle_conf.h"
 #include "stm32f4xx.h"
 /* USER CODE END Includes */
@@ -94,7 +96,7 @@ void StartDefaultTask (void const * argument);
 int main (void)
 {
     /* USER CODE BEGIN 1 */
-    is_started = 0; // set according interrupt or uart data
+    is_started = 0;     // set according interrupt or uart data
     /* USER CODE END 1 */
 
     /* MCU Configuration--------------------------------------------------------*/
@@ -155,6 +157,8 @@ int main (void)
     brake_init( );
     throttle_set_value(SPEED_0);
     throttle_set_lock(THROTTLE_LOCK);
+    uart_init( );
+    communication_init( );
     /* USER CODE END RTOS_THREADS */
 
     /* Start scheduler */
@@ -616,19 +620,29 @@ void StartDefaultTask (void const * argument)
 
     /* USER CODE BEGIN 5 */
     /* Infinite loop */
+#if DEBUG_LOG == 0
     steer_init( );
+#endif
+#if DEBUG_LOG == 1
+    uart_message a;
+    sprintf(a.generic_msg.msg, "alperen");
+#endif
     for (;;)
     {
+#if DEBUG_LOG == 0
         osDelay(3000);
         brake_test( );
         throttle_test( );
         steer_test( );
         hcsr04( );
-
-#ifdef DEBUG_LOG
-        _write(0, "Debug", 5);
-        HAL_UART_Transmit(&huart2, (uint8_t *) "DEBUG", 5, 10);
 #endif
+#if DEBUG_LOG
+        _write(0, "Debug", 5);
+        if (communication_get_msg(&a) == OK)
+            communication_send_msg(&a);
+        osDelay(1);
+#endif
+
     }
     /* USER CODE END 5 */
 }

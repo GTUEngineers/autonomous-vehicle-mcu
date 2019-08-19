@@ -9,7 +9,6 @@
 #ifndef UART_COMMUNICATION_H_
 #define UART_COMMUNICATION_H_
 
-
 /*------------------------------< Includes >----------------------------------*/
 #include <string>
 // C library headers
@@ -27,7 +26,8 @@
 
 /*------------------------------< Class  >------------------------------------*/
 
-class UARTCommunication {
+class UARTCommunication
+{
 public:
 	UARTCommunication(); /* Constructor */
 	std::string sread();

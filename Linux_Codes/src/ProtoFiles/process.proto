@@ -1,0 +1,74 @@
+syntax="proto3";
+import "common.proto";
+
+package uart;
+
+enum startstop_enum {
+    START= 0;//Ok
+    STOP = 1;//Not Ok  
+  }
+
+enum steering_enum {
+    LEFT  = 0;
+    RIGHT = 1;
+  }
+
+enum stateWorking_enum {
+    ACTIVE   = 0 ;
+    INACTIVE = 1 ;
+    ERROR    = 2 ;
+}
+
+message StartStop_req {
+    startstop_enum cmd = 1;
+  }
+
+message Steering_req  {
+    steering_enum cmd = 1;
+    double angle      = 2;
+}
+
+message Throttle_req  {
+    uint32 throttleValue  = 1;
+}
+
+message Brake_req     {
+    bool brakeValue     = 1;       
+}
+
+message StateWorking  {
+    stateWorking_enum cmd = 1;
+}
+
+message HCSR4         {
+    double distance = 1;
+}
+
+message GPS           { 
+    float  latitude  = 1;
+    float  longitude = 2;
+}
+
+enum pub_sub_message{
+    START_STOP = 0;
+    THROTTLE = 1;
+    STEERING = 2;
+    BRAKE = 3;
+    STATE_WORKING = 4;
+    HCSR4 = 5;
+    GPS = 6;
+}
+
+message pub_sub {
+    pub_sub_message msg_type = 1;
+    oneof messages {
+      StartStop_req startstop = 2;
+      Throttle_req  throttle  = 3;
+      Steering_req steering  = 4; 
+      Brake_req     brake     = 5;
+      StateWorking  statework = 6;
+      HCSR4         hcsr4_dis = 7;
+      GPS           location  = 8;
+      
+  }
+}

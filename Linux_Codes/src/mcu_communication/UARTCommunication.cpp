@@ -18,8 +18,8 @@
 
 /*------------------------------< Namespaces >--------------------------------*/
 
-
-UARTCommunication::UARTCommunication(){
+UARTCommunication::UARTCommunication()
+{
 	// Init function
 		
 		printf("\n +----------------------------------+");
@@ -114,7 +114,3 @@ std::string UARTCommunication::sread(){
 	printf("\n +----------------------------------+\n\n\n");
 
 }
-
-
-
-
