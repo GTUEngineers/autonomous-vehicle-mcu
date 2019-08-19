@@ -1,6 +1,8 @@
 syntax="proto3";
 import "common.proto";
 
+package uart;
+
 enum startstop_enum {
     START= 0;//Ok
     STOP = 1;//Not Ok  
@@ -46,7 +48,8 @@ message GPS           {
     float  latitude  = 1;
     float  longitude = 2;
 }
-message seq_req_rep {
+
+message pub_sub {
     oneof messages {
       StartStop_req startstop = 1;
       Throttle_req  throttle  = 2;
