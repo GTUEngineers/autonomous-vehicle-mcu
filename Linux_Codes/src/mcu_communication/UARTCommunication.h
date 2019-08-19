@@ -9,7 +9,6 @@
 #ifndef UART_COMMUNICATION_H_
 #define UART_COMMUNICATION_H_
 
-
 /*------------------------------< Includes >----------------------------------*/
 #include <string>
 
@@ -19,18 +18,16 @@
 
 /*------------------------------< Class  >------------------------------------*/
 
-class UARTCommunication {
+class UARTCommunication
+{
 public:
 	UARTCommunication(); /* Constructor */
 	std::string receive();
 	void transmit(std::string message);
+
 private:
 	bool isConnected;
 	std::string lastMessage;
 };
-
-
-
-
 
 #endif /* UART_COMMUNICATION_H_ */

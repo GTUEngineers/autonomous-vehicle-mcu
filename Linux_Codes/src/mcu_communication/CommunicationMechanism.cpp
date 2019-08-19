@@ -42,12 +42,12 @@ void CommunicationMechanism::waitUntilFinish()
 bool parse_startstop_req(std::string &req, uart::startstop_enum &status)
 {
 
-	uart::pub_sub reqrep;
-	if (reqrep.ParseFromArray(req.data(), req.size()))
+	uart::pub_sub pubsub;
+	if (pubsub.ParseFromArray(req.data(), req.size()))
 	{
-		if (reqrep.has_startstop())
+		if (pubsub.has_startstop())
 		{
-			status = reqrep.startstop().cmd();
+			status = pubsub.startstop().cmd();
 			return true;
 		}
 	}
@@ -58,12 +58,12 @@ bool parse_startstop_req(std::string &req, uart::startstop_enum &status)
 bool parse_throttle_req(std::string &req, int &throttle)
 {
 
-	uart::pub_sub reqrep;
-	if (reqrep.ParseFromArray(req.data(), req.size()))
+	uart::pub_sub pubsub;
+	if (pubsub.ParseFromArray(req.data(), req.size()))
 	{
-		if (reqrep.has_throttle())
+		if (pubsub.has_throttle())
 		{
-			throttle = reqrep.throttle().throttlevalue();
+			throttle = pubsub.throttle().throttlevalue();
 			return true;
 		}
 	}
@@ -73,13 +73,13 @@ bool parse_throttle_req(std::string &req, int &throttle)
 bool parse_steer_req(std::string &req, uart::steering_enum &cmd, double &angle)
 {
 
-	uart::pub_sub reqrep;
-	if (reqrep.ParseFromArray(req.data(), req.size()))
+	uart::pub_sub pubsub;
+	if (pubsub.ParseFromArray(req.data(), req.size()))
 	{
-		if (reqrep.has_steering())
+		if (pubsub.has_steering())
 		{
-			cmd = reqrep.steering().cmd();
-			angle = reqrep.steering.angle();
+			cmd = pubsub.steering().cmd();
+			angle = pubsub.steering().angle();
 			return true;
 		}
 	}
@@ -90,12 +90,12 @@ bool parse_steer_req(std::string &req, uart::steering_enum &cmd, double &angle)
 bool parse_break_req(std::string &req, bool &is_break)
 {
 
-	uart::pub_sub reqrep;
-	if (reqrep.ParseFromArray(req.data(), req.size()))
+	uart::pub_sub pubsub;
+	if (pubsub.ParseFromArray(req.data(), req.size()))
 	{
-		if (reqrep.has_brake())
+		if (pubsub.has_brake())
 		{
-			is_break = reqrep.brake().brakevalue();
+			is_break = pubsub.brake().brakevalue();
 			return true;
 		}
 	}
@@ -105,12 +105,12 @@ bool parse_break_req(std::string &req, bool &is_break)
 bool parse_stateworking(std::string &req, uart::stateWorking_enum &cmd)
 {
 
-	uart::pub_sub reqrep;
-	if (reqrep.ParseFromArray(req.data(), req.size()))
+	uart::pub_sub pubsub;
+	if (pubsub.ParseFromArray(req.data(), req.size()))
 	{
-		if (reqrep.has_statework())
+		if (pubsub.has_statework())
 		{
-			cmd = reqrep.statework().cmd();
+			cmd = pubsub.statework().cmd();
 			return true;
 		}
 	}
@@ -120,12 +120,12 @@ bool parse_stateworking(std::string &req, uart::stateWorking_enum &cmd)
 bool parse_hcsr4(std::string &req, double &distance)
 {
 
-	uart::pub_sub reqrep;
-	if (reqrep.ParseFromArray(req.data(), req.size()))
+	uart::pub_sub pubsub;
+	if (pubsub.ParseFromArray(req.data(), req.size()))
 	{
-		if (reqrep.has_hcsr4_dis())
+		if (pubsub.has_hcsr4_dis())
 		{
-			distance = reqrep.hcsr4_dis().distance();
+			distance = pubsub.hcsr4_dis().distance();
 			return true;
 		}
 	}
@@ -135,13 +135,13 @@ bool parse_hcsr4(std::string &req, double &distance)
 bool parse_gps(std::string &req, float &latitude, float &longitude)
 {
 
-	uart::pub_sub reqrep;
-	if (reqrep.ParseFromArray(req.data(), req.size()))
+	uart::pub_sub pubsub;
+	if (pubsub.ParseFromArray(req.data(), req.size()))
 	{
-		if (reqrep.has_location())
+		if (pubsub.has_location())
 		{
-			latitude = reqrep.location().latitude();
-			longitude = reqrep.location().longitude();
+			latitude = pubsub.location().latitude();
+			longitude = pubsub.location().longitude();
 			return true;
 		}
 	}

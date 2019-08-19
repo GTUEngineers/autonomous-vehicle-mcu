@@ -15,20 +15,20 @@
 
 /*------------------------------< Namespaces >--------------------------------*/
 
-
-UARTCommunication::UARTCommunication(){
+UARTCommunication::UARTCommunication()
+{
 	// Init function
 	this->isConnected = false;
 }
 
-void UARTCommunication::transmit(std::string message){
+void UARTCommunication::transmit(std::string message)
+{
 	// Transmit operation
+	return;
 }
 
-std::string UARTCommunication::receive(){
+std::string UARTCommunication::receive()
+{
 	// Receive operation
+	return "";
 }
-
-
-
-

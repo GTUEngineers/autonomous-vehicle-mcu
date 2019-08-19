@@ -9,30 +9,26 @@
 #ifndef COM_MECHANISM_H
 #define COM_MECHANISM_H
 
-
 /*------------------------------< Includes >----------------------------------*/
 #include <thread>
-#include "UARTCommunication.cpp"
+#include "UARTCommunication.h"
 /*------------------------------< Defines >-----------------------------------*/
 
 /*------------------------------< Typedefs >----------------------------------*/
 
 /*------------------------------< Class  >------------------------------------*/
 
-class CommunicationMechanism {
+class CommunicationMechanism
+{
 public:
 	CommunicationMechanism(); /* Constructor */
 	void waitUntilFinish();
+
 private:
 	std::thread helperThread;
 	UARTCommunication communication;
-	
+
 	void threadFunction();
-
-
 };
-
-
-
 
 #endif /* COM_MECHANISM_H */
