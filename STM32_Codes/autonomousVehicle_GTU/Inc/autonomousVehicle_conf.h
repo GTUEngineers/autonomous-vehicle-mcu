@@ -30,6 +30,13 @@ extern "C" {     /* Make sure we have C-declarations in C++ programs */
 #define STEERING_MAX_VALUE (7500)
 #define STEERING_MIN_VALUE (-7500)
 /*------------------------------< Typedefs >----------------------------------*/
+enum RETURN_VAL
+{
+    OK = 0,
+    NOK = 1
+};
+
+typedef enum RETURN_VAL Return_Status;
 
 enum BRAKE_POSITION
 {
@@ -43,8 +50,8 @@ typedef enum BRAKE_POSITION BrakePosition;
 
 enum THROTTLE_LOCK_POSITION
 {
-    THROTTLE_LOCK = 0, //dont apply voltage to motor
-    THROTTLE_RELEASE = 1 //apply voltage to motor
+    THROTTLE_LOCK = 0,     //dont apply voltage to motor
+    THROTTLE_RELEASE = 1     //apply voltage to motor
 };
 
 typedef enum THROTTLE_LOCK_POSITION ThrottleLockPosition;
