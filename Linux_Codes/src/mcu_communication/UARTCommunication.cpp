@@ -8,109 +8,142 @@
 
 /*------------------------------< Includes >----------------------------------*/
 #include "UARTCommunication.h"
-
-
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/syslog_sink.h>
+#include <iostream>
+// Linux headers
+#include <cstring>
+#include <errno.h> // Error integer and strerror() function
+#include <fcntl.h> // Contains file controls like O_RDWR
+#include <stdio.h>
+#include <termios.h> // Contains POSIX terminal control definitions
+#include <unistd.h>  // write(), read(), close()
 /*------------------------------< Defines >-----------------------------------*/
-
-/*BAUD Rate = 9600 */
 
 /*------------------------------< Typedefs >----------------------------------*/
 
 /*------------------------------< Namespaces >--------------------------------*/
 
-UARTCommunication::UARTCommunication()
+UARTCommunication::UARTCommunication(const std::string &serial_port)
 {
-	// Init function
-		
-		printf("\n +----------------------------------+");
-		printf("\n |        Serial Port Comm.         |");
-		printf("\n +----------------------------------+");
-
-		/*------------------------------- Opening the Serial Port -------------------------------*/
-
-		/* Change /dev/ttyUSB0 to the one corresponding to your system */
-
-        	serial_port = open("/dev/ttyUSB0", O_RDWR);	/* ttyUSB0 is the FT232 based USB2SERIAL Converter   */
-			   					/* O_RDWR   - Read/Write access to serial port       */
-								/* Open in blocking mode,read will wait              */
-									
-									                                        
-									
-        	if(serial_port == -1)						/* Error Checking */
-            	   printf("\n  Error! in Opening ttyUSB0  ");
-        	else
-            	   printf("\n  ttyUSB0 Opened Successfully ");
-
-	
-		/*---------- Setting the Attributes of the serial port using termios structure --------- */
-		
-		struct termios SerialPortSettings;	/* Create the structure                          	 */
-		
-		// Read in existing settings, and handle any error
-		if(tcgetattr(serial_port, &SerialPortSettings) != 0) {
-			printf("Error %i from tcgetattr: %s\n", errno, strerror(errno));
-		}
-
-		/* 8N1 Mode */
-		SerialPortSettings.c_cflag &= ~PARENB;   /* Disables the Parity Enable bit(PARENB),So No Parity   */
-		SerialPortSettings.c_cflag &= ~CSTOPB;   /* CSTOPB = 2 Stop bits,here it is cleared so 1 Stop bit */
-		SerialPortSettings.c_cflag &= ~CSIZE;	 /* Clears the mask for setting the data size             */
-		SerialPortSettings.c_cflag |=  CS8;      /* Set the data bits = 8                                 */
-		
-		SerialPortSettings.c_cflag &= ~CRTSCTS;       /* No Hardware flow Control                         */
-		SerialPortSettings.c_cflag |= CREAD | CLOCAL; /* Enable receiver,Ignore Modem Control lines       */ 
-		
-		
-		SerialPortSettings.c_iflag &= ~(IXON | IXOFF | IXANY);          /* Disable XON/XOFF flow control both i/p and o/p */
-		SerialPortSettings.c_iflag &= ~(ICANON | ECHO | ECHOE | ECHONL | ISIG);  /* Non Cannonical mode & echo            */
-
-
-		SerialPortSettings.c_oflag &= ~OPOST;/*No Output Processing*/
-		
-		/* Setting Time outs */
-		SerialPortSettings.c_cc[VMIN] = 8; /* Read at least 8 characters */
-		SerialPortSettings.c_cc[VTIME] = 0; /* Wait indefinetly          */
-
-		/* Setting the Baud rate */
-		cfsetispeed(&SerialPortSettings,B115200); /* Set Read  Speed as 115200                       */
-		cfsetospeed(&SerialPortSettings,B115200); /* Set Write Speed as 115200                       */
-
-		if((tcsetattr(serial_port,TCSANOW,&SerialPortSettings)) != 0) /* Set the attributes to the termios structure */
-		    printf("\n  ERROR ! in Setting attributes");
-		else
-            printf("\n  BaudRate = 115200 \n  StopBits = 1 \n  Parity   = none");
+    m_serial_port = serial_port;
+    m_logger = spdlog::stdout_color_mt("UARTCommunication");
+    m_logger->set_level(spdlog::level::debug);
+    m_logger->info("Serial Port:{}", serial_port);
 }
 
-void UARTCommunication::swrite(std::string message){
-	// Write operation
-	unsigned char msg[] = "sample";		/* Buffer containing characters to write into port	 */	
-	int  bytes_written  = 0;  	/* Value for storing the number of bytes written to the port */ 
-
-	bytes_written = write(serial_port,msg,sizeof(msg));/* use write() to send data to port                             */
-										/* "serial_port"          - file descriptor pointing to the opened serial port */
-										/*	"msg"        - address of the buffer containing data	          */
-										/* "sizeof(msg)" - No of bytes to write                               */	
-	printf("\n  %s written to ttyUSB0",msg);
-	printf("\n  %d Bytes written to ttyUSB0", bytes_written);
-	printf("\n +----------------------------------+\n\n");
+UARTCommunication::~UARTCommunication()
+{
+    try
+    {
+        close_fd();
+    }
+    catch (...)
+    {
+    }
 }
 
-std::string UARTCommunication::sread(){
-	// Read operation
-	tcflush(serial_port, TCIFLUSH);   /* Discards old data in the rx buffer            */
+void UARTCommunication::set_serial_port(const std::string &serial_port)
+{
+    this->m_serial_port = serial_port;
+}
 
-	char read_buffer[256];   /* Buffer to store the data received              		   */
-	int  bytes_read = 0;    /* Number of bytes read by the read() system call          */
-	int i = 0;
+bool UARTCommunication::configure_termios()
+{
+    // Create new termios struc, we call it 'tty' for convention
+    struct termios tty;
+    std::memset(&tty, 0, sizeof(tty));
+    m_fd = open(m_serial_port.c_str(), O_RDWR);
+    // Check for errors
+    if (m_fd < 0)
+    {
+        m_logger->critical("Open: {}", strerror(errno));
+        exit(1);
+    }
 
-	bytes_read = read(serial_port,&read_buffer,32); /* Read the data                   */
-		
-	printf("\n\n  Bytes Rxed -%d", bytes_read); /* Print the number of bytes read      */
-	printf("\n\n  ");
+    // Read in existing settings, and handle any error
+    if (tcgetattr(m_fd, &tty) != 0)
+    {
+        m_logger->critical("tcgetattr: {}", strerror(errno));
+        exit(1);
+    }
 
-	for(i=0;i<bytes_read;i++)	 /* Printing only the received characters              */
-		printf("%c",read_buffer[i]);
+    //Setting termios
+    //-------------------------c_cflag---------------////
+    tty.c_cflag &= ~PARENB;        // Clear parity bit, disabling parity (most common)
+    tty.c_cflag &= ~CSTOPB;        // Clear stop field, only one stop bit used in communication (most common)
+    tty.c_cflag |= CS8;            // 8 bits per byte (most common)
+    tty.c_cflag &= ~CRTSCTS;       // Disable RTS/CTS hardware flow control (most common)
+    tty.c_cflag |= CREAD | CLOCAL; // Turn on READ & ignore ctrl lines (CLOCAL = 1)
+    //-------------------------c_lflag---------------////
+    tty.c_lflag &= ~ICANON;
+    tty.c_lflag &= ~ECHO;   // Disable echo
+    tty.c_lflag &= ~ECHOE;  // Disable erasure
+    tty.c_lflag &= ~ECHONL; // Disable new-line echo
+    tty.c_lflag &= ~ISIG;   // Disable interpretation of INTR, QUIT and SUSP
+    //-------------------------c_iflag---------------////
 
-	printf("\n +----------------------------------+\n\n\n");
+    tty.c_iflag &= ~(IXON | IXOFF | IXANY);                                      // Turn off s/w flow ctrl
+    tty.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP | INLCR | IGNCR | ICRNL); // Disable any special
+    //-------------------------c_oflag---------------/////
+    tty.c_oflag &= ~OPOST; // Prevent special interpretation of output bytes (e.g. newline chars)
+    tty.c_oflag &= ~ONLCR; // Prevent conversion of newline to carriage return/line feed
+                           //-------------------------c_cc---------------////
+    tty.c_cc[VTIME] = 10;  // Wait for up to 1s (10 deciseconds),
+    tty.c_cc[VMIN] = 2;    // returning as soon as 2 byte data is received.
+    // Set in/out baud rate to be 115200
+    cfsetispeed(&tty, B115200);
+    cfsetospeed(&tty, B115200);
 
+    // Flush port, then apply attributes
+    tcflush(m_fd, TCIOFLUSH);
+    // Save tty settings, also checking for error
+    if (tcsetattr(m_fd, TCSANOW, &tty) != 0)
+    {
+        m_logger->critical("tcsetattr: {}", strerror(errno));
+        exit(1);
+    }
+    return true;
+}
+
+void UARTCommunication::close_fd()
+{
+    if (m_fd != -1)
+    {
+        auto retVal = close(m_fd);
+        if (retVal != 0)
+        {
+            m_logger->critical("close: {}", strerror(errno));
+            m_fd = -1;
+        }
+    }
+}
+
+bool UARTCommunication::receive(std::string &message)
+{
+    message.clear();
+    message.resize(10);
+    ssize_t n = read(m_fd, &message.front(), message.capacity());
+    // Error Handling
+    if (n < 0)
+    {
+        // Read was unsuccessful
+        m_logger->critical("Receive: {}", strerror(errno));
+        return false;
+    }
+
+    return true;
+}
+
+bool UARTCommunication::transmit(const std::string &message)
+{
+    int writeResult = write(m_fd, message.c_str(), message.size());
+
+    // Check status
+    if (writeResult == -1)
+    {
+        m_logger->critical("Transmit: {}", strerror(errno));
+        return false;
+    }
+    return true;
 }

@@ -10,16 +10,9 @@
 #define UART_COMMUNICATION_H_
 
 /*------------------------------< Includes >----------------------------------*/
+#include <memory>
+#include <spdlog/spdlog.h>
 #include <string>
-// C library headers
-#include <stdio.h>
-#include <string.h>
-
-// Linux headers
-#include <fcntl.h> // Contains file controls like O_RDWR
-#include <errno.h> // Error integer and strerror() function
-#include <termios.h> // Contains POSIX terminal control definitions
-#include <unistd.h> // write(), read(), close()
 /*------------------------------< Defines >-----------------------------------*/
 
 /*------------------------------< Typedefs >----------------------------------*/
@@ -29,14 +22,21 @@
 class UARTCommunication
 {
 public:
-	UARTCommunication(); /* Constructor */
-	std::string sread();
-	void swrite(std::string message);
+    UARTCommunication(const std::string &serial_port); /* Constructor */
+    ~UARTCommunication();
+    bool receive(std::string &message);
+    bool transmit(const std::string &message);
+    bool set_timeout(int timeout);
+    void close_fd();
+    void set_serial_port(const std::string &serial_port);
+
 private:
-	bool isConnected;
-	int serial_port;
+    bool configure_termios();
+    std::string m_serial_port;
+    bool m_isConnected;
+    int m_fd;
 
+    std::shared_ptr<spdlog::logger> m_logger;
 };
-
 
 #endif /* UART_COMMUNICATION_H_ */

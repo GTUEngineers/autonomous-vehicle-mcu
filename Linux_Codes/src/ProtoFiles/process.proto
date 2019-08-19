@@ -50,13 +50,13 @@ message GPS           {
 }
 
 enum pub_sub_message{
-    START_STOP = 0;
-    THROTTLE = 1;
-    STEERING = 2;
-    BRAKE = 3;
-    STATE_WORKING = 4;
-    HCSR4 = 5;
-    GPS = 6;
+    START_STOP_MSG = 0;
+    THROTTLE_MSG = 1;
+    STEERING_MSG = 2;
+    BRAKE_MSG = 3;
+    STATE_WORKING_MSG = 4;
+    HCSR4_MSG = 5;
+    GPS_MSG = 6;
 }
 
 message pub_sub {

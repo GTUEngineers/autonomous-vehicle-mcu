@@ -10,8 +10,11 @@
 #define COM_MECHANISM_H
 
 /*------------------------------< Includes >----------------------------------*/
-#include <thread>
 #include "UARTCommunication.h"
+#include "publisher.h"
+#include "subscriber.h"
+#include <thread>
+#include <spdlog/spdlog.h>
 /*------------------------------< Defines >-----------------------------------*/
 
 /*------------------------------< Typedefs >----------------------------------*/
@@ -21,14 +24,20 @@
 class CommunicationMechanism
 {
 public:
-	CommunicationMechanism(); /* Constructor */
-	void waitUntilFinish();
+    CommunicationMechanism(); /* Constructor */
+    ~CommunicationMechanism();
+    void waitUntilFinish();
 
 private:
-	std::thread helperThread;
-	UARTCommunication communication;
+    void zmq_listener_task();
+    void uart_periodic_req_task();
 
-	void threadFunction();
+    std::thread zmq_listener_thread;
+    std::thread uart_periodic_req_thread;
+    std::shared_ptr<spdlog::logger> m_logger;
+    pubsub::Publisher publisher;
+    pubsub::Subscriber subscriber;
+    //	UARTCommunication communication;
 };
 
 #endif /* COM_MECHANISM_H */
