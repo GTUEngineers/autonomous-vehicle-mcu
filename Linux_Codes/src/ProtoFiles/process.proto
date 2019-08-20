@@ -49,15 +49,26 @@ message GPS           {
     float  longitude = 2;
 }
 
+enum pub_sub_message{
+    START_STOP_MSG = 0;
+    THROTTLE_MSG = 1;
+    STEERING_MSG = 2;
+    BRAKE_MSG = 3;
+    STATE_WORKING_MSG = 4;
+    HCSR4_MSG = 5;
+    GPS_MSG = 6;
+}
+
 message pub_sub {
+    pub_sub_message msg_type = 1;
     oneof messages {
-      StartStop_req startstop = 1;
-      Throttle_req  throttle  = 2;
-      Steering_req steering  = 3; 
-      Brake_req     brake     = 4;
-      StateWorking  statework = 5;
-      HCSR4         hcsr4_dis = 6;
-      GPS           location  = 7;
+      StartStop_req startstop = 2;
+      Throttle_req  throttle  = 3;
+      Steering_req steering  = 4; 
+      Brake_req     brake     = 5;
+      StateWorking  statework = 6;
+      HCSR4         hcsr4_dis = 7;
+      GPS           location  = 8;
       
   }
 }

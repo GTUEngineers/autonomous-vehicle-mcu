@@ -26,6 +26,7 @@ LIST(APPEND SUB_MODULES "src/ProtoFiles")
 LIST(APPEND SUB_MODULES "src/HeartbeatMechanism")
 LIST(APPEND SUB_MODULES "src/ZmqCommunication")
 LIST(APPEND SUB_MODULES "src/reqrep")
+LIST(APPEND SUB_MODULES "src/mcu_communication")
 
 FOREACH (_prj ${SUB_MODULES})
     add_subdirectory(${_prj})
