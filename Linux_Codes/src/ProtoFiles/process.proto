@@ -58,16 +58,16 @@ enum pub_sub_message{
     HCSR4_MSG = 5;
     GPS_MSG = 6;
 }
+
 message pub_sub {
     pub_sub_message msg_type = 1;
     oneof messages {
       StartStop_req startstop = 2;
       Throttle_req  throttle  = 3;
-      Steering_req steering  = 4; 
+      Steering_req  steering  = 4; 
       Brake_req     brake     = 5;
       StateWorking  statework = 6;
       HCSR4         hcsr4_dis = 7;
       GPS           location  = 8;
-      
   }
 }

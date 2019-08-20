@@ -1,3 +1,3 @@
 #!/bin/sh
-mkdir ProtoOut
+mkdir -p ProtoOut
 protoc --python_out=ProtoOut -I=../ProtoFiles ../ProtoFiles/*.proto
