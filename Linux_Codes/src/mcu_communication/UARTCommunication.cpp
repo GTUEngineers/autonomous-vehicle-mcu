@@ -8,42 +8,40 @@
 
 /*------------------------------< Includes >----------------------------------*/
 #include "UARTCommunication.h"
+#include <iostream>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/syslog_sink.h>
-#include <iostream>
 // Linux headers
 #include <cstring>
 #include <errno.h> // Error integer and strerror() function
 #include <fcntl.h> // Contains file controls like O_RDWR
 #include <stdio.h>
 #include <termios.h> // Contains POSIX terminal control definitions
-#include <unistd.h>  // write(), read(), close()
+#include <unistd.h> // write(), read(), close()
 /*------------------------------< Defines >-----------------------------------*/
 
 /*------------------------------< Typedefs >----------------------------------*/
 
 /*------------------------------< Namespaces >--------------------------------*/
 
-UARTCommunication::UARTCommunication(const std::string &serial_port)
+UARTCommunication::UARTCommunication(const std::string& serial_port)
 {
     m_serial_port = serial_port;
     m_logger = spdlog::stdout_color_mt("UARTCommunication");
     m_logger->set_level(spdlog::level::debug);
     m_logger->info("Serial Port:{}", serial_port);
+    configure_termios();
 }
 
 UARTCommunication::~UARTCommunication()
 {
-    try
-    {
+    try {
         close_fd();
-    }
-    catch (...)
-    {
+    } catch (...) {
     }
 }
 
-void UARTCommunication::set_serial_port(const std::string &serial_port)
+void UARTCommunication::set_serial_port(const std::string& serial_port)
 {
     this->m_serial_port = serial_port;
 }
@@ -55,42 +53,40 @@ bool UARTCommunication::configure_termios()
     std::memset(&tty, 0, sizeof(tty));
     m_fd = open(m_serial_port.c_str(), O_RDWR);
     // Check for errors
-    if (m_fd < 0)
-    {
+    if (m_fd < 0) {
         m_logger->critical("Open: {}", strerror(errno));
         exit(1);
     }
 
     // Read in existing settings, and handle any error
-    if (tcgetattr(m_fd, &tty) != 0)
-    {
+    if (tcgetattr(m_fd, &tty) != 0) {
         m_logger->critical("tcgetattr: {}", strerror(errno));
         exit(1);
     }
 
     //Setting termios
     //-------------------------c_cflag---------------////
-    tty.c_cflag &= ~PARENB;        // Clear parity bit, disabling parity (most common)
-    tty.c_cflag &= ~CSTOPB;        // Clear stop field, only one stop bit used in communication (most common)
-    tty.c_cflag |= CS8;            // 8 bits per byte (most common)
-    tty.c_cflag &= ~CRTSCTS;       // Disable RTS/CTS hardware flow control (most common)
+    tty.c_cflag &= ~PARENB; // Clear parity bit, disabling parity (most common)
+    tty.c_cflag &= ~CSTOPB; // Clear stop field, only one stop bit used in communication (most common)
+    tty.c_cflag |= CS8; // 8 bits per byte (most common)
+    tty.c_cflag &= ~CRTSCTS; // Disable RTS/CTS hardware flow control (most common)
     tty.c_cflag |= CREAD | CLOCAL; // Turn on READ & ignore ctrl lines (CLOCAL = 1)
     //-------------------------c_lflag---------------////
     tty.c_lflag &= ~ICANON;
-    tty.c_lflag &= ~ECHO;   // Disable echo
-    tty.c_lflag &= ~ECHOE;  // Disable erasure
+    tty.c_lflag &= ~ECHO; // Disable echo
+    tty.c_lflag &= ~ECHOE; // Disable erasure
     tty.c_lflag &= ~ECHONL; // Disable new-line echo
-    tty.c_lflag &= ~ISIG;   // Disable interpretation of INTR, QUIT and SUSP
+    tty.c_lflag &= ~ISIG; // Disable interpretation of INTR, QUIT and SUSP
     //-------------------------c_iflag---------------////
 
-    tty.c_iflag &= ~(IXON | IXOFF | IXANY);                                      // Turn off s/w flow ctrl
+    tty.c_iflag &= ~(IXON | IXOFF | IXANY); // Turn off s/w flow ctrl
     tty.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP | INLCR | IGNCR | ICRNL); // Disable any special
     //-------------------------c_oflag---------------/////
     tty.c_oflag &= ~OPOST; // Prevent special interpretation of output bytes (e.g. newline chars)
     tty.c_oflag &= ~ONLCR; // Prevent conversion of newline to carriage return/line feed
-                           //-------------------------c_cc---------------////
-    tty.c_cc[VTIME] = 10;  // Wait for up to 1s (10 deciseconds),
-    tty.c_cc[VMIN] = 2;    // returning as soon as 2 byte data is received.
+        //-------------------------c_cc---------------////
+    tty.c_cc[VTIME] = 10; // Wait for up to 1s (10 deciseconds),
+    tty.c_cc[VMIN] = 2; // returning as soon as 2 byte data is received.
     // Set in/out baud rate to be 115200
     cfsetispeed(&tty, B115200);
     cfsetospeed(&tty, B115200);
@@ -98,8 +94,7 @@ bool UARTCommunication::configure_termios()
     // Flush port, then apply attributes
     tcflush(m_fd, TCIOFLUSH);
     // Save tty settings, also checking for error
-    if (tcsetattr(m_fd, TCSANOW, &tty) != 0)
-    {
+    if (tcsetattr(m_fd, TCSANOW, &tty) != 0) {
         m_logger->critical("tcsetattr: {}", strerror(errno));
         exit(1);
     }
@@ -108,25 +103,21 @@ bool UARTCommunication::configure_termios()
 
 void UARTCommunication::close_fd()
 {
-    if (m_fd != -1)
-    {
+    if (m_fd != -1) {
         auto retVal = close(m_fd);
-        if (retVal != 0)
-        {
+        if (retVal != 0) {
             m_logger->critical("close: {}", strerror(errno));
             m_fd = -1;
         }
     }
 }
 
-bool UARTCommunication::receive(std::string &message)
+bool UARTCommunication::receive(std::string& message)
 {
-    message.clear();
-    message.resize(10);
-    ssize_t n = read(m_fd, &message.front(), message.capacity());
+    message.resize(9);
+    ssize_t n = read(m_fd, &message.front(), message.size());
     // Error Handling
-    if (n < 0)
-    {
+    if (n < 0) {
         // Read was unsuccessful
         m_logger->critical("Receive: {}", strerror(errno));
         return false;
@@ -135,13 +126,12 @@ bool UARTCommunication::receive(std::string &message)
     return true;
 }
 
-bool UARTCommunication::transmit(const std::string &message)
+bool UARTCommunication::transmit(const std::string& message)
 {
     int writeResult = write(m_fd, message.c_str(), message.size());
 
     // Check status
-    if (writeResult == -1)
-    {
+    if (writeResult == -1) {
         m_logger->critical("Transmit: {}", strerror(errno));
         return false;
     }

@@ -22,7 +22,7 @@ class Publisher : public zmqbase::ComBase {
 public:
     Publisher(bool is_server);
 
-    bool publish(const std::string& topic, zmq::message_t& msg);
+    bool publish(const std::string& topic, const std::string& msg);
 };
 }
 #endif /* SRC_ZMQCOMMUNICATION_PUBLISHER_H_ */
