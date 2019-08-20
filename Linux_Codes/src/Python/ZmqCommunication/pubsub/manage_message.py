@@ -1,3 +1,7 @@
+import sys, os
+
+sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/../../proto_out/")
+print(sys.path)
 import process_pb2
 import common_pb2
 import logging
