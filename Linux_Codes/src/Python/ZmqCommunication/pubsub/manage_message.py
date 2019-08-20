@@ -32,19 +32,31 @@ def create_message(pubsub_message):
     
     return retMsg
 
+def create_startstop_msg(cmd):
+    pubsub_message = process_pb2.pub_sub()
+    pubsub_message.msg_type = process_pb2.pub_sub_message.START_STOP_MSG
+
+    pubsub_message.startstop.cmd = cmd
+    return pubsub_message.SerializeToString()
+
+def parse_startstop_msg(msg):
+    pubsub_message = process_pb2.pub_sub()
+    pubsub_message.ParseFromString(msg)
+    if pubsub_message.msg_type is process_pb2.pub_sub_message.START_STOP_MSG:
+
+        return pubsub_message.startstop.cmd
+    return None
+
 def testFoo():
 
-    pubsub_message = process_pb2.pub_sub()
-
-    pubsub_message.msg_type = process_pb2.pub_sub_message.START_STOP_MSG
-    pubsub_message.startstop.cmd = 0
-
-    test_message = create_message(pubsub_message)
-    test_pubsub = process_pb2.pub_sub()
-
-    test_pubsub.ParseFromString(test_message)
-    if test_pubsub.msg_type is process_pb2.pub_sub_message.START_STOP_MSG:
-        print("YEES")
+    test = create_startstop_msg(process_pb2.startstop_enum.START)
+    test_pubsub = parse_startstop_msg(test)
+    if test_pubsub is not None:
+        print("YEES "+str(test_pubsub))
+    test = create_startstop_msg(process_pb2.startstop_enum.STOP)
+    test_pubsub = parse_startstop_msg(test)
+    if test_pubsub is not None:
+        print("YEES "+str(test_pubsub))
 
 testFoo()
 
