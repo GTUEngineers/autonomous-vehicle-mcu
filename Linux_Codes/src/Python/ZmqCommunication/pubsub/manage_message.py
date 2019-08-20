@@ -46,7 +46,10 @@ def parse_startstop_msg(msg):
 
         return pubsub_message.startstop.cmd
     return None
+    
+#BU YORUMUN ALTINDAN BELİRTTİĞİM KISMA KADAR FATİH SELİM TARAFINDAN ÜSTTEKİ İKİ ÖRNEK KODA BAKILARAK YAZILDI.
 
+#her tipe göre mesaj oluşturan ve parse eden fonksiyonlar
 def create_steering_msg(cmd,angle):
     pubsub_message = process_pb2.pub_sub()
     pubsub_message.msg_type = process_pb2.pub_sub_message.STEERING_MSG
@@ -59,7 +62,6 @@ def parse_steering_msg(msg):
     pubsub_message = process_pb2.pub_sub()
     pubsub_message.ParseFromString(msg)
     if pubsub_message.msg_type is process_pb2.pub_sub_message.STEERING_MSG:
-
         return  pubsub_message.steering.cmd,pubsub_message.steering.angle
     return None
 
@@ -74,13 +76,9 @@ def parse_stateWorking_msg(msg):
     pubsub_message = process_pb2.pub_sub()
     pubsub_message.ParseFromString(msg)
     if pubsub_message.msg_type is process_pb2.pub_sub_message.STATE_WORKING_MSG:
-
         return  pubsub_message.statework.cmd
     return None
 
-#BU YORUMUN ALTINDAN BELİRTTİĞİM KISMA KADAR FATİH SELİM TARAFINDAN ÜSTTEKİ İKİ ÖRNEK KODA BAKILARAK YAZILDI.
-
-#her tipe göre mesaj oluşturan ve parse eden fonksiyonlar
 def create_throttle_msg(throttleValue):
     pubsub_message = process_pb2.pub_sub()
     pubsub_message.msg_type = process_pb2.pub_sub_message.THROTTLE_MSG
