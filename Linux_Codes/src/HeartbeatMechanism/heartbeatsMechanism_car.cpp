@@ -47,8 +47,7 @@ void HeartbeatsMechanism::listen()
     try {
 
         m_subscriber.subscribe(STATION_HB_TOPIC);
-        std::string topic;
-        zmq::message_t msg;
+        std::string topic, msg;
         int counter{ 0 };
         bool carstopped{ false }, is_rcv{ false };
 
@@ -85,7 +84,7 @@ void HeartbeatsMechanism::publish()
 {
 
     while (1) {
-        zmq::message_t msg("1", 1);
+        std::string msg("1");
         m_publisher.publish(CAR_HB_TOPIC, msg);
         sleep(1);
     }

@@ -45,8 +45,7 @@ HeartbeatsMechanism::HeartbeatsMechanism(std::string ipNum, int portNumSub, int 
 void HeartbeatsMechanism::listen()
 {
     try {
-        std::string topic;
-        zmq::message_t msg;
+        std::string topic, msg;
         bool change_control{ false }, is_rcv{ false };
         m_subscriber.subscribe(CAR_HB_TOPIC);
 
@@ -73,7 +72,7 @@ void HeartbeatsMechanism::listen()
 void HeartbeatsMechanism::publish()
 {
     while (1) {
-        zmq::message_t msg("1", 1);
+        std::string msg("1");
         m_publisher.publish(STATION_HB_TOPIC, msg);
         sleep(2);
     }

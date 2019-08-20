@@ -16,15 +16,17 @@
 /*------------------------------< Typedefs >----------------------------------*/
 
 /*------------------------------< Class  >------------------------------------*/
-namespace pubsub {
-class Subscriber : public zmqbase::ComBase {
+namespace pubsub
+{
+class Subscriber : public zmqbase::ComBase
+{
 public:
     Subscriber(bool is_server);
 
-    void subscribe(const std::string& topic);
-    void unsubscribe(const std::string& topic);
-    bool recv(std::string& topic, zmq::message_t& msg, long timeout = -1);
+    void subscribe(const std::string &topic);
+    void unsubscribe(const std::string &topic);
+    bool recv(std::string &topic, std::string &msg, long timeout = -1);
 };
-}
+} // namespace pubsub
 
 #endif /* SRC_ZMQCOMMUNICATION_SUBSCRIBER_H_ */
