@@ -39,7 +39,12 @@ def testFoo():
     pubsub_message.msg_type = process_pb2.pub_sub_message.START_STOP_MSG
     pubsub_message.startstop.cmd = 0
 
-    print(create_message(pubsub_message))
+    test_message = create_message(pubsub_message)
+    test_pubsub = process_pb2.pub_sub()
+
+    test_pubsub.ParseFromString(test_message)
+    if test_pubsub.msg_type is process_pb2.pub_sub_message.START_STOP_MSG:
+        print("YEES")
 
 testFoo()
 
