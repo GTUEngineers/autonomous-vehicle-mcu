@@ -244,11 +244,10 @@ std::string create_location(float latitude, float longitude)
 	std::string ret_str;
 	uart::pub_sub pubsub;
 	std::unique_ptr<uart::GPS> gps(new uart::GPS);
+
 	pubsub.set_msg_type(uart::pub_sub_message::GPS_MSG);
 	gps->set_latitude(latitude);
-
 	gps->set_longitude(longitude);
-
 	pubsub.set_allocated_location(gps.release());
 
 	pubsub.SerializeToString(&ret_str);
@@ -264,6 +263,63 @@ std::string create_hcsr4_dis(double distance)
 	pubsub.set_msg_type(uart::pub_sub_message::HCSR4_MSG);
 	hcsr4->set_distance(distance);
 	pubsub.set_allocated_hcsr4_dis(hcsr4.release());
+
+	pubsub.SerializeToString(&ret_str);
+	return ret_str;
+}
+
+std::string create_startstop_msg(uart::startstop_enum cmd)
+{
+	std::string ret_str;
+	uart::pub_sub pubsub;
+	std::unique_ptr<uart::StartStop_req> startstop(new uart::StartStop_req);
+
+	pubsub.set_msg_type(uart::pub_sub_message::START_STOP_MSG);
+	startstop->set_cmd(cmd);
+	pubsub.set_allocated_startstop(startstop.release());
+
+	pubsub.SerializeToString(&ret_str);
+	return ret_str;
+}
+
+std::string create_steering_msg(uart::steering_enum cmd, double angle)
+{
+	std::string ret_str;
+	uart::pub_sub pubsub;
+	std::unique_ptr<uart::Steering_req> steering(new uart::Steering_req);
+
+	pubsub.set_msg_type(uart::pub_sub_message::STEERING_MSG);
+	steering->set_cmd(cmd);
+	steering->set_angle(angle);
+	pubsub.set_allocated_steering(steering.release());
+
+	pubsub.SerializeToString(&ret_str);
+	return ret_str;
+}
+
+std::string create_throttle_msg(uint32_t throttleValue)
+{
+	std::string ret_str;
+	uart::pub_sub pubsub;
+	std::unique_ptr<uart::Throttle_req> throttle(new uart::Throttle_req);
+
+	pubsub.set_msg_type(uart::pub_sub_message::THROTTLE_MSG);
+	throttle->set_throttlevalue(throttleValue);
+	pubsub.set_allocated_throttle(throttle.release());
+
+	pubsub.SerializeToString(&ret_str);
+	return ret_str;
+}
+
+std::string create_brake_msg(bool brakeValue)
+{
+	std::string ret_str;
+	uart::pub_sub pubsub;
+	std::unique_ptr<uart::Brake_req> brake(new uart::Brake_req);
+
+	pubsub.set_msg_type(uart::pub_sub_message::BRAKE_MSG);
+	brake->set_brakevalue(brakeValue);
+	pubsub.set_allocated_brake(brake.release());
 
 	pubsub.SerializeToString(&ret_str);
 	return ret_str;
