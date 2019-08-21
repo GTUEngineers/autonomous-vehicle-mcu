@@ -84,3 +84,4 @@ cmake-build-debug/*
 
 *.pyc
 **/__pycache__/*
+**/ProtoOut/*
