@@ -6,6 +6,7 @@ SET(SOURCEFILES
 	CommunicationMechanism.cpp
 	UARTCommunication.cpp
         mcu_communication_service.cpp
+        UARTMessageBuilder.cpp
         )
 
 SET(INCLUDEDIRS
