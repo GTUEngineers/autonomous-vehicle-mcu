@@ -37,12 +37,15 @@ std::string create_cmd_req(cmd_enum cmd)
     return ret_str;
 }
 
-bool parse_cmd_rep(std::string& rep, ReturnCode& retCode)
+bool parse_cmd_rep(std::string &rep, ReturnCode &retCode)
 {
     seq_req_rep reqrep;
-    if (reqrep.ParseFromArray(rep.data(), rep.size())) {
-        if (reqrep.has_cmd_msg()) {
-            if (reqrep.cmd_msg().has_rep()) {
+    if (reqrep.ParseFromArray(rep.data(), rep.size()))
+    {
+        if (reqrep.has_cmd_msg())
+        {
+            if (reqrep.cmd_msg().has_rep())
+            {
                 retCode = reqrep.cmd_msg().rep().retval();
                 return true;
             }
@@ -54,7 +57,7 @@ bool parse_cmd_rep(std::string& rep, ReturnCode& retCode)
 //Driver file for Client
 int main()
 {
-    std::shared_ptr<spdlog::logger> m_logger{ spdlog::stdout_color_mt("REQREP_Client") };
+    std::shared_ptr<spdlog::logger> m_logger{spdlog::stdout_color_mt("REQREP_Client")};
 
     m_logger->set_level(spdlog::level::debug);
     std::unique_ptr<seqreqrep::Client> client(new seqreqrep::Client);
@@ -67,21 +70,24 @@ int main()
     client->connect(addr);
     //a counter to counts requests and responses
 
-    while (true) {
+    while (true)
+    {
         std::string req = create_cmd_req(cmd_enum::START);
         zmq::message_t request(req.c_str(), req.size());
 
         zmq::message_t reply;
         //if connection is not broken
-        if (client->reqrep(request, reply, 3)) {
+        if (client->reqrep(request, reply, 3))
+        {
             ReturnCode retCode;
-            std::string rep((char*)reply.data(), reply.size());
+            std::string rep((char *)reply.data(), reply.size());
             parse_cmd_rep(rep, retCode);
 
             m_logger->debug("Server Rep: {}", retCode);
         }
         //if it is broken
-        else {
+        else
+        {
             m_logger->critical("Connection was Broken");
             //resets client
             client.reset(new seqreqrep::Client);

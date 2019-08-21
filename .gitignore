@@ -82,3 +82,6 @@ cmake-build-debug/*
 .vscode/*
 
 
+*.pyc
+**/__pycache__/*
+**/ProtoOut/*

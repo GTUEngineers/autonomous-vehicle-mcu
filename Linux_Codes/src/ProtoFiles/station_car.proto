@@ -5,13 +5,13 @@ enum cmd_enum {
     START= 0;//Ok
     STOP = 1;//Not Ok
   }
-
+  
 message Command_req {
     cmd_enum cmd = 1;
   }
    
 message Command_rep {
-    ReturnCode retVal = 1 ;
+    ReturnCode retVal = 1 ; 
   }
 
 message Commands {

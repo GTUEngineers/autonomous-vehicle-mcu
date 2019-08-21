@@ -2,6 +2,7 @@
 
 import zmq
 
+
 class ComBase():
     TCP = "tcp://{}:{}"
     PROC = "inproc://{}"
@@ -15,7 +16,6 @@ class ComBase():
         self.label = None
         self.addr = None
         self.poller = zmq.Poller()
-        
 
     def connect(self, addr):
         self.addr = addr
