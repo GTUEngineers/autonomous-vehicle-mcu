@@ -1,13 +1,12 @@
-import logging
-import common_pb2
-import process_pb2
 import sys
 import os
-
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/../../ProtoOut/")
+import common_pb2
+import process_pb2
 # print(sys.path)
-
 # MAY process_pb2 NAME SHORTEN
+import logging
+logging.basicConfig(filename='parse_create_msg.log', filemode='w', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 
 def create_startstop_msg(cmd):
@@ -26,11 +25,8 @@ def parse_startstop_msg(msg):
         return pubsub_message.startstop.cmd
     return None
 
-# BU YORUMUN ALTINDAN BELİRTTİĞİM KISMA KADAR FATİH SELİM TARAFINDAN ÜSTTEKİ İKİ ÖRNEK KODA BAKILARAK YAZILDI.
-
-# her tipe göre mesaj oluşturan ve parse eden fonksiyonlar
-
-
+#Author: Fatih Selim
+# Functions that create and parse messages for each type
 def create_steering_msg(cmd, angle):
     pubsub_message = process_pb2.pub_sub()
     pubsub_message.msg_type = process_pb2.pub_sub_message.STEERING_MSG
@@ -129,30 +125,38 @@ def parse_GPS_msg(msg):
     return None
 
 
-# alternatif olarak bütün mesaj tiplerini parse eden fonksiyon
+# alternatively a function that parses all message types
 def parse_all_type_messages(msg):
     pubsub_message = process_pb2.pub_sub()
     pubsub_message.ParseFromString(msg)
 
+    #handles with message type and returns the parsed data.
     if pubsub_message.msg_type is process_pb2.pub_sub_message.GPS_MSG:
         return pubsub_message.location.latitude, pubsub_message.location.longitude
+    
     elif pubsub_message.msg_type is process_pb2.pub_sub_message.HCSR4_MSG:
         return pubsub_message.hcsr4_dis.distance
+    
     elif pubsub_message.msg_type is process_pb2.pub_sub_message.BRAKE_MSG:
         return pubsub_message.brake.brakeValue
+    
     elif pubsub_message.msg_type is process_pb2.pub_sub_message.THROTTLE_MSG:
         return pubsub_message.throttle.throttleValue
+    
     elif pubsub_message.msg_type is process_pb2.pub_sub_message.STATE_WORKING_MSG:
         return pubsub_message.statework.cmd
+    
     elif pubsub_message.msg_type is process_pb2.pub_sub_message.STEERING_MSG:
         return pubsub_message.steering.cmd, pubsub_message.steering.angle
+    
     elif pubsub_message.msg_type is process_pb2.pub_sub_message.START_STOP_MSG:
         return pubsub_message.startstop.cmd
+    
     else:
-        print("invalid parse type!")
+        logging.warning("Invalid parse type!")
         return None
 
-# YAZILAN KISIM BİTTİ
+# End of Fatih
 
 #Author: Tolga
 # This method must take message_type as process_pb2.pubsub_message
@@ -164,32 +168,32 @@ def create_message(message_type, val_1, val_2=None):
 
     pubsub_message = process_pb2.pub_sub()
 
-    if message_type == process_pb2.pubsub_message.START_STOP_MSG:
+    if message_type == process_pb2.pub_sub_message.START_STOP_MSG:
         pubsub_message.msg_type = process_pb2.pub_sub_message.START_STOP_MSG
         pubsub_message.startstop.cmd = val_1  # val1 is cmd in here
 
-    elif message_type == process_pb2.pubsub_message.THROTTLE_MSG:
+    elif message_type == process_pb2.pub_sub_message.THROTTLE_MSG:
         pubsub_message.msg_type = process_pb2.pub_sub_message.THROTTLE_MSG
         pubsub_message.throttle.throttleValue = val_1  # val1 is throttleVal in here
 
-    elif message_type == process_pb2.pubsub_message.STEERING_MSG:
+    elif message_type == process_pb2.pub_sub_message.STEERING_MSG:
         pubsub_message.msg_type = process_pb2.pub_sub_message.STEERING_MSG
         pubsub_message.steering.cmd = val_1  # val1 is cmd in here
         pubsub_message.steering.angle = val_2  # val2 is angle in here
 
-    elif message_type == process_pb2.pubsub_message.BRAKE_MSG:
+    elif message_type == process_pb2.pub_sub_message.BRAKE_MSG:
         pubsub_message.msg_type = process_pb2.pub_sub_message.BRAKE_MSG
         pubsub_message.brake.brakeValue = val_1  # val1 is brakeValue in here
 
-    elif message_type == process_pb2.pubsub_message.STATE_WORKING_MSG:
+    elif message_type == process_pb2.pub_sub_message.STATE_WORKING_MSG:
         pubsub_message.msg_type = process_pb2.pub_sub_message.STATE_WORKING_MSG
         pubsub_message.statework.cmd = val_1  # val1 is cmd in here
 
-    elif message_type == process_pb2.pubsub_message.HSCR4_MSG:
+    elif message_type == process_pb2.pub_sub_message.HSCR4_MSG:
         pubsub_message.msg_type = process_pb2.pub_sub_message.HCSR4_MSG
         pubsub_message.hcsr4_dis.distance = val_1  # val1 is distance in here
 
-    elif message_type == process_pb2.pubsub_message.GPS_MSG:
+    elif message_type == process_pb2.pub_sub_message.GPS_MSG:
         pubsub_message.msg_type = process_pb2.pub_sub_message.GPS_MSG
         pubsub_message.location.latitude = val_1  # val1 is latitude in here
         pubsub_message.location.longitude = val_2  # val1 is longitude in here
@@ -230,9 +234,10 @@ def testFoo():
 
     if test_pubsub is not None:
         print("YEES "+str(test_pubsub))
+        logging.warning('deneme metni')
 
-    test = create_message(
-        process_pb2.pub_sub_message.START_STOP.MSG, process_pb2.startstop_enum.STOP)
+    test = create_message(process_pb2.pub_sub_message.START_STOP_MSG, 
+                          process_pb2.startstop_enum.STOP)
     test_pubsub = parse_startstop_msg(test)
 
     if test_pubsub is not None:
