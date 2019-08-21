@@ -64,11 +64,10 @@ message pub_sub {
     oneof messages {
       StartStop_req startstop = 2;
       Throttle_req  throttle  = 3;
-      Steering_req steering  = 4; 
+      Steering_req  steering  = 4; 
       Brake_req     brake     = 5;
       StateWorking  statework = 6;
       HCSR4         hcsr4_dis = 7;
       GPS           location  = 8;
-      
   }
 }
