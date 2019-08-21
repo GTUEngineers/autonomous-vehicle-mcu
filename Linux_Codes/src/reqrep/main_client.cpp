@@ -37,49 +37,6 @@ std::string create_cmd_req(cmd_enum cmd)
     return ret_str;
 }
 
-std::string create_statework(stateWorking_enum cmd)
-{
-    std::string ret_str;
-    pub_sub pubsub;
-    std::unique_ptr<StateWorking> stateworks(new StateWorking);
-
-    stateworks->set_cmd(cmd);
-
-    pubsub.set_allocated_statework(stateworks.release());
-
-    pubsub.SerializeToString(&ret_str);
-    return ret_str;
-}
-
-std::string create_location(float latitude, float longitude)
-{
-    std::string ret_str;
-    pub_sub pubsub;
-    std::unique_ptr<GPS> gps(new GPS);
-
-    gps->set_latitude(latitude);
-    gps->set_longitude(longitude);
-
-    pubsub.set_allocated_location(gps.release());
-
-    pubsub.SerializeToString(&ret_str);
-    return ret_str;
-}
-
-std::string create_hcsr4_dis(double distance)
-{
-    std::string ret_str;
-    pub_sub pubsub;
-    std::unique_ptr<HCSR4> hcsr4(new HCSR4);
-
-    hcsr4->set_distance(distance);
-
-    pubsub.set_allocated_hcsr4_dis(hcsr4.release());
-
-    pubsub.SerializeToString(&ret_str);
-    return ret_str;
-}
-
 bool parse_cmd_rep(std::string &rep, ReturnCode &retCode)
 {
     seq_req_rep reqrep;
