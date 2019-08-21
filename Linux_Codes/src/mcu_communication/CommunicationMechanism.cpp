@@ -223,3 +223,48 @@ bool parse_gps(std::string &req, float &latitude, float &longitude)
 
 	return false;
 }
+
+/*--------------------------< Create Msg Functions >--------------------------*/
+
+std::string create_statework(uart::stateWorking_enum cmd)
+{
+	std::string ret_str;
+	uart::pub_sub pubsub;
+	std::unique_ptr<uart::StateWorking> stateworks(new uart::StateWorking);
+	pubsub.set_msg_type(uart::pub_sub_message::STATE_WORKING_MSG);
+	stateworks->set_cmd(cmd);
+	pubsub.set_allocated_statework(stateworks.release());
+
+	pubsub.SerializeToString(&ret_str);
+	return ret_str;
+}
+
+std::string create_location(float latitude, float longitude)
+{
+	std::string ret_str;
+	uart::pub_sub pubsub;
+	std::unique_ptr<uart::GPS> gps(new uart::GPS);
+	pubsub.set_msg_type(uart::pub_sub_message::GPS_MSG);
+	gps->set_latitude(latitude);
+
+	gps->set_longitude(longitude);
+
+	pubsub.set_allocated_location(gps.release());
+
+	pubsub.SerializeToString(&ret_str);
+	return ret_str;
+}
+
+std::string create_hcsr4_dis(double distance)
+{
+	std::string ret_str;
+	uart::pub_sub pubsub;
+	std::unique_ptr<uart::HCSR4> hcsr4(new uart::HCSR4);
+
+	pubsub.set_msg_type(uart::pub_sub_message::HCSR4_MSG);
+	hcsr4->set_distance(distance);
+	pubsub.set_allocated_hcsr4_dis(hcsr4.release());
+
+	pubsub.SerializeToString(&ret_str);
+	return ret_str;
+}
