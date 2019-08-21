@@ -6,7 +6,7 @@ import process_pb2
 # print(sys.path)
 # MAY process_pb2 NAME SHORTEN
 import logging
-logging.basicConfig(filename='parse_create_msg.log', filemode='w', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(filename='parse_create_msg.log', filemode='w', format='%(asctime)s - %(name)s - %(levelname)s - %(lineno)s - %(funcName)s - %(message)s')
 
 
 def create_startstop_msg(cmd):
