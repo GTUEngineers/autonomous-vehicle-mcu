@@ -28,6 +28,7 @@ add_executable(
 add_executable(
 	cli_test
         cli.cpp
+	UARTMessageBuilder.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../
 )
 target_include_directories(${TARGET_NAME} PUBLIC ${INCLUDEDIRS})

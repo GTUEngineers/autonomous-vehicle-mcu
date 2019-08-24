@@ -1,3 +1,6 @@
+#ifndef CLI_H_
+#define CLI_H_
+
 #include <iostream>
 #include "UARTMessageBuilder.h"
 #include "process.pb.h"
@@ -37,3 +40,5 @@ private:
     //start_stop informations
     uart::startstop_enum start_stop_value;
 };
+
+#endif

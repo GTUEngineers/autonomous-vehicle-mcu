@@ -6,9 +6,9 @@ Cli::Cli()
 {
     user_selection = type::dflt;
     steering_angle = -1;
-    steering_tendency = "none";
+    //steering_dir = "none";
     throttle_value = -1;
-    start_stop_value = "none";
+    //start_stop_value = "none";
 }
 
 void Cli::cli_start()
