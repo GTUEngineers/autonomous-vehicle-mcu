@@ -73,8 +73,9 @@ std::string create_startstop_pub(uart::startstop_enum start_or_stop)
 //Driver file for Server
 int main()
 {
+
     seqreqrep::Server server;
-    std::shared_ptr<spdlog::logger> m_logger{spdlog::stdout_color_mt("REQREP_Server")};
+    std::shared_ptr<spdlog::logger> m_logger{spdlog::stdout_color_mt("WifiCommunication_Server")};
 
     m_logger->set_level(spdlog::level::debug);
     //binds to localhost with port 5555
@@ -83,18 +84,15 @@ int main()
     sprintf(&addr.front(), zmqbase::TCP_CONNECTION.c_str(), "*", 5555);
     server.connect(addr);
     //a counter to counts requests and replies
-
+    m_logger->debug("Server connected");
     // publisher to mcu
     pubsub::Publisher publisher(false);
-    std::shared_ptr<spdlog::logger> mm_logger{spdlog::stdout_color_mt("Publisher_Server")};
-
-    mm_logger->set_level(spdlog::level::debug);
-    //binds to localhost with port 5555
+    //binds to localhost with port 5556
     std::string addr2;
     addr2.resize(50);
-    sprintf(&addr2.front(), zmqbase::TCP_CONNECTION.c_str(), "*", 5555);
+    sprintf(&addr2.front(), zmqbase::PROC_CONNECTION.c_str(), "*", 5556);
     publisher.connect(addr2);
-
+    m_logger->debug("Publisher Connected");
     while (true)
     {
         zmq::message_t request;

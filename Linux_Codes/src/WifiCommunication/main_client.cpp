@@ -57,7 +57,7 @@ bool parse_startstop_rep(std::string &rep, ReturnCode &retCode)
 //Driver file for Client
 int main()
 {
-    std::shared_ptr<spdlog::logger> m_logger{spdlog::stdout_color_mt("REQREP_Client")};
+    std::shared_ptr<spdlog::logger> m_logger{spdlog::stdout_color_mt("WifiCommunication_Client")};
 
     m_logger->set_level(spdlog::level::debug);
     std::unique_ptr<seqreqrep::Client> client(new seqreqrep::Client);
