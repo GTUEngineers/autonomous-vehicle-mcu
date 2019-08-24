@@ -1,6 +1,8 @@
 syntax="proto3";
 import "common.proto";
 
+package wifi;
+
 enum startstop_enum {
   START= 0;//Ok
   STOP = 1;//Not Ok  

@@ -21,32 +21,32 @@
 
 /*------------------------------< Namespaces >--------------------------------*/
 
-std::string create_cmd_req(cmd_enum cmd)
+std::string create_startstop_req(wifi::startstop_enum start_or_stop)
 {
     std::string ret_str;
-    seq_req_rep reqrep;
-    std::unique_ptr<Commands> commands(new Commands);
-    std::unique_ptr<Command_req> cmd_req(new Command_req);
+    wifi::seq_req_rep reqrep;
+    std::unique_ptr<wifi::StartStop> startstop(new wifi::StartStop);
+    std::unique_ptr<wifi::StartStop_req> startstop_req(new wifi::StartStop_req);
 
-    cmd_req->set_cmd(cmd);
+    startstop_req->set_startstop(start_or_stop);
 
-    commands->set_allocated_req(cmd_req.release());
-    reqrep.set_allocated_cmd_msg(commands.release());
+    startstop->set_allocated_req(startstop_req.release());
+    reqrep.set_allocated_startstop_msg(startstop.release());
 
     reqrep.SerializeToString(&ret_str);
     return ret_str;
 }
 
-bool parse_cmd_rep(std::string &rep, ReturnCode &retCode)
+bool parse_startstop_rep(std::string &rep, ReturnCode &retCode)
 {
-    seq_req_rep reqrep;
+    wifi::seq_req_rep reqrep;
     if (reqrep.ParseFromArray(rep.data(), rep.size()))
     {
-        if (reqrep.has_cmd_msg())
+        if (reqrep.has_startstop_msg())
         {
-            if (reqrep.cmd_msg().has_rep())
+            if (reqrep.startstop_msg().has_rep())
             {
-                retCode = reqrep.cmd_msg().rep().retval();
+                retCode = reqrep.startstop_msg().rep().retval();
                 return true;
             }
         }
@@ -72,7 +72,7 @@ int main()
 
     while (true)
     {
-        std::string req = create_cmd_req(cmd_enum::START);
+        std::string req = create_startstop_req(wifi::startstop_enum::START);
         zmq::message_t request(req.c_str(), req.size());
 
         zmq::message_t reply;
@@ -81,7 +81,7 @@ int main()
         {
             ReturnCode retCode;
             std::string rep((char *)reply.data(), reply.size());
-            parse_cmd_rep(rep, retCode);
+            parse_startstop_rep(rep, retCode);
 
             m_logger->debug("Server Rep: {}", retCode);
         }
