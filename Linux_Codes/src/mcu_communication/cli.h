@@ -1,4 +1,5 @@
 #include <iostream>
+#include "UARTMessageBuilder.h"
 
 enum type
 {
@@ -9,10 +10,10 @@ enum type
     _start_stop
 };
 
-class cli
+class Cli
 {
 public:
-    cli();
+    Cli();
     void cli_start();
     bool message_send();
 
@@ -22,10 +23,11 @@ public:
     int get_throttle_value();
     bool get_brake_value();
     bool get_start_stop_value();
+    type get_user_selection();
 
 private:
     //selection type
-    type selection;
+    type user_selection;
     //steering informations
     double steering_angle;
     std::string steering_tendency;
