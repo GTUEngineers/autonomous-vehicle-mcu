@@ -88,26 +88,24 @@ int main()
     // publisher to mcu
     pubsub::Publisher publisher(false);
     //binds to localhost with port 5556
-    std::string addr2;
-    addr2.resize(50);
-    sprintf(&addr2.front(), zmqbase::PROC_CONNECTION.c_str(), "*", 5556);
-    publisher.connect(addr2);
+    addr.clear();
+    addr.resize(50);
+    sprintf(&addr.front(), zmqbase::PROC_CONNECTION.c_str(), "*", 5556);
+    publisher.connect(addr);
     m_logger->debug("Publisher Connected");
     while (true)
     {
-        zmq::message_t request;
+        std::string request;
         //Wait for next request from client
         //if receives a message
         if (server.recv(request))
         {
             //prints
             wifi::startstop_enum start_or_stop;
-            std::string retstr((char *)request.data(), request.size());
-            parse_startstop_req(retstr, start_or_stop);
+            parse_startstop_req(request, start_or_stop);
             m_logger->debug("Clint Req: {}", start_or_stop);
-            std::string rep = create_startstop_rep(ReturnCode::OK);
+            std::string reply = create_startstop_rep(ReturnCode::OK);
 
-            zmq::message_t reply((char *)rep.data(), rep.size());
             //  Send reply back to client
             server.send(reply);
 

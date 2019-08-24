@@ -72,16 +72,14 @@ int main()
 
     while (true)
     {
-        std::string req = create_startstop_req(wifi::startstop_enum::START);
-        zmq::message_t request(req.c_str(), req.size());
+        std::string request = create_startstop_req(wifi::startstop_enum::START);
 
-        zmq::message_t reply;
+        std::string reply;
         //if connection is not broken
         if (client->reqrep(request, reply, 3))
         {
             ReturnCode retCode;
-            std::string rep((char *)reply.data(), reply.size());
-            parse_startstop_rep(rep, retCode);
+            parse_startstop_rep(reply, retCode);
 
             m_logger->debug("Server Rep: {}", retCode);
         }
