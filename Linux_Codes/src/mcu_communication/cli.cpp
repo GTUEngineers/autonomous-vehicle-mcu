@@ -26,49 +26,68 @@ void Cli::cli_start()
     {
         user_selection = type::_throttle;
         std::cout << "Enter the throttle value(int)" << std::endl;
-        std::string tmp;
-        std::cin >> tmp;
-        throttle_value = atoi(tmp.c_str());
+        std::cin >> throttle_value;
         this->message_send();
     }
     else if (msg_type == "2")
     {
-        std::string tmp;
+        std::string input_brake_val;
         user_selection = type::_break;
-        while (tmp != "1" && tmp != "0")
+        while (input_brake_val != "1" && input_brake_val != "0")
         {
-            std::cout << "Enter the break value(0 or 1)" << std::endl;
-            std::cin >> tmp;
-            brake_value = atoi(tmp.c_str());
+            std::cout << "Enter the break value(0(LOCK) or 1(RELEASE))" << std::endl;
+            std::cin >> input_brake_val;
+            if (input_brake_val == "0")
+            {
+                brake_value = uart::brake_enum::LOCK;
+            }
+            else if (input_brake_val == "1")
+            {
+                brake_value = uart::brake_enum::RELEASE;
+            }
         }
         this->message_send();
     }
     else if (msg_type == "3")
     {
         user_selection = type::_steer;
-        while (steering_tendency != "left" && steering_tendency != "right")
+        while (get_steering_dir() != uart::steering_enum::LEFT && get_steering_dir() != uart::steering_enum::RIGHT)
         {
+            std::string input_dir_val;
             std::cout << "Enter the steering tendency(\"left\" or \"right\")" << std::endl;
-            std::cin >> steering_tendency;
+            std::cin >> input_dir_val;
+            if (input_dir_val == "left")
+            {
+                steering_dir = uart::steering_enum::LEFT;
+            }
+            else if (input_dir_val == "right")
+            {
+                steering_dir = uart::steering_enum::RIGHT;
+            }
         }
         while (steering_angle > 360 || steering_angle < 0)
         {
             std::cout << "Enter the steering angle(enter the range 0.0-360.0)" << std::endl;
-            std::string tmp;
-            std::cin >> tmp;
-            steering_angle = atof(tmp.c_str());
+            std::cin >> steering_angle;
         }
         this->message_send();
     }
     else if (msg_type == "4")
     {
-        std::string tmp;
+        uint8_t input_startstop_val;
         user_selection = type::_start_stop;
-        while (tmp != "0" && tmp != "1")
+        while (start_stop_value != uart::startstop_enum::START && start_stop_value != uart::startstop_enum::STOP)
         {
-            std::cout << "Enter the start_stop value(0 or 1)" << std::endl;
-            std::cin >> tmp;
-            start_stop_value = atoi(tmp.c_str());
+            std::cout << "Enter the start_stop value(0(START) or 1(STOP))" << std::endl;
+            std::cin >> input_startstop_val;
+            if (input_startstop_val == 0)
+            {
+                start_stop_value = uart::startstop_enum::START;
+            }
+            else if (input_startstop_val == 1)
+            {
+                start_stop_value = uart::startstop_enum::STOP;
+            }
         }
         this->message_send();
     }
@@ -87,18 +106,22 @@ bool Cli::message_send()
     if (get_user_selection() == type::_throttle)
     {
         //int throttle_value; kullanarak mesaj oluştur ve gönder
+        create_throttle_msg(get_throttle_value());
     }
     else if (get_user_selection() == type::_break)
     {
         //bool break_value; kullanarak mesaj oluştur ve gönder
+        create_brake_msg(get_brake_value());
     }
     else if (get_user_selection() == type::_steer)
     {
         //double steering_angle; , std::string steering_tendency; kullanarak mesaj oluştur ve gönder
+        create_steer_msg(steering_dir, steering_angle);
     }
     else if (get_user_selection() == type::_start_stop)
     {
         //bool start_stop_value; kullanarak mesaj oluştur ve gönder
+        create_startstop_msg(start_stop_value);
     }
     else
     {
@@ -107,11 +130,11 @@ bool Cli::message_send()
 }
 
 type Cli::get_user_selection() { return user_selection; }
-double Cli::get_steering_angle() { return steering_angle; }
-std::string Cli::get_steering_tendency() { return steering_tendency; }
-int Cli::get_throttle_value() { return throttle_value; }
-bool Cli::get_brake_value() { return brake_value; }
-bool Cli::get_start_stop_value() { return start_stop_value; }
+uint16_t Cli::get_steering_angle() { return steering_angle; }
+uart::steering_enum Cli::get_steering_dir() { return steering_dir; }
+uint8_t Cli::get_throttle_value() { return throttle_value; }
+uart::brake_enum Cli::get_brake_value() { return brake_value; }
+uart::startstop_enum Cli::get_start_stop_value() { return start_stop_value; }
 
 int main()
 {

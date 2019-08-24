@@ -1,6 +1,6 @@
 #include <iostream>
 #include "UARTMessageBuilder.h"
-
+#include "process.pb.h"
 enum type
 {
     dflt,
@@ -17,24 +17,23 @@ public:
     void cli_start();
     bool message_send();
 
-    type get_selection();
-    double get_steering_angle();
-    std::string get_steering_tendency();
-    int get_throttle_value();
-    bool get_brake_value();
-    bool get_start_stop_value();
+    uint16_t get_steering_angle();
+    uart::steering_enum get_steering_dir();
+    uint8_t get_throttle_value();
+    uart::brake_enum get_brake_value();
+    uart::startstop_enum get_start_stop_value();
     type get_user_selection();
 
 private:
     //selection type
     type user_selection;
     //steering informations
-    double steering_angle;
-    std::string steering_tendency;
+    uint16_t steering_angle;
+    uart::steering_enum steering_dir;
     //throttle informations
-    int throttle_value;
+    uint8_t throttle_value;
     //brake informations
-    bool brake_value;
+    uart::brake_enum brake_value;
     //start_stop informations
-    bool start_stop_value;
+    uart::startstop_enum start_stop_value;
 };
