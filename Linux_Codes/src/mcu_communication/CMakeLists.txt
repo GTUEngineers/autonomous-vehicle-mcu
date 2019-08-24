@@ -9,6 +9,7 @@ SET(SOURCEFILES
         UARTMessageBuilder.cpp
         )
 
+
 SET(INCLUDEDIRS
         ${CMAKE_CURRENT_LIST_DIR} 
 	${CMAKE_BINARY_DIR}/src/ProtoFiles
@@ -23,7 +24,16 @@ add_executable(
         ${TARGET_NAME} 
         ${SOURCEFILES}
 )
+
+add_executable(
+	cli_test
+        cli.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../
+)
 target_include_directories(${TARGET_NAME} PUBLIC ${INCLUDEDIRS})
+target_include_directories(cli_test PUBLIC ${INCLUDEDIRS})
 #TARGET_LINK_LIBRARIES(${TARGET_NAME} "zmq" "ZmqCommunication" ${PROTOBUF_LIBRARY})
 #ADD_LIBRARY(${TARGET_NAME} STATIC ${SOURCEFILES})
 TARGET_LINK_LIBRARIES(${TARGET_NAME} "zmq" "ZmqCommunication" ${PROTOBUF_LIBRARY} "pthread")
+TARGET_LINK_LIBRARIES(cli_test "zmq" "ZmqCommunication" ${PROTOBUF_LIBRARY} "pthread")
+
