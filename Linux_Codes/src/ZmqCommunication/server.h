@@ -29,10 +29,10 @@ public:
     ~Server();
     //Tries to receive a message from given socket.
     //Returns true if it is successful, false otherwise.
-    bool recv(zmq::message_t& msg, long timeout = -1);
+    bool recv(std::string& msg, long timeout = -1);
     //Tries to send a message to given socket.
     //Returns true if it is successful, false otherwise.
-    bool send(const zmq::message_t& msg);
+    bool send(const std::string& msg);
 }; //end class
 } //namespace ZMQCommunication
 

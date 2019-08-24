@@ -24,7 +24,7 @@ Client::Client()
 Client::~Client()
 {
 }
-bool Client::reqrep(zmq::message_t& req, zmq::message_t& rep, long timeout)
+bool Client::reqrep(std::string& req, std::string& rep, long timeout)
 {
     //return value of function that is default false
     bool returnVal{ false };
@@ -36,7 +36,7 @@ bool Client::reqrep(zmq::message_t& req, zmq::message_t& rep, long timeout)
     if (pollout.revents & PollEventType::POLLOUT) {
 
         //sends message to given socket
-        if (m_socket->send(*(zmq::message_t*)&req)) {
+        if (m_socket->send(req.c_str), req.size) {
 
             //sets pollin as a ZMQ_POLLIN
             PollItem pollin = { this, PollEventType::POLLIN, PollEventType::NO };
@@ -44,8 +44,10 @@ bool Client::reqrep(zmq::message_t& req, zmq::message_t& rep, long timeout)
 
             //if poll operation is ZMQ_POLLIN
             if (pollin.revents & PollEventType::POLLIN) {
+                zmq::message_t rep_zmq;
                 //receives a message from given socket and assigns result as returnVal
-                returnVal = m_socket->recv((zmq::message_t*)&rep);
+                returnVal = m_socket->recv(&rep_zmq);
+                rep.assign((const char*)rep_zmq.data(), rep_zmq.size());
             }
         }
     }
