@@ -624,8 +624,8 @@ void StartDefaultTask (void const * argument)
     steer_init( );
 #endif
 #if DEBUG_LOG == 1
-    uart_message a;
-    sprintf(a.generic_msg.msg, "alperen");
+    uart_message_rep a;
+    sprintf(a.generic_msg.msg, "alperen1");
 #endif
     for (;;)
     {
@@ -638,7 +638,8 @@ void StartDefaultTask (void const * argument)
 #endif
 #if DEBUG_LOG
         _write(0, "Debug", 5);
-        if (communication_get_msg(&a) == OK)
+        uart_message_req b;
+        if (communication_get_msg(&b) == OK)
             communication_send_msg(&a);
         osDelay(1);
 #endif
