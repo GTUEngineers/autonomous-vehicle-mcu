@@ -1,14 +1,15 @@
-#include "cli.h"
+#include "CommandLineInterface.h"
 
 static bool flag = false;
 
 Cli::Cli()
+    : user_selection(type::dflt),
+      steering_angle(-1),
+      steering_dir(uart::steering_enum::LEFT),
+      throttle_value(-1),
+      start_stop_value(uart::startstop_enum::STOP),
+      cli_publisher(false)
 {
-    user_selection = type::dflt;
-    steering_angle = -1;
-    //steering_dir = "none";
-    throttle_value = -1;
-    //start_stop_value = "none";
 }
 
 void Cli::cli_start()
@@ -76,7 +77,7 @@ void Cli::cli_start()
     {
         uint8_t input_startstop_val;
         user_selection = type::_start_stop;
-        while (start_stop_value != uart::startstop_enum::START && start_stop_value != uart::startstop_enum::STOP)
+        while (input_startstop_val != 0 && input_startstop_val != 1)
         {
             std::cout << "Enter the start_stop value(0(START) or 1(STOP))" << std::endl;
             std::cin >> input_startstop_val;
@@ -106,7 +107,6 @@ bool Cli::message_send()
     if (get_user_selection() == type::_throttle)
     {
         //int throttle_value; kullanarak mesaj oluştur ve gönder
-        create_throttle_msg(get_throttle_value());
     }
     else if (get_user_selection() == type::_break)
     {
@@ -127,6 +127,11 @@ bool Cli::message_send()
     {
         std::cerr << "Type error" << std::endl;
     }
+}
+
+std::string Cli::to_string(uart_req req)
+{
+    return "";
 }
 
 type Cli::get_user_selection() { return user_selection; }

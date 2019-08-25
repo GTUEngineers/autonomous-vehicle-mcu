@@ -27,7 +27,7 @@ add_executable(
 
 add_executable(
 	cli_test
-        cli.cpp
+        CommandLineInterface.cpp
 	UARTMessageBuilder.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../
 )

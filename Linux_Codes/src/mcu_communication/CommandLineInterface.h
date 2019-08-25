@@ -4,6 +4,7 @@
 #include <iostream>
 #include "UARTMessageBuilder.h"
 #include "process.pb.h"
+#include "publisher.h"
 enum type
 {
     dflt,
@@ -39,6 +40,10 @@ private:
     uart::brake_enum brake_value;
     //start_stop informations
     uart::startstop_enum start_stop_value;
+    //publisher for command line interface
+    pubsub::Publisher cli_publisher;
+    //converts UART_req_un to string
+    std::string to_string(uart_req req);
 };
 
 #endif
