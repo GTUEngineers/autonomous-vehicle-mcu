@@ -92,10 +92,11 @@ void Cli::cli_start()
     }
     else if (msg_type == "3")
     {
+        std::string input_dir_val;
+        int input_steering_angle;
         user_selection = type::_steer;
-        while (get_steering_dir() != uart::steering_enum::LEFT && get_steering_dir() != uart::steering_enum::RIGHT)
-        {
-            std::string input_dir_val;
+        while (input_dir_val != "left" && input_dir_val != "right")
+        {   
             std::cout << "Enter the steering tendency(\"left\" or \"right\")" << std::endl;
             std::cin >> input_dir_val;
             if (input_dir_val == "left")
@@ -107,11 +108,11 @@ void Cli::cli_start()
                 steering_dir = uart::steering_enum::RIGHT;
             }
         }
-        while (steering_angle > 360 || steering_angle < 0)
+        while (input_steering_angle > 360 || input_steering_angle < 0)
         {
             std::cout << "Enter the steering angle(enter the range 0-360)" << std::endl;
-            std::cin >> steering_angle;
-            std::cout << steering_angle;
+            std::cin >> input_steering_angle;
+            steering_angle=input_steering_angle;
         }
         this->message_send();
     }
@@ -153,32 +154,33 @@ bool Cli::message_send()
     bool retVal=true;
     if (get_user_selection() == type::_throttle)
     {
-        //int throttle_value; kullanarak mesaj oluştur ve gönder
         cli_msg=this->to_string(create_throttle_msg(get_throttle_value()));
+        std::string message((char*)cli_msg.data(),cli_msg.size());
+        cli_logger->debug("Type:{} Topic:{} Message:{}", "Throttle",CLI_PUBLISH, message);
     }
     else if (get_user_selection() == type::_break)
     {
-        //bool break_value; kullanarak mesaj oluştur ve gönder
         cli_msg=this->to_string(create_brake_msg(get_brake_value()));
+        std::string message((char*)cli_msg.data(),cli_msg.size());
+        cli_logger->debug("Type:{} Topic:{} Message:{}", "Break",CLI_PUBLISH, message);
     }
     else if (get_user_selection() == type::_steer)
     {
-        //double steering_angle; , std::string steering_tendency; kullanarak mesaj oluştur ve gönder
         cli_msg=this->to_string(create_steer_msg(steering_dir, steering_angle));
+        std::string message((char*)cli_msg.data(),cli_msg.size());
+        cli_logger->debug("Type:{} Topic:{} Message:{}", "Steer",CLI_PUBLISH, message);
     }
     else if (get_user_selection() == type::_start_stop)
     {
-        //bool start_stop_value; kullanarak mesaj oluştur ve gönder
         cli_msg=this->to_string(create_startstop_msg(start_stop_value));
+        std::string message((char*)cli_msg.data(),cli_msg.size());
+        cli_logger->debug("Type:{} Topic:{} Message:{}", "Start_stop",CLI_PUBLISH, message);
     }
     else
     {
         cli_logger->warn("Type error in message_send();");
         retVal=false;
     }
-
-    std::string message((char*)cli_msg.data(),cli_msg.size());
-    cli_logger->debug("Topic:{} Message:{}", CLI_PUBLISH, message);
 
     return retVal;
 }

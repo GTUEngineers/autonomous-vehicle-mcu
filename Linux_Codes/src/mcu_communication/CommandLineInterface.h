@@ -53,7 +53,7 @@ private:
     pubsub::Publisher cli_publisher;
     //converts UART_req_un to string
     std::string to_string(uart_req req);
-    //logger
+    //smart pointer type logger
     std::shared_ptr<spdlog::logger> cli_logger;
 };
 
