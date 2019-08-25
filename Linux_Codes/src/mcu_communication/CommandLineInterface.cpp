@@ -1,5 +1,7 @@
 #include "CommandLineInterface.h"
 #include <unistd.h>
+#include <stdlib.h>
+#include <string>
 static bool flag = false;
 
 Cli::Cli()
@@ -26,12 +28,13 @@ void Cli::cli_start()
 
     if (msg_type == "1")
     {
+        std::string input_throttle_val;
         user_selection = type::_throttle;
         std::cout << "Enter the throttle value(int)" << std::endl;
-        std::cin >> throttle_value;
+        std::cin >> input_throttle_val;
+        throttle_value = (uint8_t)atoi(input_throttle_val.c_str());
         //TEST
-        std::cout << (uint8_t)throttle_value;
-        cli_msg = this->to_string(create_throttle_msg(throttle_value));
+        cli_msg = this->to_string(create_throttle_msg((uint8_t)throttle_value));
         std::cout << cli_msg;
     }
     else if (msg_type == "2")
