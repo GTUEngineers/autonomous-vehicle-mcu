@@ -34,8 +34,9 @@ void Cli::cli_start()
         std::cin >> input_throttle_val;
         throttle_value = (uint8_t)atoi(input_throttle_val.c_str());
         //TEST
-        cli_msg = this->to_string(create_throttle_msg((uint8_t)throttle_value));
-        std::cout << cli_msg;
+        //cli_msg = this->to_string(create_throttle_msg((uint8_t)throttle_value));
+        //std::cout << cli_msg;
+        this->message_send();
     }
     else if (msg_type == "2")
     {
@@ -106,7 +107,7 @@ void Cli::cli_start()
     }
     else
     {
-        std::cerr << "Type error" << std::endl;
+        std::cerr << "Type error in cli_start();" << std::endl;
     }
 }
 
@@ -115,35 +116,36 @@ bool Cli::message_send()
     if (get_user_selection() == type::_throttle)
     {
         //int throttle_value; kullanarak mesaj oluştur ve gönder
+        cli_msg=this->to_string(create_throttle_msg(get_throttle_value()));
     }
     else if (get_user_selection() == type::_break)
     {
         //bool break_value; kullanarak mesaj oluştur ve gönder
-        create_brake_msg(get_brake_value());
+        cli_msg=this->to_string(create_brake_msg(get_brake_value()));
     }
     else if (get_user_selection() == type::_steer)
     {
         //double steering_angle; , std::string steering_tendency; kullanarak mesaj oluştur ve gönder
-        create_steer_msg(steering_dir, steering_angle);
+        cli_msg=this->to_string(create_steer_msg(steering_dir, steering_angle));
     }
     else if (get_user_selection() == type::_start_stop)
     {
         //bool start_stop_value; kullanarak mesaj oluştur ve gönder
-        create_startstop_msg(start_stop_value);
+        cli_msg=this->to_string(create_startstop_msg(start_stop_value));
     }
     else
     {
-        std::cerr << "Type error" << std::endl;
+        std::cerr << "Type error in message_send();" << std::endl;
     }
 }
 
 void Cli::publish()
 {
-    while (true)
-    {
+    //while (true)
+    //{
         cli_publisher.publish(CLI_PUBLISH, cli_msg);
         sleep(1);
-    }
+    //}
 }
 
 std::string Cli::to_string(uart_req req_msg)
@@ -168,6 +170,6 @@ int main()
     while (!flag)
     {
         cli_process.cli_start();
-        //cli_process.publish();
+        cli_process.publish();
     }
 }
