@@ -69,7 +69,7 @@ void Cli::cli_start()
         //TEST
         //cli_msg = this->to_string(create_throttle_msg((uint8_t)throttle_value));
         //std::cout << cli_msg;
-        this->message_send();
+        this->create_message();
     }
     else if (msg_type == "2")
     {
@@ -88,7 +88,7 @@ void Cli::cli_start()
                 brake_value = uart::brake_enum::RELEASE;
             }
         }
-        this->message_send();
+        this->create_message();
     }
     else if (msg_type == "3")
     {
@@ -114,7 +114,7 @@ void Cli::cli_start()
             std::cin >> input_steering_angle;
             steering_angle=input_steering_angle;
         }
-        this->message_send();
+        this->create_message();
     }
     else if (msg_type == "4")
     {
@@ -133,7 +133,7 @@ void Cli::cli_start()
                 start_stop_value = uart::startstop_enum::STOP;
             }
         }
-        this->message_send();
+        this->create_message();
     }
     else if (msg_type == "5")
     {
@@ -147,9 +147,9 @@ void Cli::cli_start()
     
 }
 
-bool Cli::message_send()
+bool Cli::create_message()
 {
-    cli_logger->info("message sended.");
+    cli_logger->info("message created.");
 
     bool retVal=true;
     if (get_user_selection() == type::_throttle)
@@ -178,7 +178,7 @@ bool Cli::message_send()
     }
     else
     {
-        cli_logger->warn("Type error in message_send();");
+        cli_logger->warn("Type error in create_message();");
         retVal=false;
     }
 

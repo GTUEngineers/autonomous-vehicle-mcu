@@ -25,7 +25,7 @@ public:
     Cli(bool isServer);
     Cli(std::string ipNum, int portNumPub, bool isServer);
     void cli_start();
-    bool message_send();
+    bool create_message();
 
     uint16_t get_steering_angle();
     uart::steering_enum get_steering_dir();
