@@ -69,24 +69,25 @@ void Cli::cli_start()
         }
         while (steering_angle > 360 || steering_angle < 0)
         {
-            std::cout << "Enter the steering angle(enter the range 0.0-360.0)" << std::endl;
+            std::cout << "Enter the steering angle(enter the range 0-360)" << std::endl;
             std::cin >> steering_angle;
+            std::cout << steering_angle;
         }
         this->message_send();
     }
     else if (msg_type == "4")
     {
-        uint8_t input_startstop_val;
+        std::string input_startstop_val;
         user_selection = type::_start_stop;
-        while (input_startstop_val != 0 && input_startstop_val != 1)
+        while (input_startstop_val != "0" && input_startstop_val != "1")
         {
             std::cout << "Enter the start_stop value(0(START) or 1(STOP))" << std::endl;
             std::cin >> input_startstop_val;
-            if (input_startstop_val == 0)
+            if (input_startstop_val == "0")
             {
                 start_stop_value = uart::startstop_enum::START;
             }
-            else if (input_startstop_val == 1)
+            else if (input_startstop_val == "1")
             {
                 start_stop_value = uart::startstop_enum::STOP;
             }
@@ -157,6 +158,6 @@ int main()
     while (!flag)
     {
         cli_process.cli_start();
-        cli_process.publish();
+        //cli_process.publish();
     }
 }
