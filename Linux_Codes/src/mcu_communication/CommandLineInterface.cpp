@@ -1,9 +1,10 @@
 #include "CommandLineInterface.h"
-
+#include <unistd.h>
 static bool flag = false;
 
 Cli::Cli()
-    : user_selection(type::dflt),
+    : cli_msg(""),
+      user_selection(type::dflt),
       steering_angle(-1),
       steering_dir(uart::steering_enum::LEFT),
       throttle_value(-1),
@@ -129,6 +130,15 @@ bool Cli::message_send()
     }
 }
 
+void Cli::publish()
+{
+    while (true)
+    {
+        cli_publisher.publish(CLI_PUBLISH, cli_msg);
+        sleep(1);
+    }
+}
+
 std::string Cli::to_string(uart_req req)
 {
     return "";
@@ -143,9 +153,10 @@ uart::startstop_enum Cli::get_start_stop_value() { return start_stop_value; }
 
 int main()
 {
+    Cli cli_process;
     while (!flag)
     {
-        Cli deneme;
-        deneme.cli_start();
+        cli_process.cli_start();
+        cli_process.publish();
     }
 }

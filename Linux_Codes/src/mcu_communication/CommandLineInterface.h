@@ -5,6 +5,9 @@
 #include "UARTMessageBuilder.h"
 #include "process.pb.h"
 #include "publisher.h"
+
+#define CLI_PUBLISH ("cli")
+
 enum type
 {
     dflt,
@@ -27,8 +30,11 @@ public:
     uart::brake_enum get_brake_value();
     uart::startstop_enum get_start_stop_value();
     type get_user_selection();
+    void publish();
 
 private:
+    //message to send
+    std::string cli_msg;
     //selection type
     type user_selection;
     //steering informations
