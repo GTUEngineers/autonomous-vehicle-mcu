@@ -6,6 +6,7 @@
 #include "process.pb.h"
 #include "publisher.h"
 #include <thread>
+#include <spdlog/spdlog.h>
 
 #define CLI_PUBLISH ("cli")
 
@@ -52,6 +53,8 @@ private:
     pubsub::Publisher cli_publisher;
     //converts UART_req_un to string
     std::string to_string(uart_req req);
+    //logger
+    std::shared_ptr<spdlog::logger> cli_logger;
 };
 
 #endif

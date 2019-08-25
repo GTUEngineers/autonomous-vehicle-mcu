@@ -1,6 +1,8 @@
 #include "CommandLineInterface.h"
 #include <unistd.h>
 #include <stdlib.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/syslog_sink.h>
 #include <string>
 static bool flag = false;
 
@@ -8,38 +10,47 @@ Cli::Cli(bool isServer=false)
     : cli_msg(""),
       user_selection(type::dflt),
       steering_angle(-1),
-      steering_dir(uart::steering_enum::LEFT),
+      //steering_dir(uart::steering_enum::LEFT),
       throttle_value(-1),
       start_stop_value(uart::startstop_enum::STOP),
       cli_publisher(isServer)
 {
+    cli_logger = spdlog::stdout_color_mt("CommandLineInterface");
+    cli_logger->set_level(spdlog::level::debug);
+
     std::string addr,ipNum;
     ipNum="127.0.0.1";
     addr.resize(50);
     sprintf(&addr.front(), zmqbase::TCP_CONNECTION.c_str(), ipNum.c_str(), 5555);
     cli_publisher.connect(addr);
-    std::cout<<"publisher address is:"<<addr<<std::endl;
+    cli_logger->info("Publisher addr:{}", addr);
 }
 
 Cli::Cli(std::string ipNum, int portNumPub,bool isServer=false)
     : cli_msg(""),
       user_selection(type::dflt),
       steering_angle(-1),
-      steering_dir(uart::steering_enum::LEFT),
+      //steering_dir(uart::steering_enum::LEFT),
       throttle_value(-1),
       start_stop_value(uart::startstop_enum::STOP),
       cli_publisher(isServer)
 {
+    cli_logger = spdlog::stdout_color_mt("CommandLineInterface");
+    cli_logger->set_level(spdlog::level::debug);
+
     std::string addr;
     addr.resize(50);
     sprintf(&addr.front(), zmqbase::TCP_CONNECTION.c_str(), ipNum.c_str(), portNumPub);
     cli_publisher.connect(addr);
-    std::cout<<"publisher address is:"<<addr<<std::endl;
+    cli_logger->info("Publisher addr:{}", addr);
 }
 
 void Cli::cli_start()
 {
-    std::cout << "\nSelect the message type(1-5):" << std::endl;
+    std::cout<<""<<std::endl;
+    cli_logger->info("CLI started.");
+
+    std::cout << "Select the message type(1-5):" << std::endl;
     std::cout << "(1)-Throttle" << std::endl;
     std::cout << "(2)-Break" << std::endl;
     std::cout << "(3)-Steer" << std::endl;
@@ -125,16 +136,20 @@ void Cli::cli_start()
     }
     else if (msg_type == "5")
     {
+        cli_logger->info("Exited menu.");
         flag = true;
     }
     else
     {
-        std::cerr << "Type error in cli_start();" << std::endl;
+        cli_logger->warn("Type error in cli_start();");
     }
+    
 }
 
 bool Cli::message_send()
 {
+    cli_logger->info("message sended.");
+
     bool retVal=true;
     if (get_user_selection() == type::_throttle)
     {
@@ -158,19 +173,23 @@ bool Cli::message_send()
     }
     else
     {
-        std::cerr << "Type error in message_send();" << std::endl;
+        cli_logger->warn("Type error in message_send();");
         retVal=false;
     }
+
+    std::string message((char*)cli_msg.data(),cli_msg.size());
+    cli_logger->debug("Topic:{} Message:{}", CLI_PUBLISH, message);
+
     return retVal;
 }
 
 void Cli::publish()
 {
-    //while (true)
-    //{
-        cli_publisher.publish(CLI_PUBLISH, cli_msg);
-        sleep(1);
-    //}
+    cli_logger->info("message published.");
+
+    cli_publisher.publish(CLI_PUBLISH, cli_msg);
+    sleep(1);
+    
 }
 
 std::string Cli::to_string(uart_req req_msg)
@@ -204,6 +223,9 @@ int main()
     while (!flag)
     {
         cli_process.cli_start();
-        cli_process.publish();
+        if(!flag){
+             cli_process.publish();
+        }
+       
     }
 }
