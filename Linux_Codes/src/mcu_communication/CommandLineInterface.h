@@ -5,6 +5,7 @@
 #include "UARTMessageBuilder.h"
 #include "process.pb.h"
 #include "publisher.h"
+#include <thread>
 
 #define CLI_PUBLISH ("cli")
 

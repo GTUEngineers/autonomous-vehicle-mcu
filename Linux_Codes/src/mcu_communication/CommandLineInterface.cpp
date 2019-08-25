@@ -29,7 +29,10 @@ void Cli::cli_start()
         user_selection = type::_throttle;
         std::cout << "Enter the throttle value(int)" << std::endl;
         std::cin >> throttle_value;
-        this->message_send();
+        //TEST
+        std::cout << (uint8_t)throttle_value;
+        cli_msg = this->to_string(create_throttle_msg(throttle_value));
+        std::cout << cli_msg;
     }
     else if (msg_type == "2")
     {
@@ -140,9 +143,13 @@ void Cli::publish()
     }
 }
 
-std::string Cli::to_string(uart_req req)
+std::string Cli::to_string(uart_req req_msg)
 {
-    return "";
+    std::string ret_string;
+    ret_string += std::to_string(req_msg.req.msg[0]) + " ";
+    ret_string += std::to_string(req_msg.req.msg[1]) + " ";
+    ret_string += std::to_string(req_msg.req_uint16.msg);
+    return ret_string;
 }
 
 type Cli::get_user_selection() { return user_selection; }
