@@ -10,7 +10,7 @@ Cli::Cli(bool isServer=false)
     : cli_msg(""),
       user_selection(type::dflt),
       steering_angle(-1),
-      //steering_dir(uart::steering_enum::LEFT),
+      steering_dir(uart::steering_enum::LEFT),
       throttle_value(-1),
       start_stop_value(uart::startstop_enum::STOP),
       cli_publisher(isServer)
@@ -30,7 +30,7 @@ Cli::Cli(std::string ipNum, int portNumPub,bool isServer=false)
     : cli_msg(""),
       user_selection(type::dflt),
       steering_angle(-1),
-      //steering_dir(uart::steering_enum::LEFT),
+      steering_dir(uart::steering_enum::LEFT),
       throttle_value(-1),
       start_stop_value(uart::startstop_enum::STOP),
       cli_publisher(isServer)
