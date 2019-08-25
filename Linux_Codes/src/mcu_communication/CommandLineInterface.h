@@ -21,7 +21,8 @@ enum type
 class Cli
 {
 public:
-    Cli();
+    Cli(bool isServer);
+    Cli(std::string ipNum, int portNumPub, bool isServer);
     void cli_start();
     bool message_send();
 

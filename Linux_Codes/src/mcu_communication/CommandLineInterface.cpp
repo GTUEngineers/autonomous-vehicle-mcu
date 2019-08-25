@@ -4,15 +4,37 @@
 #include <string>
 static bool flag = false;
 
-Cli::Cli()
+Cli::Cli(bool isServer=false)
     : cli_msg(""),
       user_selection(type::dflt),
       steering_angle(-1),
       steering_dir(uart::steering_enum::LEFT),
       throttle_value(-1),
       start_stop_value(uart::startstop_enum::STOP),
-      cli_publisher(false)
+      cli_publisher(isServer)
 {
+    std::string addr,ipNum;
+    ipNum="127.0.0.1";
+    addr.resize(50);
+    sprintf(&addr.front(), zmqbase::TCP_CONNECTION.c_str(), ipNum.c_str(), 5555);
+    cli_publisher.connect(addr);
+    std::cout<<"publisher address is:"<<addr<<std::endl;
+}
+
+Cli::Cli(std::string ipNum, int portNumPub,bool isServer=false)
+    : cli_msg(""),
+      user_selection(type::dflt),
+      steering_angle(-1),
+      steering_dir(uart::steering_enum::LEFT),
+      throttle_value(-1),
+      start_stop_value(uart::startstop_enum::STOP),
+      cli_publisher(isServer)
+{
+    std::string addr;
+    addr.resize(50);
+    sprintf(&addr.front(), zmqbase::TCP_CONNECTION.c_str(), ipNum.c_str(), portNumPub);
+    cli_publisher.connect(addr);
+    std::cout<<"publisher address is:"<<addr<<std::endl;
 }
 
 void Cli::cli_start()
@@ -113,6 +135,7 @@ void Cli::cli_start()
 
 bool Cli::message_send()
 {
+    bool retVal=true;
     if (get_user_selection() == type::_throttle)
     {
         //int throttle_value; kullanarak mesaj oluştur ve gönder
@@ -136,7 +159,9 @@ bool Cli::message_send()
     else
     {
         std::cerr << "Type error in message_send();" << std::endl;
+        retVal=false;
     }
+    return retVal;
 }
 
 void Cli::publish()
@@ -166,7 +191,16 @@ uart::startstop_enum Cli::get_start_stop_value() { return start_stop_value; }
 
 int main()
 {
-    Cli cli_process;
+    std::string ipAddr,temp;
+    int portNum;
+    std::cout<<"Enter the ip address:"<<std::endl;
+    std::cin>>ipAddr;
+    std::cout<<"Enter the port number:"<<std::endl;
+    std::cin>>temp;
+    portNum=atoi(temp.c_str());
+    
+    Cli cli_process(ipAddr,portNum);
+    //Cli cli_process;
     while (!flag)
     {
         cli_process.cli_start();
