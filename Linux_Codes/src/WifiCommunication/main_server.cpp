@@ -90,7 +90,7 @@ int main()
     //binds to localhost with port 5556
     addr.clear();
     addr.resize(50);
-    sprintf(&addr.front(), zmqbase::PROC_CONNECTION.c_str(), "*", 5556);
+    sprintf(&addr.front(), zmqbase::PROC_CONNECTION.c_str(), "mcu_communication_su");
     publisher.connect(addr);
     m_logger->debug("Publisher Connected");
     while (true)
@@ -110,9 +110,9 @@ int main()
             server.send(reply);
 
             std::string pub = create_startstop_pub((uart::startstop_enum)start_or_stop);
-            //zmq::message_t pub_msg((char *)pub.data(), pub.size());
             //  publish recieved message
-            publisher.publish("startstoptopic" /*topic to mcu for start stop*/, pub);
+            m_logger->debug("Pub: {}", pub);
+            publisher.publish("startstoptopic", pub);
         }
     }
     return 0;

@@ -8,6 +8,7 @@
 
 /*------------------------------< Includes >----------------------------------*/
 #include "client.h"
+#include "subscriber.h"
 #include "station_car.pb.h"
 #include <iostream>
 #include <memory>
@@ -15,6 +16,7 @@
 #include <spdlog/sinks/syslog_sink.h>
 #include <spdlog/spdlog.h>
 #include <unistd.h>
+#include "process.pb.h"
 /*------------------------------< Defines >-----------------------------------*/
 
 /*------------------------------< Typedefs >----------------------------------*/
@@ -54,6 +56,22 @@ bool parse_startstop_rep(std::string &rep, ReturnCode &retCode)
     return false;
 }
 
+// temp function to listen published data from server
+bool parse_startstop_sub(std::string &rep, uart::startstop_enum &start_or_stop)
+{
+    uart::pub_sub pubsub;
+    if (pubsub.ParseFromArray(rep.data(), rep.size()))
+    {
+        if (pubsub.has_startstop())
+        {
+            start_or_stop = pubsub.startstop().cmd();
+            return true;
+        }
+    }
+    return false;
+}
+// temp end
+
 //Driver file for Client
 int main()
 {
@@ -70,6 +88,15 @@ int main()
     client->connect(addr);
     //a counter to counts requests and responses
 
+    // temp code to listen published data from server
+    pubsub::Subscriber subscriber(true);
+    addr.clear();
+    addr.resize(50);
+    sprintf(&addr.front(), zmqbase::PROC_CONNECTION.c_str(), "mcu_communication_su");
+    subscriber.connect(addr);
+    std::string top("startstoptopic");
+    subscriber.subscribe("");
+    // temp end
     while (true)
     {
         std::string request = create_startstop_req(wifi::startstop_enum::START);
@@ -92,6 +119,18 @@ int main()
             //reconnects
             client->connect(addr);
         }
+
+        // temp code to listen published data from server
+        uart::startstop_enum start_or_stop;
+        std::string sub_msg;
+        if (subscriber.recv(top, sub_msg, 100))
+        {
+            m_logger->debug("In");
+            parse_startstop_sub(sub_msg, start_or_stop);
+            m_logger->debug("SubRet: {}", start_or_stop);
+        }
+        // temp end
+
         sleep(1);
     }
 
