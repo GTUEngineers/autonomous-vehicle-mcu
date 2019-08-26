@@ -1,17 +1,29 @@
+
+/**
+ * \file        CommunicationMechanism.h
+ * \brief       A brief description one line.
+ *
+ * \author      Fatih Yakar, Tolga Reis
+ * \date        Aug 17, 2019
+ */
+
 #ifndef CLI_H_
 #define CLI_H_
 
-#include <iostream>
-#include "UARTMessageBuilder.h"
+/*------------------------------< Includes >----------------------------------*/
+#include "CommunicationMechanism.h"
 #include "process.pb.h"
 #include "publisher.h"
-#include <thread>
+#include <iostream>
 #include <spdlog/spdlog.h>
+#include <thread>
+/*------------------------------< Defines >-----------------------------------*/
 
-#define CLI_PUBLISH ("cli")
+/*------------------------------< Typedefs >----------------------------------*/
 
-enum type
-{
+/*------------------------------< Class  >------------------------------------*/
+
+enum type {
     dflt,
     _throttle,
     _break,
@@ -19,12 +31,13 @@ enum type
     _start_stop
 };
 
-class Cli
-{
+class Cli {
 public:
-    Cli(bool isServer);
+    Cli(bool isServer = false);
     Cli(std::string ipNum, int portNumPub, bool isServer);
     void cli_start();
+
+private:
     bool create_message();
 
     uint16_t get_steering_angle();
@@ -33,7 +46,6 @@ public:
     uart::brake_enum get_brake_value();
     uart::startstop_enum get_start_stop_value();
     type get_user_selection();
-    void publish();
 
 private:
     //message to send
@@ -51,8 +63,6 @@ private:
     uart::startstop_enum start_stop_value;
     //publisher for command line interface
     pubsub::Publisher cli_publisher;
-    //converts UART_req_un to string
-    std::string to_string(uart_req req);
     //smart pointer type logger
     std::shared_ptr<spdlog::logger> cli_logger;
 };

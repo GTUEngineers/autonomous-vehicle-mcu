@@ -13,12 +13,27 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/syslog_sink.h>
 
-
 /*------------------------------< Defines >-----------------------------------*/
 
 /*------------------------------< Typedefs >----------------------------------*/
 
 /*------------------------------< Namespaces >--------------------------------*/
+
+/*------------------------------< Functions >--------------------------------*/
+static bool parse_startstop_req(std::string& req, uart::startstop_enum& status);
+static bool parse_throttle_req(std::string& req, int& throttle);
+static bool parse_steering_req(std::string& req, uart::steering_enum& cmd, double& angle);
+static bool parse_break_req(std::string& req, bool& is_break);
+static bool parse_stateworking(std::string& req, uart::stateWorking_enum& cmd);
+static bool parse_hcsr4(std::string& req, double& distance);
+static bool parse_gps(std::string& req, float& latitude, float& longitude);
+static std::string create_statework(uart::stateWorking_enum cmd);
+static std::string create_location(float latitude, float longitude);
+static std::string create_hcsr4_dis(double distance);
+static std::string create_startstop_msg(uart::startstop_enum cmd);
+static std::string create_steering_msg(uart::steering_enum cmd, double angle);
+static std::string create_throttle_msg(uint32_t throttleValue);
+static std::string create_brake_msg(uart::brake_enum brakeValue);
 
 CommunicationMechanism::CommunicationMechanism()
     : zmq_listener_thread(&CommunicationMechanism::zmq_listener_task, this)
@@ -120,7 +135,7 @@ bool parse_throttle_req(std::string& req, int& throttle)
 
     return false;
 }
-bool parse_steer_req(std::string& req, uart::steering_enum& cmd, double& angle)
+bool parse_steering_req(std::string& req, uart::steering_enum& cmd, double& angle)
 {
 
     uart::pub_sub pubsub;
