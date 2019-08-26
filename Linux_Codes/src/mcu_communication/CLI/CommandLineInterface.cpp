@@ -89,6 +89,8 @@ void Cli::cli_start()
         throttle_value = (uint8_t)atoi(input_throttle_val.c_str());
 
         this->create_message();
+        cli_publisher.publish(THROTTLE_CONTROL_TOPIC, cli_msg);
+        cli_logger->info("Throttle message published.");
     } else if (msg_type == "2") {
         std::string input_brake_val;
         user_selection = type::_break;
@@ -102,7 +104,8 @@ void Cli::cli_start()
             }
         }
         this->create_message();
-        //TODO publish buralarda olmalı mesajı olustur ve gönder
+        cli_publisher.publish(BRAKE_CONTROL_TOPIC, cli_msg);
+        cli_logger->info("Brake message published.");
     } else if (msg_type == "3") {
         std::string input_dir_val;
         int input_steering_angle;
@@ -122,6 +125,8 @@ void Cli::cli_start()
             steering_angle = input_steering_angle;
         }
         this->create_message();
+        cli_publisher.publish(STEERING_CONTROL_TOPIC, cli_msg);
+        cli_logger->info("Steering message published.");
     } else if (msg_type == "4") {
         std::string input_startstop_val;
         user_selection = type::_start_stop;
@@ -135,6 +140,8 @@ void Cli::cli_start()
             }
         }
         this->create_message();
+        cli_publisher.publish(STARTSTOP_CONTROL_TOPIC, cli_msg);
+        cli_logger->info("Start_stop message published.");
     } else if (msg_type == "5") {
         cli_logger->info("Exited menu.");
         flag = true;
@@ -171,16 +178,6 @@ bool Cli::create_message()
 
     return retVal;
 }
-
-/*
-void Cli::publish()
-{
-    cli_logger->info("message published.");
-
-    cli_publisher.publish(CLI_PUBLISH, cli_msg);
-    sleep(1);
-}
- */
 
 type Cli::get_user_selection() { return user_selection; }
 uint16_t Cli::get_steering_angle() { return steering_angle; }
