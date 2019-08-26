@@ -7,8 +7,10 @@
  */
 
 /*------------------------------< Includes >----------------------------------*/
-#include "server.h"
+#include "CommunicationMechanism.h"
+#include "process.pb.h"
 #include "publisher.h"
+#include "server.h"
 #include "station_car.pb.h"
 #include <iostream>
 #include <spdlog/sinks/stdout_color_sinks.h>
@@ -16,13 +18,16 @@
 #include <spdlog/spdlog.h>
 #include <unistd.h>
 #include <zmq.hpp>
-#include "process.pb.h"
 /*------------------------------< Defines >-----------------------------------*/
 
 /*------------------------------< Typedefs >----------------------------------*/
 
 /*------------------------------< Namespaces >--------------------------------*/
-std::string create_startstop_rep(const ReturnCode &retcode)
+static std::string create_startstop_rep(const ReturnCode& retcode);
+static std::string create_startstop_pub(uart::startstop_enum start_or_stop);
+static bool parse_startstop_req(std::string& req, wifi::startstop_enum& start_or_stop);
+
+std::string create_startstop_rep(const ReturnCode& retcode)
 {
     std::string ret_str;
     wifi::seq_req_rep reqrep;
@@ -38,15 +43,12 @@ std::string create_startstop_rep(const ReturnCode &retcode)
     return ret_str;
 }
 
-bool parse_startstop_req(std::string &req, wifi::startstop_enum &start_or_stop)
+bool parse_startstop_req(std::string& req, wifi::startstop_enum& start_or_stop)
 {
     wifi::seq_req_rep reqrep;
-    if (reqrep.ParseFromArray(req.data(), req.size()))
-    {
-        if (reqrep.has_startstop_msg())
-        {
-            if (reqrep.startstop_msg().has_req())
-            {
+    if (reqrep.ParseFromArray(req.data(), req.size())) {
+        if (reqrep.has_startstop_msg()) {
+            if (reqrep.startstop_msg().has_req()) {
                 start_or_stop = reqrep.startstop_msg().req().startstop();
                 return true;
             }
@@ -73,9 +75,8 @@ std::string create_startstop_pub(uart::startstop_enum start_or_stop)
 //Driver file for Server
 int main()
 {
-
     seqreqrep::Server server;
-    std::shared_ptr<spdlog::logger> m_logger{spdlog::stdout_color_mt("WifiCommunication_Server")};
+    std::shared_ptr<spdlog::logger> m_logger{ spdlog::stdout_color_mt("WifiCommunication_Server") };
 
     m_logger->set_level(spdlog::level::debug);
     //binds to localhost with port 5555
@@ -93,13 +94,12 @@ int main()
     sprintf(&addr.front(), zmqbase::PROC_CONNECTION.c_str(), "mcu_communication_su");
     publisher.connect(addr);
     m_logger->debug("Publisher Connected");
-    while (true)
-    {
+    while (true) {
+
         std::string request;
         //Wait for next request from client
         //if receives a message
-        if (server.recv(request))
-        {
+        if (server.recv(request)) {
             //prints
             wifi::startstop_enum start_or_stop;
             parse_startstop_req(request, start_or_stop);
@@ -112,7 +112,7 @@ int main()
             std::string pub = create_startstop_pub((uart::startstop_enum)start_or_stop);
             //  publish recieved message
             m_logger->debug("Pub: {}", pub);
-            publisher.publish("startstoptopic", pub);
+            publisher.publish("a/a", pub);
         }
     }
     return 0;

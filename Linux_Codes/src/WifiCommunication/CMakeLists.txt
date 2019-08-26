@@ -15,7 +15,8 @@ add_executable(
 SET(INCLUDEDIRS
         ${CMAKE_CURRENT_LIST_DIR} 
 	${CMAKE_BINARY_DIR}/src/ProtoFiles
-	${CMAKE_SOURCE_DIR}/src/ZmqCommunication
+	${CMAKE_SOURCE_DIR}/src/mcu_communication
+        ${CMAKE_SOURCE_DIR}/src/ZmqCommunication
         ${CMAKE_CURRENT_BINARY_DIR}
         )
 
