@@ -16,7 +16,7 @@
 
 namespace zmqbase {
 const std::string TCP_CONNECTION = "tcp://%s:%d";
-const std::string PROC_CONNECTION = "inproc://%s";
+const std::string PROC_CONNECTION = "ipc:///tmp/%s";
 
 ComBase::ComBase(int s_type, bool is_server)
     : m_context(new zmq::context_t())
