@@ -2,7 +2,7 @@
  * \file        UARTCommunication.h
  * \brief       A brief description one line.
  *
- * \author      Sevval MEHDER
+ * \author      ahmet.alperen.bulut
  * \date        Aug 17, 2019
  */
 

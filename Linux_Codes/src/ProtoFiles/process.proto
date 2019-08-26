@@ -19,6 +19,11 @@ enum stateWorking_enum {
     ERROR    = 2 ;
 }
 
+enum brake_enum {
+    LOCK = 0;
+    RELEASE = 1;
+}
+
 message StartStop_req {
     startstop_enum cmd = 1;
   }
@@ -33,7 +38,7 @@ message Throttle_req  {
 }
 
 message Brake_req     {
-    bool brakeValue     = 1;       
+    brake_enum brakeValue     = 1;       
 }
 
 message StateWorking  {

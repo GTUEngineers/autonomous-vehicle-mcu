@@ -8,6 +8,9 @@
 
 /*------------------------------< Includes >----------------------------------*/
 #include "UARTCommunication.h"
+#include "UARTMessageBuilder.h"
+#include "process.pb.h"
+#include <cstring>
 #include <iostream>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/syslog_sink.h>
@@ -23,11 +26,13 @@ int main()
 {
     std::shared_ptr<spdlog::logger> logger{ spdlog::stdout_color_mt("mcu_communication_service") };
     logger->set_level(spdlog::level::debug);
-    UARTCommunication a("/dev/ttyUSB0");
+    /* UARTCommunication a("/dev/ttyUSB0");
     a.transmit("aa");
     std::string alp;
     a.receive(alp);
-    logger->info("{}", alp);
-
-    sleep(1);
+*/
+    float a = 0.52;
+    uart_rep rep;
+    memcpy(&rep.rep.msg[1], &a, sizeof(float));
+    logger->info("{}", rep.gps.latitude);
 }
