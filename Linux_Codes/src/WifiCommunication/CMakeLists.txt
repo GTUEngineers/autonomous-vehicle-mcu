@@ -1,5 +1,5 @@
 include(GNUInstallDirs)
-set(TARGET_NAME "ReqRep")
+set(TARGET_NAME "WifiCommunication")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PRJ_OUTPUT_PATH}/${TARGET_NAME})
 find_package(Protobuf REQUIRED)
 add_executable(
@@ -15,7 +15,8 @@ add_executable(
 SET(INCLUDEDIRS
         ${CMAKE_CURRENT_LIST_DIR} 
 	${CMAKE_BINARY_DIR}/src/ProtoFiles
-	${CMAKE_SOURCE_DIR}/src/ZmqCommunication
+	${CMAKE_SOURCE_DIR}/src/mcu_communication
+        ${CMAKE_SOURCE_DIR}/src/ZmqCommunication
         ${CMAKE_CURRENT_BINARY_DIR}
         )
 

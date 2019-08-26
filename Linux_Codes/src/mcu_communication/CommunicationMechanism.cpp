@@ -19,24 +19,29 @@
 
 /*------------------------------< Namespaces >--------------------------------*/
 
-CommunicationMechanism::CommunicationMechanism() : zmq_listener_thread(&CommunicationMechanism::zmq_listener_task, this),
-												   uart_periodic_req_thread(&CommunicationMechanism::uart_periodic_req_task, this),
-												   publisher(false),
-												   subscriber(false)
+CommunicationMechanism::CommunicationMechanism()
+	: zmq_listener_thread(&CommunicationMechanism::zmq_listener_task, this), uart_periodic_req_thread(&CommunicationMechanism::uart_periodic_req_task, this), publisher(true), subscriber(true)
 {
 	m_logger = spdlog::stdout_color_mt("CommunicationMechanism");
 	m_logger->set_level(spdlog::level::debug);
+	std::string addr;
+	addr.resize(50);
+
+	sprintf(&addr.front(), zmqbase::PROC_CONNECTION.c_str(), "mcu_communication_sub");
+	m_logger->info("Subscriber addr:{}", addr);
+	subscriber.connect(addr);
+	subscriber.subscribe("");
+	addr.clear();
+	addr.resize(50);
+	sprintf(&addr.front(), zmqbase::PROC_CONNECTION.c_str(), "mcu_communication_pub");
+
+	publisher.connect(addr);
+	m_logger->info("Publisher addr:{}", addr);
 	// Constructor code
 }
 
 void CommunicationMechanism::zmq_listener_task()
 {
-	subscriber.subscribe("");
-
-	std::string addr;
-	addr.resize(50);
-	// sprintf(&addr.front(), zmqbase::TCP_CONNECTION.c_str(), ipNum.c_str(), portNumSub);
-	m_logger->info("Subscriber addr:{}", addr);
 	std::string topic, msg;
 	uart::pub_sub pubsub;
 	while (true)
