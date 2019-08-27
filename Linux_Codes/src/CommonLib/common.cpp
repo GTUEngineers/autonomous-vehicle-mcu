@@ -16,6 +16,7 @@
 
 namespace Common{
     //**********WifiCommunication**********
+    //For client
     bool parse_startstop_sub(std::string& rep, uart::startstop_enum& start_or_stop)
     {
         uart::pub_sub pubsub;
@@ -57,7 +58,7 @@ namespace Common{
         reqrep.SerializeToString(&ret_str);
         return ret_str;
     }
-
+    //For server
     std::string create_startstop_rep(const ReturnCode& retcode)
     {
         std::string ret_str;
