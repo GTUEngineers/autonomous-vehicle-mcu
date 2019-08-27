@@ -8,10 +8,9 @@
 
 /*------------------------------< Includes >----------------------------------*/
 #include "CommunicationMechanism.h"
-#include "process.pb.h"
+#include "common.h"
 #include "publisher.h"
 #include "server.h"
-#include "station_car.pb.h"
 #include <iostream>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/syslog_sink.h>
@@ -23,54 +22,6 @@
 /*------------------------------< Typedefs >----------------------------------*/
 
 /*------------------------------< Namespaces >--------------------------------*/
-static std::string create_startstop_rep(const ReturnCode& retcode);
-static std::string create_startstop_pub(uart::startstop_enum start_or_stop);
-static bool parse_startstop_req(std::string& req, wifi::startstop_enum& start_or_stop);
-
-std::string create_startstop_rep(const ReturnCode& retcode)
-{
-    std::string ret_str;
-    wifi::seq_req_rep reqrep;
-    std::unique_ptr<wifi::StartStop> startstop(new wifi::StartStop);
-    std::unique_ptr<wifi::StartStop_rep> startstop_rep(new wifi::StartStop_rep);
-
-    startstop_rep->set_retval(retcode);
-
-    startstop->set_allocated_rep(startstop_rep.release());
-    reqrep.set_allocated_startstop_msg(startstop.release());
-
-    reqrep.SerializeToString(&ret_str);
-    return ret_str;
-}
-
-bool parse_startstop_req(std::string& req, wifi::startstop_enum& start_or_stop)
-{
-    wifi::seq_req_rep reqrep;
-    if (reqrep.ParseFromArray(req.data(), req.size())) {
-        if (reqrep.has_startstop_msg()) {
-            if (reqrep.startstop_msg().has_req()) {
-                start_or_stop = reqrep.startstop_msg().req().startstop();
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-std::string create_startstop_pub(uart::startstop_enum start_or_stop)
-{
-    std::string ret_str;
-    uart::pub_sub pubsub;
-
-    std::unique_ptr<uart::StartStop_req> startstop_req(new uart::StartStop_req);
-
-    startstop_req->set_cmd(start_or_stop);
-    pubsub.set_msg_type(uart::pub_sub_message::START_STOP_MSG);
-    pubsub.set_allocated_startstop(startstop_req.release());
-
-    pubsub.SerializeToString(&ret_str);
-    return ret_str;
-}
 
 //Driver file for Server
 int main()
@@ -102,14 +53,14 @@ int main()
         if (server.recv(request)) {
             //prints
             wifi::startstop_enum start_or_stop;
-            parse_startstop_req(request, start_or_stop);
+            Common::parse_startstop_req(request, start_or_stop);
             m_logger->debug("Clint Req: {}", start_or_stop);
-            std::string reply = create_startstop_rep(ReturnCode::OK);
+            std::string reply = Common::create_startstop_rep(ReturnCode::OK);
 
             //  Send reply back to client
             server.send(reply);
 
-            std::string pub = create_startstop_pub((uart::startstop_enum)start_or_stop);
+            std::string pub = Common::create_startstop_pub((uart::startstop_enum)start_or_stop);
             //  publish recieved message
             m_logger->debug("Pub: {}", pub);
             publisher.publish("a/a", pub);

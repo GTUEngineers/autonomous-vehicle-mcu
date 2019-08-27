@@ -22,7 +22,10 @@
 namespace Common{
     std::string create_startstop_req(wifi::startstop_enum start_or_stop);
     bool parse_startstop_rep(std::string& rep, ReturnCode& retCode);
-    bool parse_startstop_sub(std::string& rep, uart::startstop_enum& start_or_stop);    
+    bool parse_startstop_sub(std::string& rep, uart::startstop_enum& start_or_stop);
+    std::string create_startstop_rep(const ReturnCode& retcode);
+    std::string create_startstop_pub(uart::startstop_enum start_or_stop);
+    bool parse_startstop_req(std::string& req, wifi::startstop_enum& start_or_stop);    
 }
 
 #endif /* COMMON_H_ */

@@ -17,6 +17,7 @@ SET(INCLUDEDIRS
 	${CMAKE_BINARY_DIR}/src/ProtoFiles
 	${CMAKE_SOURCE_DIR}/src/mcu_communication
         ${CMAKE_SOURCE_DIR}/src/ZmqCommunication
+	${CMAKE_SOURCE_DIR}/src/CommonLib
         ${CMAKE_CURRENT_BINARY_DIR}
         )
 
@@ -27,6 +28,6 @@ target_include_directories(client_test PUBLIC
 target_include_directories(server_test PUBLIC
         ${INCLUDEDIRS})
 
-TARGET_LINK_LIBRARIES(client_test "zmq" "ZmqCommunication" ${PROTOBUF_LIBRARY})
-TARGET_LINK_LIBRARIES(server_test "zmq" "ZmqCommunication" ${PROTOBUF_LIBRARY})
+TARGET_LINK_LIBRARIES(client_test "CommonLib" "zmq" "ZmqCommunication" ${PROTOBUF_LIBRARY})
+TARGET_LINK_LIBRARIES(server_test "CommonLib" "zmq" "ZmqCommunication" ${PROTOBUF_LIBRARY})
 add_subdirectory(WIFI_CLI)
