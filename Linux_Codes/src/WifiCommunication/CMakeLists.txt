@@ -29,3 +29,4 @@ target_include_directories(server_test PUBLIC
 
 TARGET_LINK_LIBRARIES(client_test "zmq" "ZmqCommunication" ${PROTOBUF_LIBRARY})
 TARGET_LINK_LIBRARIES(server_test "zmq" "ZmqCommunication" ${PROTOBUF_LIBRARY})
+add_subdirectory(WIFI_CLI)
