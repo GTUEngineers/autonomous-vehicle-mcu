@@ -13,8 +13,9 @@
 #include "queue.h"
 
 /*------------------------------< Defines >-----------------------------------*/
-#define QUEUE_LENGTH    (10) // 10
-#define ITEM_SIZE       (sizeof(uart_message)) //9 byte
+#define QUEUE_LENGTH        (10) // 10
+#define REQ_ITEM_SIZE       (sizeof(uart_message_req)) //2 byte
+#define REP_ITEM_SIZE       (sizeof(uart_message_rep)) //9 byte
 #define QUEUE_SEND_TIMEOUT  (200)
 #define REQ_SIZE            (2)
 #define REP_SIZE            (9)
@@ -24,9 +25,9 @@
 
 /*------------------------------< Variables >---------------------------------*/
 static StaticQueue_t xStaticTransmitQueue;
-uint8_t ucTransmitQueueStorageArea[QUEUE_LENGTH * ITEM_SIZE];
+uint8_t ucTransmitQueueStorageArea[QUEUE_LENGTH * REP_ITEM_SIZE];
 static StaticQueue_t xStaticReceiveQueue;
-uint8_t ucReceiveQueueStorageArea[QUEUE_LENGTH * ITEM_SIZE];
+uint8_t ucReceiveQueueStorageArea[QUEUE_LENGTH * REQ_ITEM_SIZE];
 QueueHandle_t xQueue_transmit, xQueue_receive;
 
 osThreadId communicationTransmitTaskHandle;
@@ -43,10 +44,10 @@ static void communication_transmit_task (void const * argument);
 
 void communication_init ( )
 {
-    xQueue_transmit = xQueueCreateStatic(QUEUE_LENGTH, ITEM_SIZE, ucTransmitQueueStorageArea,
+    xQueue_transmit = xQueueCreateStatic(QUEUE_LENGTH, REP_ITEM_SIZE, ucTransmitQueueStorageArea,
             &xStaticTransmitQueue);
 
-    xQueue_receive = xQueueCreateStatic(QUEUE_LENGTH, ITEM_SIZE, ucReceiveQueueStorageArea,
+    xQueue_receive = xQueueCreateStatic(QUEUE_LENGTH, REQ_ITEM_SIZE, ucReceiveQueueStorageArea,
             &xStaticReceiveQueue);
 
     osThreadStaticDef(CommunicationReceiveTask, communication_receive_task, osPriorityNormal, 0,
@@ -61,14 +62,14 @@ void communication_init ( )
 
 void communication_receive_task (void const * argument)
 {
-    uart_message data;
+    uart_message_req data;
     if (xQueue_receive == NULL)
     {
         //error
     }
     while (1)
     {
-        if (uart_receive(data.generic_msg.msg, REQ_SIZE) == OK)
+        if (uart_receive(data.req.msg, REQ_SIZE) == OK)
         {
             xQueueSend(xQueue_receive, &data, QUEUE_SEND_TIMEOUT);
         }
@@ -82,7 +83,7 @@ void communication_receive_task (void const * argument)
 
 void communication_transmit_task (void const * argument)
 {
-    uart_message data;
+    uart_message_rep data;
     if (xQueue_transmit == NULL)
     {
         //TODO error
@@ -97,7 +98,7 @@ void communication_transmit_task (void const * argument)
     }
 }
 
-Return_Status communication_get_msg (uart_message* msg)
+Return_Status communication_get_msg (uart_message_req* msg)
 {
     if (xQueueReceive(xQueue_receive, msg, (TickType_t) portMAX_DELAY) == pdTRUE)
     {
@@ -112,7 +113,7 @@ uint8_t communication_get_queue_length ( )
     return uxQueueMessagesWaiting(xQueue_receive);
 }
 
-Return_Status communication_send_msg (uart_message* msg)
+Return_Status communication_send_msg (uart_message_rep* msg)
 {
     if(xQueueSend(xQueue_transmit, msg, QUEUE_SEND_TIMEOUT) == pdTRUE)
     {
