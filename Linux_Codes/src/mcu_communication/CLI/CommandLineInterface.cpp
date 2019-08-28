@@ -8,6 +8,7 @@
 
 /*------------------------------< Includes >----------------------------------*/
 #include "CommandLineInterface.h"
+#include "CommonLib.h"
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/syslog_sink.h>
 #include <stdlib.h>
@@ -21,10 +22,6 @@
 /*------------------------------< Namespaces >--------------------------------*/
 
 /*------------------------------< Functions >--------------------------------*/
-static std::string create_startstop_msg(uart::startstop_enum cmd);
-static std::string create_steering_msg(uart::steering_enum cmd, double angle);
-static std::string create_throttle_msg(uint32_t throttleValue);
-static std::string create_brake_msg(uart::brake_enum brakeValue);
 
 static bool flag = false;
 
@@ -156,19 +153,19 @@ bool Cli::create_message()
 
     bool retVal = true;
     if (get_user_selection() == type::_throttle) {
-        cli_msg = create_throttle_msg(get_throttle_value());
+        cli_msg = Common::pubsub::create_throttle_msg(get_throttle_value());
         std::string message((char*)cli_msg.data(), cli_msg.size());
         cli_logger->debug("Type:{} Topic:{} Message:{}", "Throttle", THROTTLE_CONTROL_TOPIC, message);
     } else if (get_user_selection() == type::_break) {
-        cli_msg = create_brake_msg(get_brake_value());
+        cli_msg = Common::pubsub::create_brake_msg(get_brake_value());
         std::string message((char*)cli_msg.data(), cli_msg.size());
         cli_logger->debug("Type:{} Topic:{} Message:{}", "Break", BRAKE_CONTROL_TOPIC, message);
     } else if (get_user_selection() == type::_steer) {
-        cli_msg = create_steering_msg(steering_dir, steering_angle);
+        cli_msg = Common::pubsub::create_steering_msg(steering_dir, steering_angle);
         std::string message((char*)cli_msg.data(), cli_msg.size());
         cli_logger->debug("Type:{} Topic:{} Message:{}", "Steer", STEERING_CONTROL_TOPIC, message);
     } else if (get_user_selection() == type::_start_stop) {
-        cli_msg = create_startstop_msg(start_stop_value);
+        cli_msg = Common::pubsub::create_startstop_msg(start_stop_value);
         std::string message((char*)cli_msg.data(), cli_msg.size());
         cli_logger->debug("Type:{} Topic:{} Message:{}", "Start_stop", STARTSTOP_CONTROL_TOPIC, message);
     } else {
@@ -201,61 +198,4 @@ int main()
     while (!flag) {
         cli_process.cli_start();
     }
-}
-
-std::string create_startstop_msg(uart::startstop_enum cmd)
-{
-    std::string ret_str;
-    uart::pub_sub pubsub;
-    std::unique_ptr<uart::StartStop_req> startstop(new uart::StartStop_req);
-
-    pubsub.set_msg_type(uart::pub_sub_message::START_STOP_MSG);
-    startstop->set_cmd(cmd);
-    pubsub.set_allocated_startstop(startstop.release());
-
-    pubsub.SerializeToString(&ret_str);
-    return ret_str;
-}
-
-std::string create_steering_msg(uart::steering_enum cmd, double angle)
-{
-    std::string ret_str;
-    uart::pub_sub pubsub;
-    std::unique_ptr<uart::Steering_req> steering(new uart::Steering_req);
-
-    pubsub.set_msg_type(uart::pub_sub_message::STEERING_MSG);
-    steering->set_cmd(cmd);
-    steering->set_angle(angle);
-    pubsub.set_allocated_steering(steering.release());
-
-    pubsub.SerializeToString(&ret_str);
-    return ret_str;
-}
-
-std::string create_throttle_msg(uint32_t throttleValue)
-{
-    std::string ret_str;
-    uart::pub_sub pubsub;
-    std::unique_ptr<uart::Throttle_req> throttle(new uart::Throttle_req);
-
-    pubsub.set_msg_type(uart::pub_sub_message::THROTTLE_MSG);
-    throttle->set_throttlevalue(throttleValue);
-    pubsub.set_allocated_throttle(throttle.release());
-
-    pubsub.SerializeToString(&ret_str);
-    return ret_str;
-}
-
-std::string create_brake_msg(uart::brake_enum brakeValue)
-{
-    std::string ret_str;
-    uart::pub_sub pubsub;
-    std::unique_ptr<uart::Brake_req> brake(new uart::Brake_req);
-
-    pubsub.set_msg_type(uart::pub_sub_message::BRAKE_MSG);
-    brake->set_brakevalue(brakeValue);
-    pubsub.set_allocated_brake(brake.release());
-
-    pubsub.SerializeToString(&ret_str);
-    return ret_str;
 }

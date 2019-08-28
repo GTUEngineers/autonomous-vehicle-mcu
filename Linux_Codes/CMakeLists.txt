@@ -12,7 +12,7 @@ IF (NOT EXISTS "${PRJ_OUTPUT_PATH}")
 ENDIF ()
 
 INCLUDE("${TOOLS_PATH}/global_definition.cmake")
-
+find_package(Protobuf REQUIRED)
 ################################################################################
 SET(OUTPUT_FILENAME ${PRJ_NAME})
 SET(TARGET_NAME "${OUTPUT_FILENAME}")
@@ -27,6 +27,7 @@ LIST(APPEND SUB_MODULES "src/HeartbeatMechanism")
 LIST(APPEND SUB_MODULES "src/ZmqCommunication")
 LIST(APPEND SUB_MODULES "src/WifiCommunication")
 LIST(APPEND SUB_MODULES "src/mcu_communication")
+LIST(APPEND SUB_MODULES "src/CommonLib")
 
 FOREACH (_prj ${SUB_MODULES})
     add_subdirectory(${_prj})
