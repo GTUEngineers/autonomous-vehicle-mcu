@@ -27,7 +27,7 @@
 int main()
 {
     seqreqrep::Server server;
-    std::shared_ptr<spdlog::logger> m_logger{ spdlog::stdout_color_mt("WifiCommunication_Server") };
+    std::shared_ptr<spdlog::logger> m_logger{spdlog::stdout_color_mt("WifiCommunication_Server")};
 
     m_logger->set_level(spdlog::level::debug);
     //binds to localhost with port 5555
@@ -45,12 +45,14 @@ int main()
     sprintf(&addr.front(), zmqbase::PROC_CONNECTION.c_str(), "mcu_communication_su");
     publisher.connect(addr);
     m_logger->debug("Publisher Connected");
-    while (true) {
+    while (true)
+    {
 
         std::string request;
         //Wait for next request from client
         //if receives a message
-        if (server.recv(request)) {
+        if (server.recv(request))
+        {
             //prints
             wifi::startstop_enum start_or_stop;
             Common::seqreqrep::parse_startstop_req(request, start_or_stop);
@@ -60,7 +62,7 @@ int main()
             //  Send reply back to client
             server.send(reply);
 
-            std::string pub = Common::pubsub::create_startstop((uart::startstop_enum)start_or_stop);
+            std::string pub = Common::pubsub::create_startstop_msg((uart::startstop_enum)start_or_stop);
             //  publish recieved message
             m_logger->debug("Pub: {}", pub);
             publisher.publish("a/a", pub);
