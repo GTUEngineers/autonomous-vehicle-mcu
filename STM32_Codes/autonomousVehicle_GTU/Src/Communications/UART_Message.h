@@ -14,7 +14,7 @@ extern "C" {     /* Make sure we have C-declarations in C++ programs */
 #endif
 
 /*------------------------------< Includes >----------------------------------*/
-
+#include <stdint.h>
 /*------------------------------< Defines >-----------------------------------*/
 
 /*------------------------------< Typedefs >----------------------------------*/
@@ -58,10 +58,11 @@ typedef union u_UART_message_req uart_message_req;
 /*------------------------------< Constants >---------------------------------*/
 
 /*------------------------------< Prototypes >--------------------------------*/
+void create_general_rep_msg(uart_message_rep* rep, const uint8_t val);
 void parse_steer_msg(const uart_message_req* req, uint8_t* dir, uint16_t* val);
 void parse_throttle_msg(const uart_message_req* req, uint8_t* val);
 void parse_brake_msg(const uart_message_req* req, uint8_t* val);
-void parse_startstop_rep_msg(const uart_message_req* msg, uint8_t* val);
+void parse_startstop_msg(const uart_message_req* msg, uint8_t* val);
 #if defined(__cplusplus)
 }                /* Make sure we have C-declarations in C++ programs */
 #endif

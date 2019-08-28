@@ -105,7 +105,7 @@ void parse_general_rep_msg(const uart_rep& msg, uint8_t& val)
     val = (bool)msg.rep.msg[1];
 }
 
-void parse_startstop_rep_msg(const uart_rep& msg, uint8_t& val)
+void parse_startstop_msg(const uart_req& msg, uint8_t& val)
 {
     val = (bool)msg.rep.msg[1];
 }

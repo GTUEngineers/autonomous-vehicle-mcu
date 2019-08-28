@@ -30,8 +30,10 @@
 #include "Sensors/hcsr04.h"
 #include "Communications/Communication_Mechanism.h"
 #include "Communications/UART_Communication.h"
+#include "Communications/UART_Message.h"
 #include "autonomousVehicle_conf.h"
 #include "stm32f4xx.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -623,10 +625,7 @@ void StartDefaultTask (void const * argument)
 #if DEBUG_LOG == 0
     steer_init( );
 #endif
-#if DEBUG_LOG == 1
-    uart_message_rep a;
-    sprintf(a.generic_msg.msg, "alperen1");
-#endif
+
     for (;;)
     {
 #if DEBUG_LOG == 0
@@ -640,7 +639,14 @@ void StartDefaultTask (void const * argument)
         _write(0, "Debug", 5);
         uart_message_req b;
         if (communication_get_msg(&b) == OK)
+        {
+            uart_message_rep a;
+            uint16_t val;
+            uint8_t val2;
+            parse_steer_msg(&b, &val2, &val);
+            sprintf(a.generic_msg.msg, "%d %d",val, val2);
             communication_send_msg(&a);
+        }
         osDelay(1);
 #endif
 

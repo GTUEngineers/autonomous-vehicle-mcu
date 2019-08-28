@@ -64,5 +64,5 @@ uart_rep parse_gps_msg(const uart_rep& msg);
 void parse_steer_msg(const uart_req& req, uint8_t& dir, uint16_t& val);
 void parse_throttle_msg(const uart_req& req, uint8_t& val);
 void parse_brake_msg(const uart_req& req, uint8_t& val);
-void parse_startstop_rep_msg(const uart_rep& msg, uint8_t& val);
+void parse_startstop_msg(const uart_req& msg, uint8_t& val);
 #endif /* UART_MESSAGEBUILDER_H_ */
