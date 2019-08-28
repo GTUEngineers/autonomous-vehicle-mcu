@@ -1,6 +1,5 @@
 set(TARGET_NAME "WifiCommunication_CLI")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PRJ_OUTPUT_PATH}/${TARGET_NAME})
-find_package(Protobuf REQUIRED)
 
 add_executable(
         wifi_cli_test

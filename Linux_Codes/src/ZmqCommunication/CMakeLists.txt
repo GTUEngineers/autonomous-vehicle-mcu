@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 set(TARGET_NAME "ZmqCommunication")
 PROJECT(${TARGET_NAME} CXX C ASM)
-find_package(Protobuf REQUIRED)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PRJ_OUTPUT_PATH}/${TARGET_NAME}/)
 include_directories(${CMAKE_BINARY_DIR}/include ${CMAKE_CURRENT_BINARY_DIR})

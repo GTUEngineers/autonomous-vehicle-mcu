@@ -7,8 +7,8 @@
  */
 
 /*------------------------------< Includes >----------------------------------*/
+#include "CommonLib.h"
 #include "client.h"
-#include "common.h"
 #include "subscriber.h"
 #include <iostream>
 #include <memory>
@@ -48,13 +48,13 @@ int main()
     subscriber.subscribe("");
     // temp end
     while (true) {
-        std::string request = Common::create_startstop_req(wifi::startstop_enum::START);
+        std::string request = Common::seqreqrep::create_startstop_req(wifi::startstop_enum::START);
 
         std::string reply;
         //if connection is not broken
         if (client->reqrep(request, reply, 3)) {
             ReturnCode retCode;
-            Common::parse_startstop_rep(reply, retCode);
+            Common::seqreqrep::parse_startstop_rep(reply, retCode);
 
             m_logger->debug("Server Rep: {}", retCode);
         }

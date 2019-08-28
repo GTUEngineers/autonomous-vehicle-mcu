@@ -1,7 +1,5 @@
 set(TARGET_NAME "MCU_Communication_CLI")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PRJ_OUTPUT_PATH}/${TARGET_NAME})
-find_package(Protobuf REQUIRED)
-
 
 SET(SOURCEFILES
 	CommandLineInterface.cpp

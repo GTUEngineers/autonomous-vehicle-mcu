@@ -12,7 +12,7 @@ IF (NOT EXISTS "${PRJ_OUTPUT_PATH}")
 ENDIF ()
 
 INCLUDE("${TOOLS_PATH}/global_definition.cmake")
-
+find_package(Protobuf REQUIRED)
 ################################################################################
 SET(OUTPUT_FILENAME ${PRJ_NAME})
 SET(TARGET_NAME "${OUTPUT_FILENAME}")

@@ -7,8 +7,8 @@
  */
 
 /*------------------------------< Includes >----------------------------------*/
+#include "CommonLib.h"
 #include "CommunicationMechanism.h"
-#include "common.h"
 #include "publisher.h"
 #include "server.h"
 #include <iostream>
@@ -53,14 +53,14 @@ int main()
         if (server.recv(request)) {
             //prints
             wifi::startstop_enum start_or_stop;
-            Common::parse_startstop_req(request, start_or_stop);
+            Common::seqreqrep::parse_startstop_req(request, start_or_stop);
             m_logger->debug("Clint Req: {}", start_or_stop);
-            std::string reply = Common::create_startstop_rep(ReturnCode::OK);
+            std::string reply = Common::seqreqrep::create_startstop_rep(ReturnCode::OK);
 
             //  Send reply back to client
             server.send(reply);
 
-            std::string pub = Common::create_startstop_pub((uart::startstop_enum)start_or_stop);
+            std::string pub = Common::pubsub::create_startstop((uart::startstop_enum)start_or_stop);
             //  publish recieved message
             m_logger->debug("Pub: {}", pub);
             publisher.publish("a/a", pub);

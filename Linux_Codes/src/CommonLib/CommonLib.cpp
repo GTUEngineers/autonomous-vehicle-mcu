@@ -7,28 +7,16 @@
  */
 
 /*------------------------------< Includes >----------------------------------*/
-#include "common.h"
+#include "CommonLib.h"
 /*------------------------------< Defines >-----------------------------------*/
 
 /*------------------------------< Typedefs >----------------------------------*/
 
 /*------------------------------< Namespaces >--------------------------------*/
 
-namespace Common{
-    //**********WifiCommunication**********
-    //For client
-    bool parse_startstop_sub(std::string& rep, uart::startstop_enum& start_or_stop)
-    {
-        uart::pub_sub pubsub;
-        if (pubsub.ParseFromArray(rep.data(), rep.size())) {
-            if (pubsub.has_startstop()) {
-                start_or_stop = pubsub.startstop().cmd();
-                return true;
-            }
-        }
-        return false;
-    }
+namespace Common {
 
+namespace seqreqrep { //**********WifiCommunication**********
     bool parse_startstop_rep(std::string& rep, ReturnCode& retCode)
     {
         wifi::seq_req_rep reqrep;
@@ -43,22 +31,7 @@ namespace Common{
         return false;
     }
 
-    std::string create_startstop_req(wifi::startstop_enum start_or_stop)
-    {
-        std::string ret_str;
-        wifi::seq_req_rep reqrep;
-        std::unique_ptr<wifi::StartStop> startstop(new wifi::StartStop);
-        std::unique_ptr<wifi::StartStop_req> startstop_req(new wifi::StartStop_req);
-
-        startstop_req->set_startstop(start_or_stop);
-
-        startstop->set_allocated_req(startstop_req.release());
-        reqrep.set_allocated_startstop_msg(startstop.release());
-
-        reqrep.SerializeToString(&ret_str);
-        return ret_str;
-    }
-    //For server
+    // For server
     std::string create_startstop_rep(const ReturnCode& retcode)
     {
         std::string ret_str;
@@ -69,6 +42,22 @@ namespace Common{
         startstop_rep->set_retval(retcode);
 
         startstop->set_allocated_rep(startstop_rep.release());
+        reqrep.set_allocated_startstop_msg(startstop.release());
+
+        reqrep.SerializeToString(&ret_str);
+        return ret_str;
+    }
+
+    std::string create_startstop_req(wifi::startstop_enum start_or_stop)
+    {
+        std::string ret_str;
+        wifi::seq_req_rep reqrep;
+        std::unique_ptr<wifi::StartStop> startstop(new wifi::StartStop);
+        std::unique_ptr<wifi::StartStop_req> startstop_req(new wifi::StartStop_req);
+
+        startstop_req->set_startstop(start_or_stop);
+
+        startstop->set_allocated_req(startstop_req.release());
         reqrep.set_allocated_startstop_msg(startstop.release());
 
         reqrep.SerializeToString(&ret_str);
@@ -88,8 +77,23 @@ namespace Common{
         }
         return false;
     }
+}
+namespace pubsub {
+    // For client
+    bool parse_startstop(std::string& rep, uart::startstop_enum& start_or_stop)
+    {
+        uart::pub_sub pubsub;
+        if (pubsub.ParseFromArray(rep.data(), rep.size())) {
+            if (pubsub.has_startstop()) {
+                start_or_stop = pubsub.startstop().cmd();
+                return true;
+            }
+        }
+        return false;
+    }
 
-    std::string create_startstop_pub(uart::startstop_enum start_or_stop)
+    std::string
+    create_startstop(uart::startstop_enum start_or_stop)
     {
         std::string ret_str;
         uart::pub_sub pubsub;
@@ -103,5 +107,6 @@ namespace Common{
         pubsub.SerializeToString(&ret_str);
         return ret_str;
     }
-    //******************************
+}
+//******************************
 }

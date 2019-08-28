@@ -11,8 +11,8 @@
 #define WIFI_CLI_H_
 
 /*------------------------------< Includes >----------------------------------*/
+#include "CommonLib.h"
 #include "client.h"
-#include "common.h"
 #include "subscriber.h"
 #include <iostream>
 #include <memory>
@@ -33,12 +33,14 @@ public:
     Wifi_Cli();
     Wifi_Cli(std::string ipNumb, int portNumPub);
     void cli_start();
+
 private:
     void main_menu();
     void sub_menu();
     bool create_message();
     wifi::startstop_enum get_start_stop_value();
     type get_user_selection();
+
 private:
     //message to send
     std::string cli_msg;
