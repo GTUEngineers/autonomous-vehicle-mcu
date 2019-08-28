@@ -19,37 +19,36 @@
 /*------------------------------< Variables >----------------------------------*/
 std::shared_ptr<spdlog::logger> m_logger;
 /*------------------------------< Namespaces >--------------------------------*/
-void reverse(uart_req& req);
+void reverse(uart_req &req);
 
 void init_uartmessagebuilder_logger()
 {
     m_logger = spdlog::stdout_color_mt("UARTCommunication");
 }
-void reverse(uart_req& req)
+void reverse(uart_req &req)
 {
     uint8_t l = req.req.msg[1];
     req.req.msg[1] = req.req.msg[0];
     req.req.msg[0] = l;
 }
 
-uart_req create_steer_msg(const uart::steering_enum dir, const uint16_t& val)
+uart_req create_steer_msg(const uart::steering_enum dir, const uint16_t &val)
 {
     uart_req req;
-    req.req_uint16.msg = val;
+    memcpy(&req.req_uint16, &val, sizeof(uint16_t));
     reverse(req);
-    uint8_t header = (uint8_t)dir;
-    req.req.msg[0] = ((req.req.msg[0] & 0b00000011) | (header << 2) | 0b00010000);
+    uint8_t header = 0b00010000 | ((uint8_t)dir << 2);
+    req.req.msg[0] = (req.req.msg[0] & 0b00000011) | header;
     return req;
 }
 
-uart_req create_throttle_msg(const uint8_t& val)
+uart_req create_throttle_msg(const uint8_t &val)
 {
     uart_req req;
     memcpy(&req.req.msg[1], &val, sizeof(uint8_t));
     req.req.msg[0] = 0b00100000;
     return req;
 }
-
 uart_req create_brake_msg(const uart::brake_enum val)
 {
     uart_req req;
@@ -86,51 +85,16 @@ uart_req create_gps_msg()
     return req;
 }
 
-uart::stateWorking_enum parse_state_msg(const uart_rep& msg)
-{
-    return (uart::stateWorking_enum)msg.rep.msg[1];
-}
-
-std::string parse_hcsr4_msg(const uart_rep& msg)
+uart::stateWorking_enum parse_state_msg(const uart_rep &msg)
 {
 }
-
-uart_rep parse_gps_msg(const uart_rep& msg)
+std::string parse_hcsr4_msg(const uart_rep &msg)
 {
-    return msg;
 }
-
-void parse_general_rep_msg(const uart_rep& msg, uint8_t& val)
+gps parse_gps_msg(const uart_rep &msg)
 {
-    val = (bool)msg.rep.msg[1];
 }
-
-void parse_startstop_msg(const uart_req& msg, uint8_t& val)
+bool parse_general_rep_msg(const uart_rep &msg)
 {
-    val = (bool)msg.rep.msg[1];
-}
-
-void parse_steer_msg(const uart_req& req, uint8_t& dir, uint16_t& val)
-{
-#define DIR_MASK (0b000000100)
-#define ANGLE_MASK (0b00000011111111)
-    uint16_t temp = req.req.msg[0];
-    dir = (temp & DIR_MASK) >> 2;
-    uart_req reqm = req;
-    reverse(reqm);
-    val = reqm.req_uint16.msg & ANGLE_MASK;
-#undef DIR_MASK
-#undef ANGLE_MASK
-}
-
-void parse_throttle_msg(const uart_req& req, uint8_t& val)
-{
-    val = req.req.msg[1];
-}
-
-void parse_brake_msg(const uart_req& req, uint8_t& val)
-{
-#define BRAKE_MASK (0b00000001)
-    val = (req.req.msg[1] & BRAKE_MASK);
-#undef BRAKE_MASK
+    return (bool)msg.rep_uint16.msg;
 }

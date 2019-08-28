@@ -13,16 +13,19 @@
 #include "UARTCommunication.h"
 #include "publisher.h"
 #include "subscriber.h"
-#include <thread>
 #include <spdlog/spdlog.h>
-/*------------------------------< Defines >-----------------------------------*/
+#include <thread>
 
+/*------------------------------< Defines >-----------------------------------*/
+#define STEERING_CONTROL_TOPIC ("control/steering")
+#define BRAKE_CONTROL_TOPIC ("control/brake")
+#define THROTTLE_CONTROL_TOPIC ("control/throttle")
+#define STARTSTOP_CONTROL_TOPIC ("control/startstop")
 /*------------------------------< Typedefs >----------------------------------*/
 
 /*------------------------------< Class  >------------------------------------*/
 
-class CommunicationMechanism
-{
+class CommunicationMechanism {
 public:
     CommunicationMechanism(); /* Constructor */
     ~CommunicationMechanism();

@@ -31,8 +31,10 @@ int main()
     std::string alp;
     a.receive(alp);
 */
-    float a = 0.52;
-    uart_rep rep;
-    memcpy(&rep.rep.msg[1], &a, sizeof(float));
-    logger->info("{}", rep.gps.latitude);
+    //0001 0011 0000 0010
+    init_uartmessagebuilder_logger();
+    uint16_t temp;
+    logger->info("{}", create_gps_msg().req_uint16.msg);
+
+    sleep(1);
 }
