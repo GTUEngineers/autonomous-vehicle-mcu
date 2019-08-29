@@ -13,12 +13,15 @@
 #include "process.pb.h"
 #include <string>
 /*------------------------------< Defines >-----------------------------------*/
+#define UART_REQ_SIZE (2)
+#define UART_REP_SIZE (9)
+
 struct UART_req {
     uint8_t msg[2];
-};
+} __attribute__((packed, aligned(1)));
 struct UART_req_uint16 {
     uint16_t msg;
-};
+} __attribute__((packed, aligned(1)));
 
 union UART_req_un {
     struct UART_req req;
@@ -26,10 +29,10 @@ union UART_req_un {
 };
 struct UART_rep {
     uint8_t msg[9];
-};
+} __attribute__((packed, aligned(1)));
 struct UART_rep_uint16 {
     uint16_t msg;
-};
+} __attribute__((packed, aligned(1)));
 union UART_rep_un {
     struct UART_rep rep;
     struct UART_rep_uint16 rep_uint16;
@@ -37,12 +40,14 @@ union UART_rep_un {
 struct GPS {
     float latitude;
     float longitude;
-};
+} __attribute__((packed, aligned(1)));
 /*------------------------------< Typedefs >----------------------------------*/
 typedef union UART_req_un uart_req;
 typedef union UART_rep_un uart_rep;
 typedef struct GPS gps;
+
 /*------------------------------< Class  >------------------------------------*/
+namespace uart_msg {
 void init_uartmessagebuilder_logger();
 uart_req create_steer_msg(const uart::steering_enum dir, const uint16_t& val);
 uart_req create_throttle_msg(const uint8_t& val);
@@ -55,5 +60,5 @@ bool parse_general_rep_msg(const uart_rep& msg);
 uart::stateWorking_enum parse_state_msg(const uart_rep& msg);
 std::string parse_hcsr4_msg(const uart_rep& msg);
 gps parse_gps_msg(const uart_rep& msg);
-
+}
 #endif /* UART_MESSAGEBUILDER_H_ */

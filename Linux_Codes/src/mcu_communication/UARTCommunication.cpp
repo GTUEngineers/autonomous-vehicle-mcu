@@ -112,10 +112,9 @@ void UARTCommunication::close_fd()
     }
 }
 
-bool UARTCommunication::receive(std::string& message)
+bool UARTCommunication::receive(uart_rep& message)
 {
-    message.resize(9);
-    ssize_t n = read(m_fd, &message.front(), message.size());
+    ssize_t n = read(m_fd, &message.rep.msg, UART_REP_SIZE);
     // Error Handling
     if (n < 0) {
         // Read was unsuccessful
@@ -126,9 +125,9 @@ bool UARTCommunication::receive(std::string& message)
     return true;
 }
 
-bool UARTCommunication::transmit(const std::string& message)
+bool UARTCommunication::transmit(const uart_req& message)
 {
-    int writeResult = write(m_fd, message.c_str(), message.size());
+    int writeResult = write(m_fd, message.req.msg, UART_REQ_SIZE);
 
     // Check status
     if (writeResult == -1) {

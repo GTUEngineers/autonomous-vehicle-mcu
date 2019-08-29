@@ -4,6 +4,8 @@
  *
  * \author      Sevval MEHDER
  * \date        Aug 17, 2019
+ * \author      Tolga REİS
+ * \update      Aug 29, 2019
  */
 
 #ifndef COM_MECHANISM_H
@@ -25,7 +27,8 @@
 
 /*------------------------------< Class  >------------------------------------*/
 
-class CommunicationMechanism {
+class CommunicationMechanism
+{
 public:
     CommunicationMechanism(); /* Constructor */
     ~CommunicationMechanism();
@@ -35,6 +38,7 @@ private:
     void zmq_listener_task();
     void uart_periodic_req_task();
 
+    UARTCommunication uartcom;
     std::thread zmq_listener_thread;
     std::thread uart_periodic_req_thread;
     std::shared_ptr<spdlog::logger> m_logger;

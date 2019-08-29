@@ -32,9 +32,9 @@ int main()
     a.receive(alp);
 */
     //0001 0011 0000 0010
-    init_uartmessagebuilder_logger();
+    uart_msg::init_uartmessagebuilder_logger();
     uint16_t temp;
-    logger->info("{}", create_gps_msg().req_uint16.msg);
+    //  logger->info("{}", create_gps_msg().req_uint16.msg);
 
     sleep(1);
 }

@@ -112,7 +112,7 @@ namespace pubsub {
         uart::pub_sub pubsub;
         if (pubsub.ParseFromArray(rep_or_req.data(), rep_or_req.size())) {
             if (pubsub.has_steering()) {
-                left_or_right = pubsub.steering().cmd();
+                left_or_right = pubsub.steering().dir();
                 angle = pubsub.steering().angle();
                 return true;
             }
@@ -239,7 +239,7 @@ namespace pubsub {
         std::unique_ptr<uart::Steering_req> steering(new uart::Steering_req);
 
         pubsub.set_msg_type(uart::pub_sub_message::STEERING_MSG);
-        steering->set_cmd(left_or_right);
+        steering->set_dir(left_or_right);
         steering->set_angle(angle);
         pubsub.set_allocated_steering(steering.release());
 

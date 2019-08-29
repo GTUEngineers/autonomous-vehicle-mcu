@@ -2,8 +2,8 @@
  * \file        common.h
  * \brief       A brief description one line.
  *
- * \author      fatihyakar
- * \date        Aug 27, 2019
+ * \author      Fatih Selim YAKAR, Tolga REİS
+ * \date        Aug 29, 2019
  */
 
 #ifndef COMMON_H_
