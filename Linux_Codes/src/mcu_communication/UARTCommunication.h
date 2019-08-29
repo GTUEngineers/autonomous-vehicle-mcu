@@ -10,6 +10,7 @@
 #define UART_COMMUNICATION_H_
 
 /*------------------------------< Includes >----------------------------------*/
+#include "UARTMessageBuilder.h"
 #include <memory>
 #include <spdlog/spdlog.h>
 #include <string>
@@ -19,16 +20,15 @@
 
 /*------------------------------< Class  >------------------------------------*/
 
-class UARTCommunication
-{
+class UARTCommunication {
 public:
-    UARTCommunication(const std::string &serial_port); /* Constructor */
+    UARTCommunication(const std::string& serial_port); /* Constructor */
     ~UARTCommunication();
-    bool receive(std::string &message);
-    bool transmit(const std::string &message);
+    bool receive(uart_rep& message);
+    bool transmit(const uart_req& message);
     bool set_timeout(int timeout);
     void close_fd();
-    void set_serial_port(const std::string &serial_port);
+    void set_serial_port(const std::string& serial_port);
 
 private:
     bool configure_termios();

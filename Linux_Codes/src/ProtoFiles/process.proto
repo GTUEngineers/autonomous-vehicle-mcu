@@ -29,7 +29,7 @@ message StartStop_req {
   }
 
 message Steering_req  {
-    steering_enum cmd = 1;
+    steering_enum dir = 1;
     double angle      = 2;
 }
 
