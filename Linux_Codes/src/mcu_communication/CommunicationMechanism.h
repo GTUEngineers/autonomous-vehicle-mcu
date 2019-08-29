@@ -15,6 +15,7 @@
 #include "UARTCommunication.h"
 #include "publisher.h"
 #include "subscriber.h"
+#include <mutex>
 #include <spdlog/spdlog.h>
 #include <thread>
 
@@ -27,8 +28,7 @@
 
 /*------------------------------< Class  >------------------------------------*/
 
-class CommunicationMechanism
-{
+class CommunicationMechanism {
 public:
     CommunicationMechanism(); /* Constructor */
     ~CommunicationMechanism();
@@ -37,8 +37,10 @@ public:
 private:
     void zmq_listener_task();
     void uart_periodic_req_task();
-
-    UARTCommunication uartcom;
+    bool uart_reqrep(uart_req& req, uart_rep& rep);
+    void reinit_uart();
+    std::unique_ptr<UARTCommunication> uartcom;
+    std::mutex m_uartmutex;
     std::thread zmq_listener_thread;
     std::thread uart_periodic_req_thread;
     std::shared_ptr<spdlog::logger> m_logger;
