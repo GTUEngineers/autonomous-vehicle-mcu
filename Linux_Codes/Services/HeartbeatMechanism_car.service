@@ -1,0 +1,8 @@
+[Unit]
+Description=HeartBeat
+
+[Service]
+ExecStart=/home/tolga/autonomous-vehicle/Linux_Codes/local_build/Output/HeartbeatMechanism/test/heartbeatMechanism_test_car
+
+[Install]
+WantedBy=multi-user.target
