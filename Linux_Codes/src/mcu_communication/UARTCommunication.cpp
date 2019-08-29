@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <termios.h> // Contains POSIX terminal control definitions
 #include <unistd.h> // write(), read(), close()
+
 /*------------------------------< Defines >-----------------------------------*/
 
 /*------------------------------< Typedefs >----------------------------------*/
@@ -27,7 +28,10 @@
 UARTCommunication::UARTCommunication(const std::string& serial_port)
 {
     m_serial_port = serial_port;
-    m_logger = spdlog::stdout_color_mt("UARTCommunication");
+    m_logger = spdlog::get("UARTCommunication");
+    if (m_logger == nullptr) {
+        m_logger = spdlog::stdout_color_mt("UARTCommunication");
+    }
     m_logger->set_level(spdlog::level::debug);
     m_logger->info("Serial Port:{}", serial_port);
     configure_termios();
@@ -48,6 +52,7 @@ void UARTCommunication::set_serial_port(const std::string& serial_port)
 
 bool UARTCommunication::configure_termios()
 {
+
     // Create new termios struc, we call it 'tty' for convention
     struct termios tty;
     std::memset(&tty, 0, sizeof(tty));
@@ -85,8 +90,8 @@ bool UARTCommunication::configure_termios()
     tty.c_oflag &= ~OPOST; // Prevent special interpretation of output bytes (e.g. newline chars)
     tty.c_oflag &= ~ONLCR; // Prevent conversion of newline to carriage return/line feed
         //-------------------------c_cc---------------////
-    tty.c_cc[VTIME] = 10; // Wait for up to 1s (10 deciseconds),
-    tty.c_cc[VMIN] = 2; // returning as soon as 2 byte data is received.
+    tty.c_cc[VTIME] = 7; // Wait for up to 1s (10 deciseconds),
+    tty.c_cc[VMIN] = 0; // returning as soon as 2 byte data is received.
     // Set in/out baud rate to be 115200
     cfsetispeed(&tty, B115200);
     cfsetospeed(&tty, B115200);
@@ -104,19 +109,21 @@ bool UARTCommunication::configure_termios()
 void UARTCommunication::close_fd()
 {
     if (m_fd != -1) {
+
         auto retVal = close(m_fd);
         if (retVal != 0) {
             m_logger->critical("close: {}", strerror(errno));
-            m_fd = -1;
         }
+        m_fd = -1;
     }
 }
 
 bool UARTCommunication::receive(uart_rep& message)
 {
     ssize_t n = read(m_fd, &message.rep.msg, UART_REP_SIZE);
+    m_logger->debug("read: {}", n);
     // Error Handling
-    if (n < 0) {
+    if (n <= 0) {
         // Read was unsuccessful
         m_logger->critical("Receive: {}", strerror(errno));
         return false;
@@ -128,7 +135,7 @@ bool UARTCommunication::receive(uart_rep& message)
 bool UARTCommunication::transmit(const uart_req& message)
 {
     int writeResult = write(m_fd, message.req.msg, UART_REQ_SIZE);
-
+    m_logger->debug("write: {}", writeResult);
     // Check status
     if (writeResult == -1) {
         m_logger->critical("Transmit: {}", strerror(errno));

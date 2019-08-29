@@ -24,7 +24,10 @@ void reverse(uart_req& req);
 
 void init_uartmessagebuilder_logger()
 {
-    m_logger = spdlog::stdout_color_mt("UARTCommunication");
+    m_logger = spdlog::get("UARTMessageBuilder");
+    if (m_logger == nullptr) {
+        m_logger = spdlog::stdout_color_mt("UARTMessageBuilder");
+    }
 }
 void reverse(uart_req& req)
 {
