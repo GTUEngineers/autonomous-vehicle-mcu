@@ -1,0 +1,10 @@
+[Unit]
+Description=zeromq Server
+
+[Service]
+Restart=always
+RestartSec=1sec
+ExecStart=/usr/bin/server_test
+
+[Install]
+WantedBy=multi-user.target
