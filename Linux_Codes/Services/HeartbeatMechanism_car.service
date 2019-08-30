@@ -2,9 +2,9 @@
 Description=Heartbeat Mechanism Car
 
 [Service]
-Restart=always
-RestartSec=1sec
 ExecStart=/usr/bin/heartbeatMechanism_test_car
+Restart=on-failure
+RestartSec=1sec
 
 [Install]
 WantedBy=multi-user.target

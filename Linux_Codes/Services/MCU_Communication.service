@@ -2,9 +2,9 @@
 Description=MCU Communication Service
 
 [Service]
-Restart=always
-RestartSec=1sec
 ExecStart=/usr/bin/MCU_Communication
+Restart=on-failure
+RestartSec=1sec
 
 [Install]
 WantedBy=multi-user.target

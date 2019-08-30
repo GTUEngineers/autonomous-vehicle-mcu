@@ -2,9 +2,9 @@
 Description=Wifi Server
 
 [Service]
-Restart=always
-RestartSec=1sec
 ExecStart=/usr/bin/server_test
+Restart=on-failure
+RestartSec=1sec
 
 [Install]
 WantedBy=multi-user.target
