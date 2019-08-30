@@ -2,7 +2,7 @@
 Description=Communication Service
 
 [Service]
-Restart=on-failure
+Restart=always
 ExecStart=/usr/bin/communication_test
 
 [Install]
