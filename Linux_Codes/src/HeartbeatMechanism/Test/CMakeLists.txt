@@ -21,5 +21,5 @@ target_include_directories(heartbeatMechanism_test_car PUBLIC
 target_include_directories(heartbeatMechanism_test_station PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/../)
 
-TARGET_LINK_LIBRARIES(heartbeatMechanism_test_station "zmq" "pthread" "ZmqCommunication")
-TARGET_LINK_LIBRARIES(heartbeatMechanism_test_car "zmq" "pthread" "ZmqCommunication") 
+TARGET_LINK_LIBRARIES(heartbeatMechanism_test_station "CommonLib" "zmq" "pthread" "ZmqCommunication" ${PROTOBUF_LIBRARY})
+TARGET_LINK_LIBRARIES(heartbeatMechanism_test_car "CommonLib" "zmq" "pthread" "ZmqCommunication" ${PROTOBUF_LIBRARY}) 

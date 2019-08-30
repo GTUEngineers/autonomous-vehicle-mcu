@@ -24,11 +24,13 @@
 #define BRAKE_CONTROL_TOPIC ("control/brake")
 #define THROTTLE_CONTROL_TOPIC ("control/throttle")
 #define STARTSTOP_CONTROL_TOPIC ("control/startstop")
+#define STATEWORK_CONTROL_TOPIC ("control/statework")
 /*------------------------------< Typedefs >----------------------------------*/
 
 /*------------------------------< Class  >------------------------------------*/
 
-class CommunicationMechanism {
+class CommunicationMechanism
+{
 public:
     CommunicationMechanism(); /* Constructor */
     ~CommunicationMechanism();
@@ -37,7 +39,7 @@ public:
 private:
     void zmq_listener_task();
     void uart_periodic_req_task();
-    bool uart_reqrep(uart_req& req, uart_rep& rep);
+    bool uart_reqrep(uart_req &req, uart_rep &rep);
     void reinit_uart();
     std::unique_ptr<UARTCommunication> uartcom;
     std::mutex m_uartmutex;
