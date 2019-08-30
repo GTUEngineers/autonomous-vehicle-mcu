@@ -1,0 +1,11 @@
+[Unit]
+Description=Wifi Server
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/server_test
+Restart=always
+RestartSec=1sec
+
+[Install]
+WantedBy=multi-user.target

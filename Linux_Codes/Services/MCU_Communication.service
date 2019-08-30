@@ -1,0 +1,11 @@
+[Unit]
+Description=MCU Communication Service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/MCU_Communication
+Restart=always
+RestartSec=1sec
+
+[Install]
+WantedBy=multi-user.target

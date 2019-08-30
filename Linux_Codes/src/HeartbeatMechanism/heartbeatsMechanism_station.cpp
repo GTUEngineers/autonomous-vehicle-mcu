@@ -21,8 +21,10 @@
 /*------------------------------< Namespaces >--------------------------------*/
 
 HeartbeatsMechanism::HeartbeatsMechanism(std::string ipNum, int portNumSub, int portNumPub,
-                                         bool isServer)
-    : m_tcp_subscriber(isServer), m_tcp_publisher(isServer), m_proc_publisher(isServer)
+    bool isServer)
+    : m_tcp_subscriber(isServer)
+    , m_tcp_publisher(isServer)
+    , m_proc_publisher(isServer)
 {
 
     m_logger = spdlog::stdout_color_mt("HeartbeatsMechanism_STATION");
@@ -43,43 +45,34 @@ HeartbeatsMechanism::HeartbeatsMechanism(std::string ipNum, int portNumSub, int 
 
 void HeartbeatsMechanism::listen()
 {
-    try
-    {
+    try {
         std::string topic, msg;
-        bool change_control{false}, is_rcv{false};
+        bool change_control{ false }, is_rcv{ false };
         m_tcp_subscriber.subscribe(CAR_HB_TOPIC);
 
-        while (1)
-        {
+        while (1) {
             change_control = is_rcv;
 
             is_rcv = m_tcp_subscriber.recv(topic, msg, RECEIVE_TIMEOUT);
 
-            if (!is_rcv)
-            {
+            if (!is_rcv) {
                 m_logger->critical("Unable to connect.");
-            }
-            else
-            {
-                if (!change_control && is_rcv)
-                {
+            } else {
+                if (!change_control && is_rcv) {
                     m_logger->info("Connected");
                 }
-                std::string message = std::string((char *)msg.data(), msg.size());
+                std::string message = std::string((char*)msg.data(), msg.size());
                 m_logger->debug("Topic:{} Message:{}", topic, message);
             }
         }
-    }
-    catch (std::exception e)
-    {
+    } catch (std::exception e) {
         m_logger->critical("{} there is a problem in heartbeatsMechanism_station.cpp void HeartbeatsMechanism::listen() function", e.what());
     }
 }
 
 void HeartbeatsMechanism::publish()
 {
-    while (1)
-    {
+    while (1) {
         std::string msg("1");
         m_tcp_publisher.publish(STATION_HB_TOPIC, msg);
         sleep(2);
