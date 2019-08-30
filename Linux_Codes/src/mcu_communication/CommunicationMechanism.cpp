@@ -10,7 +10,6 @@
 #include "CommunicationMechanism.h"
 #include "CommonLib.h"
 #include "UARTMessageBuilder.h"
-#include "process.pb.h"
 #include <UARTCommunication.h>
 #include <iostream>
 #include <spdlog/sinks/stdout_color_sinks.h>
@@ -25,11 +24,7 @@
 /*------------------------------< Functions >--------------------------------*/
 
 CommunicationMechanism::CommunicationMechanism()
-    : zmq_listener_thread(&CommunicationMechanism::zmq_listener_task, this)
-    , uart_periodic_req_thread(&CommunicationMechanism::uart_periodic_req_task, this)
-    , publisher(true)
-    , subscriber(true)
-    , uartcom{ nullptr }
+    : zmq_listener_thread(&CommunicationMechanism::zmq_listener_task, this), uart_periodic_req_thread(&CommunicationMechanism::uart_periodic_req_task, this), publisher(true), subscriber(true), uartcom{nullptr}
 {
     m_logger = spdlog::stdout_color_mt("CommunicationMechanism");
     m_logger->set_level(spdlog::level::debug);
@@ -53,26 +48,38 @@ void CommunicationMechanism::zmq_listener_task()
     uart::pub_sub pubsub;
     uart_rep uart_rep;
     uart_req uart_msg;
-    while (true) {
+    while (true)
+    {
         subscriber.recv(topic, msg);
-        if (topic == "control/steering") {
+        if (topic == "control/steering")
+        {
             pubsub.ParseFromArray(msg.data(), msg.size());
-            if (pubsub.msg_type() == uart::pub_sub_message::STEERING_MSG) {
+            if (pubsub.msg_type() == uart::pub_sub_message::STEERING_MSG)
+            {
                 uart_msg = uart_msg::create_steer_msg(pubsub.steering().dir(), pubsub.steering().angle());
             }
-        } else if (topic == "control/throttle") {
+        }
+        else if (topic == "control/throttle")
+        {
             pubsub.ParseFromArray(msg.data(), msg.size());
-            if (pubsub.msg_type() == uart::pub_sub_message::THROTTLE_MSG) {
+            if (pubsub.msg_type() == uart::pub_sub_message::THROTTLE_MSG)
+            {
                 uart_msg = uart_msg::create_throttle_msg(pubsub.throttle().throttlevalue());
             }
-        } else if (topic == "control/brake") {
+        }
+        else if (topic == "control/brake")
+        {
             pubsub.ParseFromArray(msg.data(), msg.size());
-            if (pubsub.msg_type() == uart::pub_sub_message::BRAKE_MSG) {
+            if (pubsub.msg_type() == uart::pub_sub_message::BRAKE_MSG)
+            {
                 uart_msg = uart_msg::create_brake_msg(pubsub.brake().brakevalue());
             }
-        } else if (topic == "control/startstop") {
+        }
+        else if (topic == "control/startstop")
+        {
             pubsub.ParseFromArray(msg.data(), msg.size());
-            if (pubsub.msg_type() == uart::pub_sub_message::START_STOP_MSG) {
+            if (pubsub.msg_type() == uart::pub_sub_message::START_STOP_MSG)
+            {
                 uart_msg = uart_msg::create_startstop_msg(pubsub.startstop().cmd());
             }
         } /* else if (topic == "info/stateworking") {
@@ -91,27 +98,31 @@ void CommunicationMechanism::zmq_listener_task()
                 uart_msg = uart_msg::create_gps_msg();
             }
         } */
-        else {
+        else
+        {
             m_logger->critical("Invalid Topic: {}", topic);
         }
-        if (!uart_reqrep(uart_msg, uart_rep)) {
+        if (!uart_reqrep(uart_msg, uart_rep))
+        {
             reinit_uart();
             m_logger->critical("UART ERROR");
         }
     }
 }
 
-bool CommunicationMechanism::uart_reqrep(uart_req& req, uart_rep& rep)
+bool CommunicationMechanism::uart_reqrep(uart_req &req, uart_rep &rep)
 {
     std::unique_lock<std::mutex> lock(m_uartmutex);
-    uint8_t try_counter{ 0 };
-    bool ret{ false };
-    do {
+    uint8_t try_counter{0};
+    bool ret{false};
+    do
+    {
         uartcom->transmit(req); //stateworking
         ret = uartcom->receive(rep);
         ++try_counter;
     } while (!ret && try_counter < RETRY_UART);
-    if (!ret && try_counter > RETRY_UART) {
+    if (!ret && try_counter > RETRY_UART)
+    {
         return false;
     }
     return true;
@@ -119,6 +130,7 @@ bool CommunicationMechanism::uart_reqrep(uart_req& req, uart_rep& rep)
 
 void CommunicationMechanism::reinit_uart()
 {
+    std::unique_lock<std::mutex> lock(m_uartmutex);
     uartcom->close_fd();
     uartcom.reset(new UARTCommunication("/dev/ttyUSB0"));
 
@@ -134,8 +146,16 @@ void CommunicationMechanism::uart_periodic_req_task()
 
     publisher.connect(addr);
     m_logger->info("Publisher addr:{}", addr);
+    uart_req uart_msg = uart_msg::create_state_msg();
+    uart_rep uart_rep;
     while (true)
-        ;
+    {
+        if (uart_reqrep(uart_msg, uart_rep))
+        {
+            std::string statework_msg = Common::pubsub::create_statework_msg(uart_msg::parse_state_msg(uart_rep));
+            publisher.publish(STATEWORK_CONTROL_TOPIC, statework_msg);
+        }
+    }
 }
 
 void CommunicationMechanism::waitUntilFinish()
