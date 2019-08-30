@@ -66,6 +66,9 @@ UART_HandleTypeDef huart2;
 osThreadId defaultTaskHandle;
 uint32_t defaultTaskBuffer[512];
 osStaticThreadDef_t defaultTaskControlBlock;
+osThreadId ControlHandle;
+uint32_t ControlBuffer[512];
+osStaticThreadDef_t ControlControlBlock;
 /* USER CODE BEGIN PV */
 uint8_t is_started;
 /* USER CODE END PV */
@@ -80,6 +83,7 @@ static void MX_TIM2_Init (void);
 static void MX_TIM3_Init (void);
 static void MX_USART2_UART_Init (void);
 void StartDefaultTask (void const * argument);
+void ControlTask (void const * argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -149,9 +153,14 @@ int main (void)
 
     /* Create the thread(s) */
     /* definition and creation of defaultTask */
-    osThreadStaticDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 512, defaultTaskBuffer,
+   /* osThreadStaticDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 512, defaultTaskBuffer,
             &defaultTaskControlBlock);
     defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+*/
+    /* definition and creation of Control */
+    osThreadStaticDef(Control, ControlTask, osPriorityAboveNormal, 0, 512, ControlBuffer,
+            &ControlControlBlock);
+    ControlHandle = osThreadCreate(osThread(Control), NULL);
 
     /* USER CODE BEGIN RTOS_THREADS */
     /* add threads, ... */
@@ -377,7 +386,7 @@ static void MX_TIM2_Init (void)
         Error_Handler( );
     }
     sConfigOC.OCMode = TIM_OCMODE_PWM1;
-    sConfigOC.Pulse = 50;
+    sConfigOC.Pulse = 60;
     sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
     sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
     if (HAL_TIM_PWM_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
@@ -590,7 +599,7 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
 
         HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_1);
         HAL_TIM_Base_Stop(&htim3);
-        HAL_GPIO_WritePin(STEER_PWM_PIN_GPIO_Port, STEER_PWM_PIN_Pin, GPIO_PIN_RESET);
+        //HAL_GPIO_WritePin(STEER_PWM_PIN_GPIO_Port, STEER_PWM_PIN_Pin, GPIO_PIN_RESET);
 
     }
 }
@@ -651,6 +660,147 @@ void StartDefaultTask (void const * argument)
 
     }
     /* USER CODE END 5 */
+}
+
+/* USER CODE BEGIN Header_ControlTask */
+/**
+ * @brief Function implementing the Control thread.
+ * @param argument: Not used
+ * @retval None
+ */
+/* USER CODE END Header_ControlTask */
+void ControlTask (void const * argument)
+{
+    /* USER CODE BEGIN ControlTask */
+    /* Infinite loop */
+    uart_message_req req;
+
+    uint8_t msg_header;
+    for (;;)
+    {
+
+        if (communication_get_msg(&req) == OK)
+        {
+            msg_header = (req.req.msg[0] & 0b11110000) >> 4;
+            switch (msg_header)
+            {
+                case 0x0:
+                {
+                    uint8_t val = 0;
+                    uart_message_rep rep = { 0 };
+                    parse_startstop_msg(&req, &val);
+                    is_started = val;
+                    create_general_rep_msg(&rep, 1);
+                    communication_send_msg(&rep);
+                    break;
+                }
+                case 0x1:
+                {
+                    if (is_started == 1)
+                    {
+                        uint8_t dir;
+                        int16_t val;
+                        uart_message_rep rep = { 0 };
+                        parse_steer_msg(&req, &dir, &val);
+                        if (dir == 0)
+                        {
+                            val = val * 7;
+                        }
+                        else
+                        {
+                            val = val * 7 * -1;
+                        }
+                        steer_set_value(val);
+                        create_general_rep_msg(&rep, 1);
+                        communication_send_msg(&rep);
+                    }
+                    break;
+                }
+                case 0x2:
+                {
+                    if (is_started == 1)
+                    {
+                        uint8_t val;
+                        uart_message_rep rep = { 0 };
+                        parse_throttle_msg(&req, &val);
+                        switch (val)
+                        {
+                            case 0:
+                            {
+                                throttle_set_value(SPEED_0);
+                                break;
+                            }
+                            case 5:
+                            {
+                                throttle_set_value(SPEED_5);
+                                break;
+                            }
+                            case 10:
+                            {
+                                throttle_set_value(SPEED_10);
+                                break;
+                            }
+                            case 15:
+                            {
+                                throttle_set_value(SPEED_15);
+                                break;
+                            }
+                            case 20:
+                            {
+                                throttle_set_value(SPEED_20);
+                                break;
+                            }
+                            default:
+                            {
+                                throttle_set_value(SPEED_0);
+                                break;
+                            }
+
+                        }
+                        create_general_rep_msg(&rep, 1);
+                        communication_send_msg(&rep);
+                    }
+                    break;
+                }
+                case 0x3:
+                {
+                    if (is_started == 1)
+                    {
+                        uint8_t val;
+                        uart_message_rep rep = { 0 };
+                        parse_brake_msg(&req, &val);
+                        if (val == 0)
+                        {
+                            brake_set_value(BRAKE_RELEASE);
+                        }
+                        else
+                        {
+                            brake_set_value(BRAKE_LOCK);
+                        }
+                        create_general_rep_msg(&rep, 1);
+                        communication_send_msg(&rep);
+                    }
+                    break;
+                }
+                case 0x4:
+                {
+
+                    break;
+                }
+                default:
+                {
+                    //LOGGER
+                    break;
+                }
+            }
+        }
+        else
+        {
+        }
+
+        osDelay(1);
+    }
+    /* USER CODE END ControlTask */
 }
 
 /**

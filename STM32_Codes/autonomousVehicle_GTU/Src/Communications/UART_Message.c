@@ -40,7 +40,7 @@ void parse_startstop_msg (const uart_message_req* req, uint8_t* val)
 #undef STARTSTOP_MASK
 }
 
-void parse_steer_msg (const uart_message_req* req, uint8_t* dir, uint16_t* val)
+void parse_steer_msg (const uart_message_req* req, uint8_t* dir, int16_t* val)
 {
 #define DIR_MASK (0b000000100)
 #define ANGLE_MASK (0b00001111111111)

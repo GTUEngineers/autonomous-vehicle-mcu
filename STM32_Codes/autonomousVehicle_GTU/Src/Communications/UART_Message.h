@@ -59,7 +59,7 @@ typedef union u_UART_message_req uart_message_req;
 
 /*------------------------------< Prototypes >--------------------------------*/
 void create_general_rep_msg(uart_message_rep* rep, const uint8_t val);
-void parse_steer_msg(const uart_message_req* req, uint8_t* dir, uint16_t* val);
+void parse_steer_msg(const uart_message_req* req, uint8_t* dir, int16_t* val);
 void parse_throttle_msg(const uart_message_req* req, uint8_t* val);
 void parse_brake_msg(const uart_message_req* req, uint8_t* val);
 void parse_startstop_msg(const uart_message_req* msg, uint8_t* val);
