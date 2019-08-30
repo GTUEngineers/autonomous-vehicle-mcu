@@ -20,9 +20,8 @@
 /*------------------------------< Namespaces >--------------------------------*/
 
 HeartbeatsMechanism::HeartbeatsMechanism(std::string ipNum, int portNumSub, int portNumPub,
-    bool isServer)
-    : m_subscriber{ isServer }
-    , m_publisher(isServer)
+                                         bool isServer)
+    : m_subscriber{isServer}, m_publisher(isServer)
 {
 
     m_logger = spdlog::stdout_color_mt("HeartbeatsMechanism_CAR");
@@ -44,38 +43,46 @@ HeartbeatsMechanism::HeartbeatsMechanism(std::string ipNum, int portNumSub, int 
 
 void HeartbeatsMechanism::listen()
 {
-    try {
+    try
+    {
 
         m_subscriber.subscribe(STATION_HB_TOPIC);
         std::string topic, msg;
-        int counter{ 0 };
-        bool carstopped{ false }, is_rcv{ false };
+        int counter{0};
+        bool carstopped{false}, is_rcv{false};
 
-        while (1) {
+        while (1)
+        {
             is_rcv = m_subscriber.recv(topic, msg, RECEIVE_TIMEOUT);
-            if (!is_rcv) {
+            if (!is_rcv)
+            {
                 ++counter;
-                if (counter == MAX_COUNT && !carstopped) {
+                if (counter == MAX_COUNT && !carstopped)
+                {
                     m_logger->critical("Unable to connect"); //STOP CAR
-                    carstopped = true;
+                    carstopped = true;                       //Uart stop req
                 }
             }
 
-            else if (carstopped) {
+            else if (carstopped)
+            {
                 counter = 0;
                 carstopped = false;
                 m_logger->info("Reconnected"); //Start car
 
-                std::string message((char*)msg.data(), msg.size());
+                std::string message((char *)msg.data(), msg.size());
                 m_logger->debug("Topic:{} Message:{}", topic, message);
-
-            } else {
+            }
+            else
+            {
                 counter = 0;
-                std::string message((char*)msg.data(), msg.size());
+                std::string message((char *)msg.data(), msg.size());
                 m_logger->debug("Topic:{} Message:{}", topic, message);
             }
         }
-    } catch (std::exception e) {
+    }
+    catch (std::exception e)
+    {
         m_logger->critical("{} there is a problem in heartbeatsMechanism_station.cpp void HeartbeatsMechanism::listen() function", e.what());
     }
 }
@@ -83,7 +90,8 @@ void HeartbeatsMechanism::listen()
 void HeartbeatsMechanism::publish()
 {
 
-    while (1) {
+    while (1)
+    {
         std::string msg("1");
         m_publisher.publish(CAR_HB_TOPIC, msg);
         sleep(1);
