@@ -2,7 +2,7 @@
 Description=MCU Communication Service
 
 [Service]
-ExecStart=/autonomous-vehicle/Linux_Codes/local_build/Output/MCU_Communication/MCU_Communication
+ExecStart=/usr/bin/MCU_Communication
 
 [Install]
 WantedBy=multi-user.target

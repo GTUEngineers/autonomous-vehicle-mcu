@@ -1,0 +1,9 @@
+[Unit]
+Description=Communication Service
+
+[Service]
+Restart=on-failure
+ExecStart=/usr/bin/communication_test
+
+[Install]
+WantedBy=multi-user.target
