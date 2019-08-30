@@ -102,10 +102,10 @@ void HAL_DAC_MspInit(DAC_HandleTypeDef* hdac)
     /**DAC GPIO Configuration    
     PA4     ------> DAC_OUT1 
     */
-    GPIO_InitStruct.Pin = THROTTLE_PIN_Pin;
+    GPIO_InitStruct.Pin = THROTTLE_VOLTAGE_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(THROTTLE_PIN_GPIO_Port, &GPIO_InitStruct);
+    HAL_GPIO_Init(THROTTLE_VOLTAGE_GPIO_Port, &GPIO_InitStruct);
 
   /* USER CODE BEGIN DAC_MspInit 1 */
 
@@ -133,7 +133,7 @@ void HAL_DAC_MspDeInit(DAC_HandleTypeDef* hdac)
     /**DAC GPIO Configuration    
     PA4     ------> DAC_OUT1 
     */
-    HAL_GPIO_DeInit(THROTTLE_PIN_GPIO_Port, THROTTLE_PIN_Pin);
+    HAL_GPIO_DeInit(THROTTLE_VOLTAGE_GPIO_Port, THROTTLE_VOLTAGE_Pin);
 
   /* USER CODE BEGIN DAC_MspDeInit 1 */
 

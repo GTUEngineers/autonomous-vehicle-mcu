@@ -74,28 +74,28 @@ void Error_Handler(void);
 #define PH0_OSC_IN_GPIO_Port GPIOH
 #define PH1_OSC_OUT_Pin GPIO_PIN_1
 #define PH1_OSC_OUT_GPIO_Port GPIOH
-#define STEER_DIR_PIN_Pin GPIO_PIN_0
-#define STEER_DIR_PIN_GPIO_Port GPIOC
+#define STEER_DIR_Pin GPIO_PIN_0
+#define STEER_DIR_GPIO_Port GPIOC
 #define HCSR04_TRIG_Pin GPIO_PIN_1
 #define HCSR04_TRIG_GPIO_Port GPIOC
 #define HCSR04_ECHO_Pin GPIO_PIN_3
 #define HCSR04_ECHO_GPIO_Port GPIOC
 #define B1_Pin GPIO_PIN_0
 #define B1_GPIO_Port GPIOA
-#define BRAKE_RELAY_PIN_1_Pin GPIO_PIN_2
-#define BRAKE_RELAY_PIN_1_GPIO_Port GPIOA
-#define BRAKE_RELAY_PIN_2_Pin GPIO_PIN_3
-#define BRAKE_RELAY_PIN_2_GPIO_Port GPIOA
-#define THROTTLE_PIN_Pin GPIO_PIN_4
-#define THROTTLE_PIN_GPIO_Port GPIOA
+#define BRAKE_RELAY_1_Pin GPIO_PIN_2
+#define BRAKE_RELAY_1_GPIO_Port GPIOA
+#define BRAKE_RELAY_2_Pin GPIO_PIN_3
+#define BRAKE_RELAY_2_GPIO_Port GPIOA
+#define THROTTLE_VOLTAGE_Pin GPIO_PIN_4
+#define THROTTLE_VOLTAGE_GPIO_Port GPIOA
 #define SPI1_SCK_Pin GPIO_PIN_5
 #define SPI1_SCK_GPIO_Port GPIOA
 #define SPI1_MISO_Pin GPIO_PIN_6
 #define SPI1_MISO_GPIO_Port GPIOA
 #define SPI1_MOSI_Pin GPIO_PIN_7
 #define SPI1_MOSI_GPIO_Port GPIOA
-#define THROTTLE_LOCK_PIN_Pin GPIO_PIN_4
-#define THROTTLE_LOCK_PIN_GPIO_Port GPIOC
+#define THROTTLE_LOCK_Pin GPIO_PIN_4
+#define THROTTLE_LOCK_GPIO_Port GPIOC
 #define BOOT1_Pin GPIO_PIN_2
 #define BOOT1_GPIO_Port GPIOB
 #define START_BUTTON_Pin GPIO_PIN_7
@@ -124,7 +124,7 @@ void Error_Handler(void);
 #define MEMS_INT2_Pin GPIO_PIN_1
 #define MEMS_INT2_GPIO_Port GPIOE
 /* USER CODE BEGIN Private defines */
-#define DEBUG_LOG 1
+#define DEBUG_LOG 0
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
