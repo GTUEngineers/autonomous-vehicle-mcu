@@ -2,8 +2,9 @@
 Description=MCU Communication Service
 
 [Service]
+Type=simple
 ExecStart=/usr/bin/MCU_Communication
-Restart=on-failure
+Restart=always
 RestartSec=1sec
 
 [Install]

@@ -57,7 +57,7 @@ void HeartbeatsMechanism::listen()
                 ++counter;
                 if (counter == MAX_COUNT && !carstopped) {
                     m_logger->critical("Unable to connect"); //STOP CAR
-                    carstopped = true;
+                    carstopped = true; //stop
                 }
             }
 
@@ -68,7 +68,6 @@ void HeartbeatsMechanism::listen()
 
                 std::string message((char*)msg.data(), msg.size());
                 m_logger->debug("Topic:{} Message:{}", topic, message);
-
             } else {
                 counter = 0;
                 std::string message((char*)msg.data(), msg.size());

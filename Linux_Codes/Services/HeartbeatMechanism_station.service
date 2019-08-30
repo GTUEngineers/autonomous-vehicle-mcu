@@ -2,8 +2,9 @@
 Description=Heartbeat Mechanism Station
 
 [Service]
+Type=simple
 ExecStart=/usr/bin/heartbeatMechanism_test_station
-Restart=on-failure
+Restart=always
 RestartSec=1sec
 
 [Install]

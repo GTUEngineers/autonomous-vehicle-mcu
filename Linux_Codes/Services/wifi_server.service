@@ -2,8 +2,9 @@
 Description=Wifi Server
 
 [Service]
+Type=simple
 ExecStart=/usr/bin/server_test
-Restart=on-failure
+Restart=always
 RestartSec=1sec
 
 [Install]
