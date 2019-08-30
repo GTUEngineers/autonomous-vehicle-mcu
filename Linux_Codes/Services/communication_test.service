@@ -3,6 +3,7 @@ Description=Communication Service
 
 [Service]
 Restart=always
+RestartSec=1sec
 ExecStart=/usr/bin/communication_test
 
 [Install]

@@ -1,10 +1,10 @@
 [Unit]
-Description=Heartbeat Mechanism Car
+Description=Wifi Client
 
 [Service]
 Restart=always
 RestartSec=1sec
-ExecStart=/usr/bin/heartbeatMechanism_test_car
+ExecStart=/usr/bin/client_test
 
 [Install]
 WantedBy=multi-user.target

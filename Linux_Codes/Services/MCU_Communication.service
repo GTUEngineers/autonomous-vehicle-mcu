@@ -3,7 +3,7 @@ Description=MCU Communication Service
 
 [Service]
 Restart=always
-RestartSec=0.5sec
+RestartSec=1sec
 ExecStart=/usr/bin/MCU_Communication
 
 [Install]

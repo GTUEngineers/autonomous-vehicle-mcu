@@ -1,0 +1,10 @@
+[Unit]
+Description=Heartbeat Mechanism Station
+
+[Service]
+Restart=always
+RestartSec=1sec
+ExecStart=/usr/bin/heartbeatMechanism_test_station
+
+[Install]
+WantedBy=multi-user.target
