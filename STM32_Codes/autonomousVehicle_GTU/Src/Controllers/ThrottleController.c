@@ -18,7 +18,7 @@
 /*------------------------------< Constants >---------------------------------*/
 
 /*------------------------------< Variables >---------------------------------*/
-uint32_t throttle_current_value = 0;
+static uint32_t throttle_current_value = 0;
 /*------------------------------< Prototypes >--------------------------------*/
 
 /*------------------------------< Functions >---------------------------------*/
@@ -42,11 +42,11 @@ void throttle_set_lock (ThrottleLockPosition val)
 {
     if (val == THROTTLE_LOCK)
     {
-        HAL_GPIO_WritePin(THROTTLE_LOCK_PIN_GPIO_Port, THROTTLE_LOCK_PIN_Pin, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(THROTTLE_LOCK_GPIO_Port, THROTTLE_LOCK_Pin, GPIO_PIN_SET);
     }
     else
     {
-        HAL_GPIO_WritePin(THROTTLE_LOCK_PIN_GPIO_Port, THROTTLE_LOCK_PIN_Pin, GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(THROTTLE_LOCK_GPIO_Port, THROTTLE_LOCK_Pin, GPIO_PIN_RESET);
     }
 }
 

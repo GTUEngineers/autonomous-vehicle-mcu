@@ -41,11 +41,11 @@ void steer_set_value (int val)
     HAL_TIM_Base_Stop(&htim3);     //check it
     if (position > val)
     {
-        HAL_GPIO_WritePin(STEER_DIR_PIN_GPIO_Port, STEER_DIR_PIN_Pin, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(STEER_DIR_GPIO_Port, STEER_DIR_Pin, GPIO_PIN_SET);
     }
     else
     {
-        HAL_GPIO_WritePin(STEER_DIR_PIN_GPIO_Port, STEER_DIR_PIN_Pin, GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(STEER_DIR_GPIO_Port, STEER_DIR_Pin, GPIO_PIN_RESET);
     }
 
     uint32_t abs_val = abs(position - val);
