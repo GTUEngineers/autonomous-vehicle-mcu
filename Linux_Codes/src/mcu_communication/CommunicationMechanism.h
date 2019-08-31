@@ -37,7 +37,7 @@ class CommunicationMechanism
 {
 public:
     CommunicationMechanism(); /* Constructor */
-    ~CommunicationMechanism();
+                              //  ~CommunicationMechanism();
     void waitUntilFinish();
 
 private:
