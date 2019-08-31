@@ -31,34 +31,34 @@ extern "C"
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 
-    /* Private includes ----------------------------------------------------------*/
-    /* USER CODE BEGIN Includes */
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
 
-    /* USER CODE END Includes */
+/* USER CODE END Includes */
 
-    /* Exported types ------------------------------------------------------------*/
-    /* USER CODE BEGIN ET */
-    extern DAC_HandleTypeDef hdac;
-    extern TIM_HandleTypeDef htim2;
-    extern TIM_HandleTypeDef htim3;
-    extern uint8_t is_started;
-    extern UART_HandleTypeDef huart2;
-    /* USER CODE END ET */
+/* Exported types ------------------------------------------------------------*/
+/* USER CODE BEGIN ET */
+extern DAC_HandleTypeDef hdac;
+extern TIM_HandleTypeDef htim2;
+extern TIM_HandleTypeDef htim3;
+extern uint8_t is_started;
+extern UART_HandleTypeDef huart2;
+/* USER CODE END ET */
 
-    /* Exported constants --------------------------------------------------------*/
-    /* USER CODE BEGIN EC */
+/* Exported constants --------------------------------------------------------*/
+/* USER CODE BEGIN EC */
 
-    /* USER CODE END EC */
+/* USER CODE END EC */
 
-    /* Exported macro ------------------------------------------------------------*/
-    /* USER CODE BEGIN EM */
+/* Exported macro ------------------------------------------------------------*/
+/* USER CODE BEGIN EM */
 
-    /* USER CODE END EM */
+/* USER CODE END EM */
 
-    void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
+void HAL_TIM_MspPostInit (TIM_HandleTypeDef *htim);
 
-    /* Exported functions prototypes ---------------------------------------------*/
-    void Error_Handler(void);
+/* Exported functions prototypes ---------------------------------------------*/
+void Error_Handler (void);
 
 /* USER CODE BEGIN EFP */
 
@@ -114,8 +114,8 @@ extern "C"
 #define SWDIO_GPIO_Port GPIOA
 #define SWCLK_Pin GPIO_PIN_14
 #define SWCLK_GPIO_Port GPIOA
-#define STEER_PWM_PIN_Pin GPIO_PIN_15
-#define STEER_PWM_PIN_GPIO_Port GPIOA
+#define STEER_PWM_Pin GPIO_PIN_15
+#define STEER_PWM_GPIO_Port GPIOA
 #define Audio_RST_Pin GPIO_PIN_4
 #define Audio_RST_GPIO_Port GPIOD
 #define Audio_SCL_Pin GPIO_PIN_6
@@ -126,7 +126,7 @@ extern "C"
 #define MEMS_INT2_GPIO_Port GPIOE
 /* USER CODE BEGIN Private defines */
 #define DEBUG_LOG 0
-    /* USER CODE END Private defines */
+/* USER CODE END Private defines */
 
 #ifdef __cplusplus
 }
