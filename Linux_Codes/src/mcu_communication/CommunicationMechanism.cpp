@@ -18,6 +18,7 @@
 
 /*------------------------------< Defines >-----------------------------------*/
 #define RETRY_UART (2)
+#define NAME "CommunicationMechanism"
 /*------------------------------< Typedefs >----------------------------------*/
 
 /*------------------------------< Namespaces >--------------------------------*/
@@ -25,15 +26,11 @@
 /*------------------------------< Functions >--------------------------------*/
 
 CommunicationMechanism::CommunicationMechanism()
-    : zmq_listener_thread(&CommunicationMechanism::zmq_listener_task, this)
-    , uart_periodic_req_thread(&CommunicationMechanism::uart_periodic_req_task, this)
-    , publisher(true)
-    , subscriber(true)
-    , uartcom{ nullptr }
+    : zmq_listener_thread(&CommunicationMechanism::zmq_listener_task, this), uart_periodic_req_thread(&CommunicationMechanism::uart_periodic_req_task, this), publisher(true), subscriber(true), uartcom{nullptr}
 {
-    m_logger = spdlog::stdout_color_mt("CommunicationMechanism");
+    m_logger = spdlog::stdout_color_mt(NAME);
     m_logger->set_level(spdlog::level::debug);
-    uartcom.reset(new UARTCommunication("/dev/ttyUSB0")); //TODO Fix
+    uartcom.reset(new UARTCommunication(UART_PORT)); //TODO Fix
 
     // Constructor code
 }
@@ -43,7 +40,7 @@ void CommunicationMechanism::zmq_listener_task()
     std::string addr;
     addr.resize(50);
 
-    sprintf(&addr.front(), zmqbase::PROC_CONNECTION.c_str(), "mcu_communication_sub");
+    sprintf(&addr.front(), zmqbase::PROC_CONNECTION.c_str(), MCU_SUB_PROC_CONN);
     m_logger->info("Subscriber addr:{}", addr);
     subscriber.connect(addr);
 
@@ -53,26 +50,38 @@ void CommunicationMechanism::zmq_listener_task()
     uart::pub_sub pubsub;
     uart_rep uart_rep;
     uart_req uart_msg;
-    while (true) {
+    while (true)
+    {
         subscriber.recv(topic, msg);
-        if (topic == "control/steering") {
+        if (topic == "control/steering")
+        {
             pubsub.ParseFromArray(msg.data(), msg.size());
-            if (pubsub.msg_type() == uart::pub_sub_message::STEERING_MSG) {
+            if (pubsub.msg_type() == uart::pub_sub_message::STEERING_MSG)
+            {
                 uart_msg = uart_msg::create_steer_msg(pubsub.steering().dir(), pubsub.steering().angle());
             }
-        } else if (topic == "control/throttle") {
+        }
+        else if (topic == "control/throttle")
+        {
             pubsub.ParseFromArray(msg.data(), msg.size());
-            if (pubsub.msg_type() == uart::pub_sub_message::THROTTLE_MSG) {
+            if (pubsub.msg_type() == uart::pub_sub_message::THROTTLE_MSG)
+            {
                 uart_msg = uart_msg::create_throttle_msg(pubsub.throttle().throttlevalue());
             }
-        } else if (topic == "control/brake") {
+        }
+        else if (topic == "control/brake")
+        {
             pubsub.ParseFromArray(msg.data(), msg.size());
-            if (pubsub.msg_type() == uart::pub_sub_message::BRAKE_MSG) {
+            if (pubsub.msg_type() == uart::pub_sub_message::BRAKE_MSG)
+            {
                 uart_msg = uart_msg::create_brake_msg(pubsub.brake().brakevalue());
             }
-        } else if (topic == "control/startstop") {
+        }
+        else if (topic == "control/startstop")
+        {
             pubsub.ParseFromArray(msg.data(), msg.size());
-            if (pubsub.msg_type() == uart::pub_sub_message::START_STOP_MSG) {
+            if (pubsub.msg_type() == uart::pub_sub_message::START_STOP_MSG)
+            {
                 uart_msg = uart_msg::create_startstop_msg(pubsub.startstop().cmd());
             }
         } /* else if (topic == "info/stateworking") {
@@ -91,27 +100,31 @@ void CommunicationMechanism::zmq_listener_task()
                 uart_msg = uart_msg::create_gps_msg();
             }
         } */
-        else {
+        else
+        {
             m_logger->critical("Invalid Topic: {}", topic);
         }
-        if (!uart_reqrep(uart_msg, uart_rep)) {
+        if (!uart_reqrep(uart_msg, uart_rep))
+        {
             reinit_uart();
             m_logger->critical("UART ERROR");
         }
     }
 }
 
-bool CommunicationMechanism::uart_reqrep(uart_req& req, uart_rep& rep)
+bool CommunicationMechanism::uart_reqrep(uart_req &req, uart_rep &rep)
 {
     std::unique_lock<std::mutex> lock(m_uartmutex);
-    uint8_t try_counter{ 0 };
-    bool ret{ false };
-    do {
+    uint8_t try_counter{0};
+    bool ret{false};
+    do
+    {
         uartcom->transmit(req); //stateworking
         ret = uartcom->receive(rep);
         ++try_counter;
     } while (!ret && try_counter < RETRY_UART);
-    if (!ret && try_counter > RETRY_UART) {
+    if (!ret && try_counter > RETRY_UART)
+    {
         return false;
     }
     return true;
@@ -120,7 +133,7 @@ bool CommunicationMechanism::uart_reqrep(uart_req& req, uart_rep& rep)
 void CommunicationMechanism::reinit_uart()
 {
     uartcom->close_fd();
-    uartcom.reset(new UARTCommunication("/dev/ttyUSB0"));
+    uartcom.reset(new UARTCommunication(UART_PORT));
 
     return;
 }
@@ -130,7 +143,7 @@ void CommunicationMechanism::uart_periodic_req_task()
     std::string addr;
     addr.clear();
     addr.resize(50);
-    sprintf(&addr.front(), zmqbase::PROC_CONNECTION.c_str(), "mcu_communication_pub");
+    sprintf(&addr.front(), zmqbase::PROC_CONNECTION.c_str(), MCU_PUB_PROC_CONN);
 
     publisher.connect(addr);
     m_logger->info("Publisher addr:{}", addr);

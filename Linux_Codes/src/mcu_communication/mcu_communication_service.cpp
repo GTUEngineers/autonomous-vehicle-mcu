@@ -17,24 +17,27 @@
 #include <spdlog/spdlog.h>
 #include <string>
 /*------------------------------< Defines >-----------------------------------*/
+#define NAME "mcu_communication_service"
 
 /*------------------------------< Typedefs >----------------------------------*/
 
 /*------------------------------< Namespaces >--------------------------------*/
 std::shared_ptr<UARTCommunication> uartcom;
-bool uart_reqrep(uart_req& req, uart_rep& rep)
+bool uart_reqrep(uart_req &req, uart_rep &rep)
 {
 
-    int try_counter{ 0 };
-    bool ret{ false };
-    do {
+    int try_counter{0};
+    bool ret{false};
+    do
+    {
         uartcom->transmit(req); //stateworking
         ret = uartcom->receive(rep);
         ++try_counter;
         sleep(1);
     } while (!ret && try_counter < 2);
     std::cerr << try_counter << std::endl;
-    if (!ret && try_counter >= 2) {
+    if (!ret && try_counter >= 2)
+    {
         std::cerr << "girtdi1";
         return false;
     }
@@ -44,17 +47,17 @@ bool uart_reqrep(uart_req& req, uart_rep& rep)
 void reinit_uart()
 {
     uartcom->close_fd();
-    uartcom.reset(new UARTCommunication("/dev/ttyUSB0"));
-    std::cerr << "ALPEREN";
+    uartcom.reset(new UARTCommunication(UART_PORT));
     return;
 }
 int main()
 {
-    uartcom.reset(new UARTCommunication("/dev/ttyUSB0"));
+    uartcom.reset(new UARTCommunication(UART_PORT));
     std::shared_ptr<spdlog::logger> logger;
-    logger = spdlog::get("mcu_communication_service");
-    if (logger == nullptr) {
-        logger = spdlog::stdout_color_mt("mcu_communication_service");
+    logger = spdlog::get(NAME);
+    if (logger == nullptr)
+    {
+        logger = spdlog::stdout_color_mt(NAME);
     }
 
     logger->set_level(spdlog::level::debug);
@@ -65,9 +68,10 @@ int main()
     uart_rep alp;
 
     bool ret;
-    uint64_t try_counter{ 0 };
+    uint64_t try_counter{0};
 
-    do {
+    do
+    {
         if (!uart_reqrep(alp1, alp))
             reinit_uart();
         ++try_counter;

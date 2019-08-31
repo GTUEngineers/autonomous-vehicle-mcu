@@ -15,20 +15,21 @@
 #include <spdlog/spdlog.h>
 #include <string>
 /*------------------------------< Defines >-----------------------------------*/
-
+#define UART_PORT "/dev/ttyUSB0"
 /*------------------------------< Typedefs >----------------------------------*/
 
 /*------------------------------< Class  >------------------------------------*/
 
-class UARTCommunication {
+class UARTCommunication
+{
 public:
-    UARTCommunication(const std::string& serial_port); /* Constructor */
+    UARTCommunication(const std::string &serial_port); /* Constructor */
     ~UARTCommunication();
-    bool receive(uart_rep& message);
-    bool transmit(const uart_req& message);
+    bool receive(uart_rep &message);
+    bool transmit(const uart_req &message);
     bool set_timeout(int timeout);
     void close_fd();
-    void set_serial_port(const std::string& serial_port);
+    void set_serial_port(const std::string &serial_port);
 
 private:
     bool configure_termios();
