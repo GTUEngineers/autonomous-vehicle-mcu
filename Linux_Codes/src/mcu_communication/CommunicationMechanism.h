@@ -24,16 +24,15 @@
 #define BRAKE_CONTROL_TOPIC ("control/brake")
 #define THROTTLE_CONTROL_TOPIC ("control/throttle")
 #define STARTSTOP_CONTROL_TOPIC ("control/startstop")
-#define PORT 5555
-#define IP "127.0.0.1"
-#define MCU_SUB_PROC_CONN "mcu_communication_sub"
-#define MCU_PUB_PROC_CONN "mcu_communication_pub"
+#define PORT (5555)
+#define IP ("127.0.0.1")
+#define MCU_SUB_PROC_CONN ("mcu_communication_sub")
+#define MCU_PUB_PROC_CONN ("mcu_communication_pub")
 /*------------------------------< Typedefs >----------------------------------*/
 
 /*------------------------------< Class  >------------------------------------*/
 
-class CommunicationMechanism
-{
+class CommunicationMechanism {
 public:
     CommunicationMechanism(); /* Constructor */
     ~CommunicationMechanism();
@@ -42,7 +41,7 @@ public:
 private:
     void zmq_listener_task();
     void uart_periodic_req_task();
-    bool uart_reqrep(uart_req &req, uart_rep &rep);
+    bool uart_reqrep(uart_req& req, uart_rep& rep);
     void reinit_uart();
     std::unique_ptr<UARTCommunication> uartcom;
     std::mutex m_uartmutex;
