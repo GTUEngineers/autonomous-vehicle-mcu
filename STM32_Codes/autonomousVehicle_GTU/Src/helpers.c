@@ -1,5 +1,6 @@
 #include "helpers.h"
-#include "stm32f4xx.h"
+#include "main.h"
+#include "stm32f4xx_hal_gpio.h"
 
 int _write(int file, char *ptr, int len)
 {

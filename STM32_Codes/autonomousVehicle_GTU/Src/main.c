@@ -33,6 +33,7 @@
 #include "Communications/UART_Message.h"
 #include "autonomousVehicle_conf.h"
 #include "stm32f4xx.h"
+#include "helpers.h"
 
 /* USER CODE END Includes */
 
@@ -600,6 +601,10 @@ void StartDefaultTask(void const *argument)
     for (;;)
     {
 #if DEBUG_LOG == 0
+        //set_green_led();
+        //set_red_led();
+        //set_orange_led();
+        //set_blue_led();
         osDelay(3000);
         brake_test();
         throttle_test();
