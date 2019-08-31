@@ -57,6 +57,7 @@ uart_req create_state_msg();
 uart_req create_hcsr4_msg();
 uart_req create_gps_msg();
 bool parse_general_rep_msg(const uart_rep& msg);
+uint16_t parse_steering_msg(const uart_rep& msg);
 uart::stateWorking_enum parse_state_msg(const uart_rep& msg);
 std::string parse_hcsr4_msg(const uart_rep& msg);
 gps parse_gps_msg(const uart_rep& msg);

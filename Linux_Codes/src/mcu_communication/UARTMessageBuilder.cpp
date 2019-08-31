@@ -21,6 +21,7 @@ std::shared_ptr<spdlog::logger> m_logger;
 /*------------------------------< Namespaces >--------------------------------*/
 namespace uart_msg {
 void reverse(uart_req& req);
+void reverse(uart_rep& rep);
 
 void init_uartmessagebuilder_logger()
 {
@@ -34,6 +35,13 @@ void reverse(uart_req& req)
     uint8_t l = req.req.msg[1];
     req.req.msg[1] = req.req.msg[0];
     req.req.msg[0] = l;
+}
+
+void reverse(uart_rep& rep)
+{
+    uint8_t l = rep.rep.msg[1];
+    rep.rep.msg[1] = rep.rep.msg[0];
+    rep.rep.msg[0] = l;
 }
 
 uart_req create_steer_msg(const uart::steering_enum dir, const uint16_t& val)
@@ -87,6 +95,14 @@ uart_req create_gps_msg()
     uart_req req;
     req.req.msg[0] = 96;
     return req;
+}
+
+uint16_t parse_steering_msg(const uart_rep& msg)
+{
+	reverse(msg);
+	uint16_t retVal;
+	memccpy(&retVal, msg.rep.msg, sizeof(uint16_t));
+	return retVal;
 }
 
 uart::stateWorking_enum parse_state_msg(const uart_rep& msg)
