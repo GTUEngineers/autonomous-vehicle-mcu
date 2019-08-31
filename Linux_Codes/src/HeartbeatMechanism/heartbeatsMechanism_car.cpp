@@ -14,7 +14,7 @@
 #include <unistd.h>
 /*------------------------------< Defines >-----------------------------------*/
 #define MAX_COUNT (3)
-#define RECEIVE_TIMEOUT (1000)
+#define RECEIVE_TIMEOUT (1500)
 /*------------------------------< Typedefs >----------------------------------*/
 
 /*------------------------------< Namespaces >--------------------------------*/
@@ -49,6 +49,12 @@ HeartbeatsMechanism::HeartbeatsMechanism(std::string ipNum, int portNumSub, int 
     //README,Is mcu_communication_pub
     m_proc_publisher.connect(addr);
     m_logger->info("Uart publisher addr:{}", addr);
+}
+
+void HeartbeatsMechanism::waitUntilFinish()
+{
+    m_subscriber_thread.join();
+    m_publisher_thread.join();
 }
 
 void HeartbeatsMechanism::listen()
@@ -101,6 +107,7 @@ void HeartbeatsMechanism::publish()
     while (1) {
         std::string msg("1");
         m_tcp_publisher.publish(CAR_HB_TOPIC, msg);
-        sleep(1);
+        //sleep(1);
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
 }

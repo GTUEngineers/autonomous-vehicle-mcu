@@ -53,7 +53,7 @@ int main()
             //std::string pub = Common::pubsub::create_startstop_msg((uart::startstop_enum)start_or_stop);
             //  publish recieved message
             m_logger->debug("Pub: {}", STARTSTOP_CONTROL_TOPIC);
-            publisher.publish(STARTSTOP_CONTROL_TOPIC, "1"); //Linux create startstop
+            publisher.publish(STARTSTOP_CONTROL_TOPIC, Common::pubsub::create_startstop_msg((uart::startstop_enum)start_or_stop)); //Linux create startstop
         }
     }
     return 0;

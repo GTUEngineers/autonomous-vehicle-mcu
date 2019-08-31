@@ -43,6 +43,12 @@ HeartbeatsMechanism::HeartbeatsMechanism(std::string ipNum, int portNumSub, int 
     m_publisher_thread = std::thread(&HeartbeatsMechanism::publish, this);
 }
 
+void HeartbeatsMechanism::waitUntilFinish()
+{
+    m_subscriber_thread.join();
+    m_publisher_thread.join();
+}
+
 void HeartbeatsMechanism::listen()
 {
     try {
@@ -75,6 +81,7 @@ void HeartbeatsMechanism::publish()
     while (1) {
         std::string msg("1");
         m_tcp_publisher.publish(STATION_HB_TOPIC, msg);
-        sleep(2);
+        //sleep(0.5);
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
 }
