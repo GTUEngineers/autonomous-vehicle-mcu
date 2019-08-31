@@ -1,0 +1,41 @@
+syntax="proto3";
+import "common.proto";
+
+package lidar;
+
+message Position{
+    float x = 1;
+    float y = 2;
+    float z = 3;
+}
+
+message Size{
+    float width = 1;
+    float height = 2;
+}
+
+message Cluster{
+    Position center = 1;
+    Size size = 2;
+}
+
+message Pixel{
+    float x = 1;
+    float y = 2;
+}
+
+message RequestData{
+    Pixel upper_left = 1;
+    Pixel downer_right = 2;
+}
+
+message req_rep{
+    oneof messages{
+        RequestData req = 1;
+        Cluster rep = 2;
+    }
+}
+
+message pub_sub{
+    repeated Cluster clusters = 1; 
+}
