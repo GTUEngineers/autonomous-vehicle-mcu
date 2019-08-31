@@ -100,22 +100,22 @@ void brake_set_value (BrakePosition val)
 void brake_lock ( )
 {
     //Brake motor lock to brake
-    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_1_Pin, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_2_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(BRAKE_RELAY_1_GPIO_Port, BRAKE_RELAY_1_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(BRAKE_RELAY_2_GPIO_Port, BRAKE_RELAY_2_Pin, GPIO_PIN_RESET);
 }
 
 void brake_release ( )
 {
     //Brake motor release to brake
-    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_1_Pin, GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_2_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(BRAKE_RELAY_1_GPIO_Port, BRAKE_RELAY_1_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(BRAKE_RELAY_2_GPIO_Port, BRAKE_RELAY_2_Pin, GPIO_PIN_SET);
 }
 
 void brake_stop ( )
 {
     //Brake motor stop current position
-    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_1_Pin, GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_2_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(BRAKE_RELAY_1_GPIO_Port, BRAKE_RELAY_1_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(BRAKE_RELAY_2_GPIO_Port, BRAKE_RELAY_2_Pin, GPIO_PIN_RESET);
 }
 
 float brake_get_rotary_position_sensor_value ( )

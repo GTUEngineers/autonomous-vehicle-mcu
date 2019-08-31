@@ -37,15 +37,15 @@ void steer_set_value (int val)
     {
         return;
     }
-    HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_1);
+    HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_3);
     HAL_TIM_Base_Stop(&htim3);     //check it
     if (position > val)
     {
-        HAL_GPIO_WritePin(STEER_DIR_PIN_GPIO_Port, STEER_DIR_PIN_Pin, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(STEER_DIR_GPIO_Port, STEER_DIR_Pin, GPIO_PIN_SET);
     }
     else
     {
-        HAL_GPIO_WritePin(STEER_DIR_PIN_GPIO_Port, STEER_DIR_PIN_Pin, GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(STEER_DIR_GPIO_Port, STEER_DIR_Pin, GPIO_PIN_RESET);
     }
 
     uint32_t abs_val = abs(position - val);
@@ -53,7 +53,7 @@ void steer_set_value (int val)
     TIM3->ARR = 2 * abs_val - 1;
     position = val;
 
-    HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+    HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3);
     HAL_TIM_Base_Start_IT(&htim3);
     //enable pwm and timer
 }

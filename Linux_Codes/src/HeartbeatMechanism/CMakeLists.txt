@@ -10,9 +10,13 @@ SET(SOURCEFILES
         )
 SET(INCLUDEDIRS
         ${CMAKE_CURRENT_LIST_DIR}
-	        "${CMAKE_SOURCE_DIR}/src/ZmqCommunication"
+	${CMAKE_SOURCE_DIR}/src/ZmqCommunication
+	${CMAKE_SOURCE_DIR}/src/CommonLib
+	${CMAKE_BINARY_DIR}/src/ProtoFiles
+	${CMAKE_SOURCE_DIR}/src/mcu_communication
+	${CMAKE_CURRENT_BINARY_DIR}
         )
 include_directories(${INCLUDEDIRS})
 ADD_LIBRARY(${TARGET_NAME} STATIC ${SOURCEFILES})
-TARGET_LINK_LIBRARIES(${TARGET_NAME} "zmq" "pthread" "ZmqCommunication")
+TARGET_LINK_LIBRARIES(${TARGET_NAME} "CommonLib" "zmq" "pthread" "ZmqCommunication" ${PROTOBUF_LIBRARY})
 add_subdirectory(Test)

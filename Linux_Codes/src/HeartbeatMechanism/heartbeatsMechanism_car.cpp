@@ -21,8 +21,9 @@
 
 HeartbeatsMechanism::HeartbeatsMechanism(std::string ipNum, int portNumSub, int portNumPub,
     bool isServer)
-    : m_subscriber{ isServer }
-    , m_publisher(isServer)
+    : m_tcp_subscriber{ isServer }
+    , m_tcp_publisher(isServer)
+    , m_proc_publisher(false)
 {
 
     m_logger = spdlog::stdout_color_mt("HeartbeatsMechanism_CAR");
@@ -31,33 +32,45 @@ HeartbeatsMechanism::HeartbeatsMechanism(std::string ipNum, int portNumSub, int 
     std::string addr;
     addr.resize(50);
     sprintf(&addr.front(), zmqbase::TCP_CONNECTION.c_str(), ipNum.c_str(), portNumSub);
-    m_logger->info("Subscriber addr:{}", addr);
-    m_subscriber.connect(addr);
+    m_logger->info("Car subscriber addr:{}", addr);
+    m_tcp_subscriber.connect(addr);
+
     addr.clear();
     addr.resize(50);
     sprintf(&addr.front(), zmqbase::TCP_CONNECTION.c_str(), ipNum.c_str(), portNumPub);
-    m_publisher.connect(addr);
-    m_logger->info("Publisher addr:{}", addr);
+    m_tcp_publisher.connect(addr);
+    m_logger->info("Car publisher addr:{}", addr);
     m_subscriber_thread = std::thread(&HeartbeatsMechanism::listen, this);
     m_publisher_thread = std::thread(&HeartbeatsMechanism::publish, this);
+
+    addr.clear();
+    addr.resize(50);
+    sprintf(&addr.front(), zmqbase::PROC_CONNECTION.c_str(), "mcu_communication_sub");
+    //README,Is mcu_communication_pub
+    m_proc_publisher.connect(addr);
+    m_logger->info("Uart publisher addr:{}", addr);
 }
 
 void HeartbeatsMechanism::listen()
 {
     try {
 
-        m_subscriber.subscribe(STATION_HB_TOPIC);
+        m_tcp_subscriber.subscribe(STATION_HB_TOPIC);
         std::string topic, msg;
         int counter{ 0 };
         bool carstopped{ false }, is_rcv{ false };
 
         while (1) {
-            is_rcv = m_subscriber.recv(topic, msg, RECEIVE_TIMEOUT);
+            is_rcv = m_tcp_subscriber.recv(topic, msg, RECEIVE_TIMEOUT);
             if (!is_rcv) {
                 ++counter;
                 if (counter == MAX_COUNT && !carstopped) {
                     m_logger->critical("Unable to connect"); //STOP CAR
-                    carstopped = true;
+                    carstopped = true; //MCU uart stop req
+
+                    std::string stop_msg = Common::pubsub::create_startstop_msg(uart::startstop_enum::STOP);
+                    m_proc_publisher.publish(CAR_HB_TOPIC, stop_msg);
+                    m_logger->info("Car stopped.Stop message sent.");
                 }
             }
 
@@ -65,10 +78,12 @@ void HeartbeatsMechanism::listen()
                 counter = 0;
                 carstopped = false;
                 m_logger->info("Reconnected"); //Start car
+                std::string start_msg = Common::pubsub::create_startstop_msg(uart::startstop_enum::START);
+                m_proc_publisher.publish(CAR_HB_TOPIC, start_msg);
+                m_logger->info("Car startted.Start message sent.");
 
                 std::string message((char*)msg.data(), msg.size());
                 m_logger->debug("Topic:{} Message:{}", topic, message);
-
             } else {
                 counter = 0;
                 std::string message((char*)msg.data(), msg.size());
@@ -85,7 +100,7 @@ void HeartbeatsMechanism::publish()
 
     while (1) {
         std::string msg("1");
-        m_publisher.publish(CAR_HB_TOPIC, msg);
+        m_tcp_publisher.publish(CAR_HB_TOPIC, msg);
         sleep(1);
     }
 }

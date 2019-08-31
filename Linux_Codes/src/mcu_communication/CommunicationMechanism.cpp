@@ -10,7 +10,6 @@
 #include "CommunicationMechanism.h"
 #include "CommonLib.h"
 #include "UARTMessageBuilder.h"
-#include "process.pb.h"
 #include <UARTCommunication.h>
 #include <iostream>
 #include <spdlog/sinks/stdout_color_sinks.h>
@@ -120,6 +119,7 @@ bool CommunicationMechanism::uart_reqrep(uart_req& req, uart_rep& rep)
 
 void CommunicationMechanism::reinit_uart()
 {
+    std::unique_lock<std::mutex> lock(m_uartmutex);
     uartcom->close_fd();
     uartcom.reset(new UARTCommunication(UART_PORT));
 
@@ -135,8 +135,14 @@ void CommunicationMechanism::uart_periodic_req_task()
 
     publisher.connect(addr);
     m_logger->info("Publisher addr:{}", addr);
-    while (true)
-        ;
+    uart_req uart_msg = uart_msg::create_state_msg();
+    uart_rep uart_rep;
+    while (true) {
+        if (uart_reqrep(uart_msg, uart_rep)) {
+            std::string statework_msg = Common::pubsub::create_statework_msg(uart_msg::parse_state_msg(uart_rep));
+            publisher.publish(STATEWORK_CONTROL_TOPIC, statework_msg);
+        }
+    }
 }
 
 void CommunicationMechanism::waitUntilFinish()

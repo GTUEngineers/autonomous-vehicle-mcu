@@ -74,33 +74,35 @@ void Error_Handler(void);
 #define PH0_OSC_IN_GPIO_Port GPIOH
 #define PH1_OSC_OUT_Pin GPIO_PIN_1
 #define PH1_OSC_OUT_GPIO_Port GPIOH
-#define STEER_DIR_PIN_Pin GPIO_PIN_0
-#define STEER_DIR_PIN_GPIO_Port GPIOC
 #define HCSR04_TRIG_Pin GPIO_PIN_1
 #define HCSR04_TRIG_GPIO_Port GPIOC
 #define HCSR04_ECHO_Pin GPIO_PIN_3
 #define HCSR04_ECHO_GPIO_Port GPIOC
 #define B1_Pin GPIO_PIN_0
 #define B1_GPIO_Port GPIOA
-#define BRAKE_RELAY_PIN_1_Pin GPIO_PIN_2
-#define BRAKE_RELAY_PIN_1_GPIO_Port GPIOA
-#define BRAKE_RELAY_PIN_2_Pin GPIO_PIN_3
-#define BRAKE_RELAY_PIN_2_GPIO_Port GPIOA
-#define THROTTLE_PIN_Pin GPIO_PIN_4
-#define THROTTLE_PIN_GPIO_Port GPIOA
+#define BRAKE_RELAY_1_Pin GPIO_PIN_2
+#define BRAKE_RELAY_1_GPIO_Port GPIOA
+#define BRAKE_RELAY_2_Pin GPIO_PIN_3
+#define BRAKE_RELAY_2_GPIO_Port GPIOA
+#define THROTTLE_VOLTAGE_Pin GPIO_PIN_4
+#define THROTTLE_VOLTAGE_GPIO_Port GPIOA
 #define SPI1_SCK_Pin GPIO_PIN_5
 #define SPI1_SCK_GPIO_Port GPIOA
 #define SPI1_MISO_Pin GPIO_PIN_6
 #define SPI1_MISO_GPIO_Port GPIOA
 #define SPI1_MOSI_Pin GPIO_PIN_7
 #define SPI1_MOSI_GPIO_Port GPIOA
-#define THROTTLE_LOCK_PIN_Pin GPIO_PIN_4
-#define THROTTLE_LOCK_PIN_GPIO_Port GPIOC
+#define THROTTLE_LOCK_Pin GPIO_PIN_4
+#define THROTTLE_LOCK_GPIO_Port GPIOC
 #define BOOT1_Pin GPIO_PIN_2
 #define BOOT1_GPIO_Port GPIOB
 #define START_BUTTON_Pin GPIO_PIN_7
 #define START_BUTTON_GPIO_Port GPIOE
 #define START_BUTTON_EXTI_IRQn EXTI9_5_IRQn
+#define STEER_DIR_Pin GPIO_PIN_9
+#define STEER_DIR_GPIO_Port GPIOE
+#define STEER_PWM_Pin GPIO_PIN_10
+#define STEER_PWM_GPIO_Port GPIOB
 #define LD4_Pin GPIO_PIN_12
 #define LD4_GPIO_Port GPIOD
 #define LD3_Pin GPIO_PIN_13
@@ -113,8 +115,6 @@ void Error_Handler(void);
 #define SWDIO_GPIO_Port GPIOA
 #define SWCLK_Pin GPIO_PIN_14
 #define SWCLK_GPIO_Port GPIOA
-#define STEER_PWM_PIN_Pin GPIO_PIN_15
-#define STEER_PWM_PIN_GPIO_Port GPIOA
 #define Audio_RST_Pin GPIO_PIN_4
 #define Audio_RST_GPIO_Port GPIOD
 #define Audio_SCL_Pin GPIO_PIN_6
@@ -124,7 +124,7 @@ void Error_Handler(void);
 #define MEMS_INT2_Pin GPIO_PIN_1
 #define MEMS_INT2_GPIO_Port GPIOE
 /* USER CODE BEGIN Private defines */
-#define DEBUG_LOG 1
+#define DEBUG_LOG 0
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
