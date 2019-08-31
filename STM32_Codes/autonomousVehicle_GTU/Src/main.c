@@ -126,7 +126,7 @@ int main (void)
     MX_USART2_UART_Init( );
     /* USER CODE BEGIN 2 */
     HAL_DAC_Start(&hdac, DAC_CHANNEL_1);
-    HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+    HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3);
     HAL_TIM_Base_Start_IT(&htim3);
 
     /* USER CODE END 2 */
@@ -380,7 +380,7 @@ static void MX_TIM2_Init (void)
     sConfigOC.Pulse = 50;
     sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
     sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-    if (HAL_TIM_PWM_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+    if (HAL_TIM_PWM_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_3) != HAL_OK)
     {
         Error_Handler( );
     }
@@ -495,10 +495,10 @@ static void MX_GPIO_Init (void)
     ;
 
     /*Configure GPIO pin Output Level */
-    HAL_GPIO_WritePin(CS_I2C_SPI_GPIO_Port, CS_I2C_SPI_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOE, CS_I2C_SPI_Pin | STEER_DIR_Pin, GPIO_PIN_RESET);
 
     /*Configure GPIO pin Output Level */
-    HAL_GPIO_WritePin(GPIOC, STEER_DIR_Pin | HCSR04_TRIG_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(HCSR04_TRIG_GPIO_Port, HCSR04_TRIG_Pin, GPIO_PIN_RESET);
 
     /*Configure GPIO pin Output Level */
     HAL_GPIO_WritePin(GPIOA, BRAKE_RELAY_1_Pin | BRAKE_RELAY_2_Pin, GPIO_PIN_RESET);
@@ -515,13 +515,6 @@ static void MX_GPIO_Init (void)
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(CS_I2C_SPI_GPIO_Port, &GPIO_InitStruct);
-
-    /*Configure GPIO pins : STEER_DIR_Pin THROTTLE_LOCK_Pin */
-    GPIO_InitStruct.Pin = STEER_DIR_Pin | THROTTLE_LOCK_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-    GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
     /*Configure GPIO pin : HCSR04_TRIG_Pin */
     GPIO_InitStruct.Pin = HCSR04_TRIG_Pin;
@@ -549,6 +542,13 @@ static void MX_GPIO_Init (void)
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
+    /*Configure GPIO pin : THROTTLE_LOCK_Pin */
+    GPIO_InitStruct.Pin = THROTTLE_LOCK_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(THROTTLE_LOCK_GPIO_Port, &GPIO_InitStruct);
+
     /*Configure GPIO pin : BOOT1_Pin */
     GPIO_InitStruct.Pin = BOOT1_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
@@ -560,6 +560,13 @@ static void MX_GPIO_Init (void)
     GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
     GPIO_InitStruct.Pull = GPIO_PULLDOWN;
     HAL_GPIO_Init(START_BUTTON_GPIO_Port, &GPIO_InitStruct);
+
+    /*Configure GPIO pin : STEER_DIR_Pin */
+    GPIO_InitStruct.Pin = STEER_DIR_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(STEER_DIR_GPIO_Port, &GPIO_InitStruct);
 
     /*Configure GPIO pins : LD4_Pin LD3_Pin LD5_Pin LD6_Pin
      Audio_RST_Pin */
@@ -588,7 +595,7 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
     {
         //HAL_GPIO_TogglePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_1_Pin);     //For test
 
-        HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_1);
+        HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_3);
         HAL_TIM_Base_Stop(&htim3);
         HAL_GPIO_WritePin(STEER_PWM_GPIO_Port, STEER_PWM_Pin, GPIO_PIN_RESET);
 
@@ -629,10 +636,10 @@ void StartDefaultTask (void const * argument)
     {
 #if DEBUG_LOG == 0
         osDelay(3000);
-        brake_test( );
-        throttle_test( );
+        //brake_test( );
+        //throttle_test( );
         steer_test( );
-        hcsr04( );
+        //hcsr04( );
 #endif
 #if DEBUG_LOG
         _write(0, "Debug", 5);
