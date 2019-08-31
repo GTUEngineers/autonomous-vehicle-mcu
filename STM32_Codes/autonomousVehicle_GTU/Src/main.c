@@ -613,9 +613,36 @@ void set_orange_led()
 
 void blink_red_led()
 {
-    while (1)
+    for (int i = 0; i < 100; ++i)
     {
         HAL_GPIO_TogglePin(LD5_GPIO_Port, LD5_Pin);
+        HAL_Delay(500);
+    }
+}
+
+void blink_blue_led()
+{
+    for (int i = 0; i < 100; ++i)
+    {
+        HAL_GPIO_TogglePin(LD6_GPIO_Port, LD6_Pin);
+        HAL_Delay(500);
+    }
+}
+
+void blink_green_led()
+{
+    for (int i = 0; i < 100; ++i)
+    {
+        HAL_GPIO_TogglePin(LD4_GPIO_Port, LD4_Pin);
+        HAL_Delay(500);
+    }
+}
+
+void blink_green_led()
+{
+    for (int i = 0; i < 100; ++i)
+    {
+        HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
         HAL_Delay(500);
     }
 }
