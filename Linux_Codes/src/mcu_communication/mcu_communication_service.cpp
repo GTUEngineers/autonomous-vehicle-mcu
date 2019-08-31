@@ -36,7 +36,6 @@ int main()
 
     logger->set_level(spdlog::level::debug);
 
-    CommunicationMechanism a;
-
-    sleep(1000);
+    CommunicationMechanism cm;
+    cm.waitUntilFinish();
 }
