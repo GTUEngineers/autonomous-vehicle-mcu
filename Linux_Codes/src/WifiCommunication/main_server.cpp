@@ -40,16 +40,15 @@ int main()
     //a counter to counts requests and replies
     m_logger->debug("Server connected");
     bind_req_rep_pub(addr, publisher);
-    m_logger->debug("Publisher Connected";
-    while (true)
-    {
+    m_logger->debug("Publisher Connected");
+    while (true) {
         std::string request;
         //Wait for next request from client
         //if receives a message
         if (server.recv(request)) {
             wifi::startstop_enum start_or_stop;
-            Common::seqreqrep::parse_startstop_req(req, start_or_stop);
-            log->debug("Clint Req: {}", start_or_stop);
+            Common::seqreqrep::parse_startstop_req(request, start_or_stop);
+            m_logger->debug("Clint Req: {}", start_or_stop);
             reply_req_rep_server(server);
             //std::string pub = Common::pubsub::create_startstop_msg((uart::startstop_enum)start_or_stop);
             //  publish recieved message
