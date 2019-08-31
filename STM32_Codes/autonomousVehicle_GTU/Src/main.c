@@ -126,8 +126,8 @@ int main (void)
     MX_USART2_UART_Init( );
     /* USER CODE BEGIN 2 */
     HAL_DAC_Start(&hdac, DAC_CHANNEL_1);
-    HAL_TIM_Base_Start_IT(&htim3);
     HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+    HAL_TIM_Base_Start_IT(&htim3);
 
     /* USER CODE END 2 */
 
@@ -590,7 +590,7 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
 
         HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_1);
         HAL_TIM_Base_Stop(&htim3);
-        HAL_GPIO_WritePin(STEER_PWM_PIN_GPIO_Port, STEER_PWM_PIN_Pin, GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(STEER_PWM_GPIO_Port, STEER_PWM_Pin, GPIO_PIN_RESET);
 
     }
 }
