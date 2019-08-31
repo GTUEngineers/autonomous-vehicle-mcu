@@ -18,9 +18,7 @@
 #include <unistd.h>
 #include <zmq.hpp>
 /*------------------------------< Defines >-----------------------------------*/
-#define NAME "WifiCommunication_Server"
-#define S_SUCCESS "Server connected"
-#define P_SUCCESS "Publisher Connected"
+#define LOGGER_NAME "WifiCommunication_Server"
 /*------------------------------< Typedefs >----------------------------------*/
 
 /*------------------------------< Namespaces >--------------------------------*/
@@ -29,21 +27,20 @@
 void bind_req_rep_server(std::string &add, seqreqrep::Server &server);
 void reply_req_rep_server(seqreqrep::Server &server);
 void bind_req_rep_pub(std::string &add, pubsub::Publisher &pub);
-void print(std::string &req, std::shared_ptr<spdlog::logger> &log);
 
 //Driver file for Server
 int main()
 {
     seqreqrep::Server server;
     pubsub::Publisher publisher(false); // publisher to mcu
-    std::shared_ptr<spdlog::logger> m_logger{spdlog::stdout_color_mt(NAME)};
+    std::shared_ptr<spdlog::logger> m_logger{spdlog::stdout_color_mt(LOGGER_NAME)};
     std::string addr;
     m_logger->set_level(spdlog::level::debug);
     bind_req_rep_server(addr, server);
     //a counter to counts requests and replies
-    m_logger->debug(S_SUCCESS);
+    m_logger->debug("Server connected");
     bind_req_rep_pub(addr, publisher);
-    m_logger->debug(P_SUCCESS);
+    m_logger->debug("Publisher Connected";
     while (true)
     {
         std::string request;
@@ -51,7 +48,9 @@ int main()
         //if receives a message
         if (server.recv(request))
         {
-            print(request, m_logger);
+            wifi::startstop_enum start_or_stop;
+            Common::seqreqrep::parse_startstop_req(req, start_or_stop);
+            log->debug("Clint Req: {}", start_or_stop);
             reply_req_rep_server(server);
             //std::string pub = Common::pubsub::create_startstop_msg((uart::startstop_enum)start_or_stop);
             //  publish recieved message
@@ -61,15 +60,7 @@ int main()
     }
     return 0;
 }
-/*
- *prints request
- */
-void print(std::string &req, std::shared_ptr<spdlog::logger> &log)
-{
-    wifi::startstop_enum start_or_stop;
-    Common::seqreqrep::parse_startstop_req(req, start_or_stop);
-    log->debug("Clint Req: {}", start_or_stop);
-}
+
 /*
  *binds to localhost with port 5556
  */

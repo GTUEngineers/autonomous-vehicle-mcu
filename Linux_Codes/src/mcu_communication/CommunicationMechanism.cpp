@@ -18,7 +18,7 @@
 
 /*------------------------------< Defines >-----------------------------------*/
 #define RETRY_UART (2)
-#define NAME "CommunicationMechanism"
+#define LOGGER_NAME "CommunicationMechanism"
 /*------------------------------< Typedefs >----------------------------------*/
 
 /*------------------------------< Namespaces >--------------------------------*/
@@ -28,7 +28,7 @@
 CommunicationMechanism::CommunicationMechanism()
     : zmq_listener_thread(&CommunicationMechanism::zmq_listener_task, this), uart_periodic_req_thread(&CommunicationMechanism::uart_periodic_req_task, this), publisher(true), subscriber(true), uartcom{nullptr}
 {
-    m_logger = spdlog::stdout_color_mt(NAME);
+    m_logger = spdlog::stdout_color_mt(LOGGER_NAME);
     m_logger->set_level(spdlog::level::debug);
     uartcom.reset(new UARTCommunication(UART_PORT)); //TODO Fix
 

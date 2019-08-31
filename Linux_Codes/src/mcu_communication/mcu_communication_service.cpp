@@ -17,7 +17,7 @@
 #include <spdlog/spdlog.h>
 #include <string>
 /*------------------------------< Defines >-----------------------------------*/
-#define NAME "mcu_communication_service"
+#define LOGGER_NAME "mcu_communication_service"
 
 /*------------------------------< Typedefs >----------------------------------*/
 
@@ -54,10 +54,10 @@ int main()
 {
     uartcom.reset(new UARTCommunication(UART_PORT));
     std::shared_ptr<spdlog::logger> logger;
-    logger = spdlog::get(NAME);
+    logger = spdlog::get(LOGGER_NAME);
     if (logger == nullptr)
     {
-        logger = spdlog::stdout_color_mt(NAME);
+        logger = spdlog::stdout_color_mt(LOGGER_NAME);
     }
 
     logger->set_level(spdlog::level::debug);

@@ -18,7 +18,7 @@
 #include <spdlog/spdlog.h>
 #include <unistd.h>
 /*------------------------------< Defines >-----------------------------------*/
-#define NAME "WifiCommunication_Client"
+#define LOGGER_NAME "WifiCommunication_Client"
 #define FAIL "Connection was Broken"
 /*------------------------------< Typedefs >----------------------------------*/
 
@@ -31,7 +31,7 @@ void connect_sub(std::string &add, pubsub::Subscriber &sub);
 //Driver file for Client
 int main()
 {
-    std::shared_ptr<spdlog::logger> m_logger{spdlog::stdout_color_mt(NAME)};
+    std::shared_ptr<spdlog::logger> m_logger{spdlog::stdout_color_mt(LOGGER_NAME)};
     m_logger->set_level(spdlog::level::debug);
     std::unique_ptr<seqreqrep::Client> client(new seqreqrep::Client);
     pubsub::Subscriber subscriber(true);
@@ -76,7 +76,7 @@ void connect_sub(std::string &add, pubsub::Subscriber &sub)
     add.resize(50);
     sprintf(&add.front(), zmqbase::PROC_CONNECTION.c_str(), MCU_SUB_PROC_CONN);
     sub.connect(add);
-    std::string top("startstoptopic");
+    std::string top(STARTSTOP_CONTROL_TOPIC);
     sub.subscribe("");
 }
 
