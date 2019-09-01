@@ -26,6 +26,20 @@ void reverse (uart_message_req* req)
     req->req.msg[0] = l;
 }
 
+
+void create_state_rep_msg(uart_message_rep* rep, enum STATE val)
+{
+#define STATE_MSG_MASK (0b00000011)
+    rep->generic_msg.msg[1] = val & STATE_MSG_MASK;
+#undef STATE_MSG_MASK
+}
+
+void create_steer_rep_msg(uart_message_rep* rep, const uint16_t val)
+{
+    memcpy(rep->generic_msg.msg, &val, sizeof(uint16_t));
+    reverse(rep);
+}
+
 void create_general_rep_msg (uart_message_rep* rep, const uint8_t val)
 {
 #define GENERAL_MSG_MASK (0b00000001)
