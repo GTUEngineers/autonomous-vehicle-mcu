@@ -6,7 +6,7 @@
 
 int main()
 {
-    HeartbeatsMechanism heartbeat_station("10.42.0.251", 5557, 5556, false);
+    HeartbeatsMechanism heartbeat_station("127.0.0.1", 5557, 5556, false);
     heartbeat_station.waitUntilFinish();
 
     return 0;
