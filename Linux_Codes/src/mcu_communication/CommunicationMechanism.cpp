@@ -34,7 +34,6 @@ CommunicationMechanism::CommunicationMechanism()
     uartcom.reset(new UARTCommunication(UART_PORT)); //TODO Fix
     zmq_listener_thread = std::thread(&CommunicationMechanism::zmq_listener_task, this);
     //uart_periodic_req_thread = std::thread(&CommunicationMechanism::uart_periodic_req_task, this);
-    
 
     // Constructor code
 }
@@ -63,28 +62,28 @@ void CommunicationMechanism::zmq_listener_task()
             if (pubsub.msg_type() == uart::pub_sub_message::STEERING_MSG)
             {
                 uart_msg = uart_msg::create_steer_msg(pubsub.steering().dir(), pubsub.steering().angle());
-                m_logger->debug("Steering:{}", pubsub.steering().angle()); 
+                m_logger->debug("Steering:{},{}", pubsub.steering().angle(), pubsub.steering().dir());
             }
         }
-        else if (topic == "control/throttle")
+        else if (topic == THROTTLE_CONTROL_TOPIC)
         {
             pubsub.ParseFromArray(msg.data(), msg.size());
             if (pubsub.msg_type() == uart::pub_sub_message::THROTTLE_MSG)
             {
                 uart_msg = uart_msg::create_throttle_msg(pubsub.throttle().throttlevalue());
-                m_logger->debug("Throttle:{}", pubsub.throttle().throttlevalue()); 
+                m_logger->debug("Throttle:{}", pubsub.throttle().throttlevalue());
             }
         }
-        else if (topic == "control/brake")
+        else if (topic == BRAKE_CONTROL_TOPIC)
         {
             pubsub.ParseFromArray(msg.data(), msg.size());
             if (pubsub.msg_type() == uart::pub_sub_message::BRAKE_MSG)
             {
                 uart_msg = uart_msg::create_brake_msg(pubsub.brake().brakevalue());
-                m_logger->debug("Brake:{}", pubsub.brake().brakevalue()); 
+                m_logger->debug("Brake:{}", pubsub.brake().brakevalue());
             }
         }
-        else if (topic == "control/startstop")
+        else if (topic == STARTSTOP_CONTROL_TOPIC)
         {
             pubsub.ParseFromArray(msg.data(), msg.size());
             if (pubsub.msg_type() == uart::pub_sub_message::START_STOP_MSG)
