@@ -8,6 +8,7 @@
 
 /*------------------------------< Includes >----------------------------------*/
 #include "UART_Message.h"
+#include "string.h"
 /*------------------------------< Defines >-----------------------------------*/
 
 /*------------------------------< Typedefs >----------------------------------*/
@@ -17,27 +18,26 @@
 /*------------------------------< Variables >---------------------------------*/
 
 /*------------------------------< Prototypes >--------------------------------*/
-void reverse (uart_message_req* req);
+void reverse (uint8_t* req);
 /*------------------------------< Functions >---------------------------------*/
-void reverse (uart_message_req* req)
+void reverse (uint8_t * req)
 {
-    uint8_t l = req->req.msg[1];
-    req->req.msg[1] = req->req.msg[0];
-    req->req.msg[0] = l;
+    uint8_t l = req[1];
+    req[1] = req[0];
+    req[0] = l;
 }
 
-
-void create_state_rep_msg(uart_message_rep* rep, enum STATE val)
+void create_state_rep_msg (uart_message_rep* rep, enum STATE val)
 {
 #define STATE_MSG_MASK (0b00000011)
     rep->generic_msg.msg[1] = val & STATE_MSG_MASK;
 #undef STATE_MSG_MASK
 }
 
-void create_steer_rep_msg(uart_message_rep* rep, const uint16_t val)
+void create_steer_rep_msg (uart_message_rep* rep, const uint16_t val)
 {
     memcpy(rep->generic_msg.msg, &val, sizeof(uint16_t));
-    reverse(rep);
+    reverse(rep->generic_msg.msg);
 }
 
 void create_general_rep_msg (uart_message_rep* rep, const uint8_t val)
@@ -54,7 +54,7 @@ void parse_startstop_msg (const uart_message_req* req, uint8_t* val)
 #undef STARTSTOP_MASK
 }
 
-void parse_steer_msg (const uart_message_req* req, uint8_t* dir, uint16_t* val)
+void parse_steer_msg (const uart_message_req* req, uint8_t* dir, int16_t* val)
 {
 #define DIR_MASK (0b000000100)
 #define ANGLE_MASK (0b00001111111111)
@@ -62,7 +62,7 @@ void parse_steer_msg (const uart_message_req* req, uint8_t* dir, uint16_t* val)
     *dir = (temp & DIR_MASK) >> 2;
     uart_message_req reqm;
     reqm.req_uint16.msg = req->req_uint16.msg;
-    reverse(&reqm);
+    reverse(reqm.req.msg);
     *val = reqm.req_uint16.msg & ANGLE_MASK;
 #undef DIR_MASK
 #undef ANGLE_MASK
