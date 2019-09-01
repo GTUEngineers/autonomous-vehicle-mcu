@@ -30,9 +30,11 @@ CommunicationMechanism::CommunicationMechanism()
 
     m_logger = spdlog::stdout_color_mt(LOGGER_NAME);
     m_logger->set_level(spdlog::level::debug);
-    zmq_listener_thread = std::thread(&CommunicationMechanism::zmq_listener_task, this);
-    uart_periodic_req_thread = std::thread(&CommunicationMechanism::uart_periodic_req_task, this);
+
     uartcom.reset(new UARTCommunication(UART_PORT)); //TODO Fix
+    zmq_listener_thread = std::thread(&CommunicationMechanism::zmq_listener_task, this);
+    //uart_periodic_req_thread = std::thread(&CommunicationMechanism::uart_periodic_req_task, this);
+    
 
     // Constructor code
 }
@@ -55,12 +57,13 @@ void CommunicationMechanism::zmq_listener_task()
     while (true)
     {
         subscriber.recv(topic, msg);
-        if (topic == "control/steering")
+        if (topic == STEERING_CONTROL_TOPIC)
         {
             pubsub.ParseFromArray(msg.data(), msg.size());
             if (pubsub.msg_type() == uart::pub_sub_message::STEERING_MSG)
             {
                 uart_msg = uart_msg::create_steer_msg(pubsub.steering().dir(), pubsub.steering().angle());
+                m_logger->debug("Steering:{}", pubsub.steering().angle()); 
             }
         }
         else if (topic == "control/throttle")
@@ -69,6 +72,7 @@ void CommunicationMechanism::zmq_listener_task()
             if (pubsub.msg_type() == uart::pub_sub_message::THROTTLE_MSG)
             {
                 uart_msg = uart_msg::create_throttle_msg(pubsub.throttle().throttlevalue());
+                m_logger->debug("Throttle:{}", pubsub.throttle().throttlevalue()); 
             }
         }
         else if (topic == "control/brake")
@@ -77,6 +81,7 @@ void CommunicationMechanism::zmq_listener_task()
             if (pubsub.msg_type() == uart::pub_sub_message::BRAKE_MSG)
             {
                 uart_msg = uart_msg::create_brake_msg(pubsub.brake().brakevalue());
+                m_logger->debug("Brake:{}", pubsub.brake().brakevalue()); 
             }
         }
         else if (topic == "control/startstop")
@@ -107,11 +112,11 @@ void CommunicationMechanism::zmq_listener_task()
         {
             m_logger->critical("Invalid Topic: {}", topic);
         }
-        if (!uart_reqrep(uart_msg, uart_rep))
+        /*if (!uart_reqrep(uart_msg, uart_rep))
         {
             reinit_uart();
             m_logger->critical("UART ERROR");
-        }
+        }*/
     }
 }
 

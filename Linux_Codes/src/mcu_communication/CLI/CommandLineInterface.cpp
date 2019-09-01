@@ -37,15 +37,15 @@ Cli::Cli(bool isServer)
     cli_logger = spdlog::stdout_color_mt("CommandLineInterface");
     cli_logger->set_level(spdlog::level::debug);
 
-    std::string addr, ipNum;
-    ipNum = "127.0.0.1";
+    std::string addr/* , ipNum;*/
+    //ipNum = "127.0.0.1";
     addr.resize(50);
-    sprintf(&addr.front(), zmqbase::TCP_CONNECTION.c_str(), ipNum.c_str(), 5555);
+    sprintf(&addr.front(), zmqbase::PROC_CONNECTION.c_str(),MCU_SUB_PROC_CONN);
     cli_publisher.connect(addr);
     cli_logger->info("Publisher addr:{}", addr);
 }
 
-Cli::Cli(std::string ipNum, int portNumPub, bool isServer = false)
+/* Cli::Cli(std::string ipNum, int portNumPub, bool isServer = false)
     : cli_msg("")
     , user_selection(type::dflt)
     , steering_angle(-1)
@@ -62,7 +62,7 @@ Cli::Cli(std::string ipNum, int portNumPub, bool isServer = false)
     sprintf(&addr.front(), zmqbase::TCP_CONNECTION.c_str(), ipNum.c_str(), portNumPub);
     cli_publisher.connect(addr);
     cli_logger->info("Publisher addr:{}", addr);
-}
+}*/
 
 void Cli::cli_start()
 {
@@ -185,15 +185,15 @@ uart::startstop_enum Cli::get_start_stop_value() { return start_stop_value; }
 
 int main()
 {
-    std::string ipAddr, temp;
+    /*std::string ipAddr, temp;
     int portNum;
     std::cout << "Enter the ip address:" << std::endl;
     std::cin >> ipAddr;
     std::cout << "Enter the port number:" << std::endl;
     std::cin >> temp;
-    portNum = atoi(temp.c_str());
+    portNum = atoi(temp.c_str());*/
 
-    Cli cli_process(ipAddr, portNum);
+    Cli cli_process;
     //Cli cli_process;
     while (!flag) {
         cli_process.cli_start();
