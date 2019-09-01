@@ -1,7 +1,6 @@
 syntax="proto3";
-import "common.proto";
 
-package lidar;
+package LidarComm;
 
 message Position{
     float x = 1;
@@ -31,8 +30,8 @@ message RequestData{
 
 message req_rep{
     oneof messages{
-        RequestData req = 1;
-        Cluster rep = 2;
+        RequestData lidar_req = 1;
+        Cluster lidar_rep = 2;
     }
 }
 
