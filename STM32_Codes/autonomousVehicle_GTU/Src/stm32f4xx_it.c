@@ -26,6 +26,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "Controllers/BrakeController.h"
+#include "helpers.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -238,7 +239,7 @@ void HAL_GPIO_EXTI_Callback (uint16_t GPIO_Pin)
         }
         case GPIO_PIN_8:
         {
-            brake_set_value (BRAKE_LOCK);
+            emergency_stop();
             break;
         }
     }
