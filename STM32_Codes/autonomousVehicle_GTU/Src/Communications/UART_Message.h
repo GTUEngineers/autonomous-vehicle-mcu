@@ -53,11 +53,19 @@ union u_uart_message_rep
     struct UART_gps_message_rep gps_msg;
 };
 
+enum STATE{
+    RUNNING = 0,
+    STOP = 1,
+    STATE_ERROR = 2
+};
+
 typedef union u_uart_message_rep uart_message_rep;
 typedef union u_UART_message_req uart_message_req;
 /*------------------------------< Constants >---------------------------------*/
 
 /*------------------------------< Prototypes >--------------------------------*/
+void create_state_rep_msg(uart_message_rep* rep, enum STATE val);
+void create_steer_rep_msg(uart_message_rep* rep, const uint16_t val);
 void create_general_rep_msg(uart_message_rep* rep, const uint8_t val);
 void parse_steer_msg(const uart_message_req* req, uint8_t* dir, int16_t* val);
 void parse_throttle_msg(const uart_message_req* req, uint8_t* val);

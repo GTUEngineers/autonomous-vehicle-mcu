@@ -24,7 +24,8 @@
 #define __MAIN_H
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 /* Includes ------------------------------------------------------------------*/
@@ -54,10 +55,10 @@ extern UART_HandleTypeDef huart2;
 
 /* USER CODE END EM */
 
-void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
+void HAL_TIM_MspPostInit (TIM_HandleTypeDef *htim);
 
 /* Exported functions prototypes ---------------------------------------------*/
-void Error_Handler(void);
+void Error_Handler (void);
 
 /* USER CODE BEGIN EFP */
 
@@ -74,8 +75,6 @@ void Error_Handler(void);
 #define PH0_OSC_IN_GPIO_Port GPIOH
 #define PH1_OSC_OUT_Pin GPIO_PIN_1
 #define PH1_OSC_OUT_GPIO_Port GPIOH
-#define STEER_DIR_Pin GPIO_PIN_0
-#define STEER_DIR_GPIO_Port GPIOC
 #define HCSR04_TRIG_Pin GPIO_PIN_1
 #define HCSR04_TRIG_GPIO_Port GPIOC
 #define HCSR04_ECHO_Pin GPIO_PIN_3
@@ -101,6 +100,13 @@ void Error_Handler(void);
 #define START_BUTTON_Pin GPIO_PIN_7
 #define START_BUTTON_GPIO_Port GPIOE
 #define START_BUTTON_EXTI_IRQn EXTI9_5_IRQn
+#define EMERGENCY_STOP_Pin GPIO_PIN_8
+#define EMERGENCY_STOP_GPIO_Port GPIOE
+#define EMERGENCY_STOP_EXTI_IRQn EXTI9_5_IRQn
+#define STEER_DIR_Pin GPIO_PIN_9
+#define STEER_DIR_GPIO_Port GPIOE
+#define STEER_PWM_Pin GPIO_PIN_10
+#define STEER_PWM_GPIO_Port GPIOB
 #define LD4_Pin GPIO_PIN_12
 #define LD4_GPIO_Port GPIOD
 #define LD3_Pin GPIO_PIN_13
@@ -113,8 +119,6 @@ void Error_Handler(void);
 #define SWDIO_GPIO_Port GPIOA
 #define SWCLK_Pin GPIO_PIN_14
 #define SWCLK_GPIO_Port GPIOA
-#define STEER_PWM_PIN_Pin GPIO_PIN_15
-#define STEER_PWM_PIN_GPIO_Port GPIOA
 #define Audio_RST_Pin GPIO_PIN_4
 #define Audio_RST_GPIO_Port GPIOD
 #define Audio_SCL_Pin GPIO_PIN_6

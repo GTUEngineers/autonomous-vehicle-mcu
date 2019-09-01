@@ -33,6 +33,7 @@
 #include "Communications/UART_Message.h"
 #include "autonomousVehicle_conf.h"
 #include "stm32f4xx.h"
+#include "helpers.h"
 
 /* USER CODE END Includes */
 
@@ -130,8 +131,8 @@ int main (void)
     MX_USART2_UART_Init( );
     /* USER CODE BEGIN 2 */
     HAL_DAC_Start(&hdac, DAC_CHANNEL_1);
+    HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3);
     HAL_TIM_Base_Start_IT(&htim3);
-    HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
 
     /* USER CODE END 2 */
 
@@ -168,6 +169,7 @@ int main (void)
     throttle_set_value(SPEED_0);
     throttle_set_lock(THROTTLE_LOCK);
     uart_init( );
+    steer_init( );
     communication_init( );
     /* USER CODE END RTOS_THREADS */
 
@@ -265,7 +267,6 @@ static void MX_DAC_Init (void)
     /* USER CODE BEGIN DAC_Init 2 */
 
     /* USER CODE END DAC_Init 2 */
-
 }
 
 /**
@@ -299,7 +300,6 @@ static void MX_I2C1_Init (void)
     /* USER CODE BEGIN I2C1_Init 2 */
 
     /* USER CODE END I2C1_Init 2 */
-
 }
 
 /**
@@ -337,7 +337,6 @@ static void MX_SPI1_Init (void)
     /* USER CODE BEGIN SPI1_Init 2 */
 
     /* USER CODE END SPI1_Init 2 */
-
 }
 
 /**
@@ -357,8 +356,8 @@ static void MX_TIM2_Init (void)
     TIM_OC_InitTypeDef sConfigOC = { 0 };
 
     /* USER CODE BEGIN TIM2_Init 1 */
-//Prescaler 207 4KHz
-//Prescaler 332 2.5kHz
+    //Prescaler 207 4KHz
+    //Prescaler 332 2.5kHz
     /* USER CODE END TIM2_Init 1 */
     htim2.Instance = TIM2;
     htim2.Init.Prescaler = 207;
@@ -389,7 +388,7 @@ static void MX_TIM2_Init (void)
     sConfigOC.Pulse = 60;
     sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
     sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-    if (HAL_TIM_PWM_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+    if (HAL_TIM_PWM_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_3) != HAL_OK)
     {
         Error_Handler( );
     }
@@ -397,7 +396,6 @@ static void MX_TIM2_Init (void)
 
     /* USER CODE END TIM2_Init 2 */
     HAL_TIM_MspPostInit(&htim2);
-
 }
 
 /**
@@ -416,7 +414,7 @@ static void MX_TIM3_Init (void)
     TIM_MasterConfigTypeDef sMasterConfig = { 0 };
 
     /* USER CODE BEGIN TIM3_Init 1 */
-//Prescaler 2*X -1 tane pwm adımına denk gelir
+    //Prescaler 2*X -1 tane pwm adımına denk gelir
     //10500 2KHz
     //16800 1.25 KHz
     /* USER CODE END TIM3_Init 1 */
@@ -444,7 +442,6 @@ static void MX_TIM3_Init (void)
     /* USER CODE BEGIN TIM3_Init 2 */
 
     /* USER CODE END TIM3_Init 2 */
-
 }
 
 /**
@@ -477,7 +474,6 @@ static void MX_USART2_UART_Init (void)
     /* USER CODE BEGIN USART2_Init 2 */
 
     /* USER CODE END USART2_Init 2 */
-
 }
 
 /**
@@ -504,10 +500,10 @@ static void MX_GPIO_Init (void)
     ;
 
     /*Configure GPIO pin Output Level */
-    HAL_GPIO_WritePin(CS_I2C_SPI_GPIO_Port, CS_I2C_SPI_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOE, CS_I2C_SPI_Pin | STEER_DIR_Pin, GPIO_PIN_RESET);
 
     /*Configure GPIO pin Output Level */
-    HAL_GPIO_WritePin(GPIOC, STEER_DIR_Pin | HCSR04_TRIG_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(HCSR04_TRIG_GPIO_Port, HCSR04_TRIG_Pin, GPIO_PIN_RESET);
 
     /*Configure GPIO pin Output Level */
     HAL_GPIO_WritePin(GPIOA, BRAKE_RELAY_1_Pin | BRAKE_RELAY_2_Pin, GPIO_PIN_RESET);
@@ -525,13 +521,6 @@ static void MX_GPIO_Init (void)
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(CS_I2C_SPI_GPIO_Port, &GPIO_InitStruct);
 
-    /*Configure GPIO pins : STEER_DIR_Pin THROTTLE_LOCK_Pin */
-    GPIO_InitStruct.Pin = STEER_DIR_Pin | THROTTLE_LOCK_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-    GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
     /*Configure GPIO pin : HCSR04_TRIG_Pin */
     GPIO_InitStruct.Pin = HCSR04_TRIG_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -548,7 +537,7 @@ static void MX_GPIO_Init (void)
     /*Configure GPIO pin : B1_Pin */
     GPIO_InitStruct.Pin = B1_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_EVT_RISING;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Pull = GPIO_PULLDOWN;
     HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
     /*Configure GPIO pins : BRAKE_RELAY_1_Pin BRAKE_RELAY_2_Pin */
@@ -557,6 +546,13 @@ static void MX_GPIO_Init (void)
     GPIO_InitStruct.Pull = GPIO_PULLDOWN;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+    /*Configure GPIO pin : THROTTLE_LOCK_Pin */
+    GPIO_InitStruct.Pin = THROTTLE_LOCK_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(THROTTLE_LOCK_GPIO_Port, &GPIO_InitStruct);
 
     /*Configure GPIO pin : BOOT1_Pin */
     GPIO_InitStruct.Pin = BOOT1_Pin;
@@ -569,6 +565,19 @@ static void MX_GPIO_Init (void)
     GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
     GPIO_InitStruct.Pull = GPIO_PULLDOWN;
     HAL_GPIO_Init(START_BUTTON_GPIO_Port, &GPIO_InitStruct);
+
+    /*Configure GPIO pin : EMERGENCY_STOP_Pin */
+    GPIO_InitStruct.Pin = EMERGENCY_STOP_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+    GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+    HAL_GPIO_Init(EMERGENCY_STOP_GPIO_Port, &GPIO_InitStruct);
+
+    /*Configure GPIO pin : STEER_DIR_Pin */
+    GPIO_InitStruct.Pin = STEER_DIR_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(STEER_DIR_GPIO_Port, &GPIO_InitStruct);
 
     /*Configure GPIO pins : LD4_Pin LD3_Pin LD5_Pin LD6_Pin
      Audio_RST_Pin */
@@ -587,7 +596,6 @@ static void MX_GPIO_Init (void)
     /* EXTI interrupt init*/
     HAL_NVIC_SetPriority(EXTI9_5_IRQn, 5, 0);
     HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
-
 }
 
 /* USER CODE BEGIN 4 */
@@ -595,27 +603,13 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
 {
     if (htim->Instance == TIM3)
     {
-        //HAL_GPIO_TogglePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_1_Pin);     //For test
-
-        HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_1);
+        HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_3);
         HAL_TIM_Base_Stop(&htim3);
-        //HAL_GPIO_WritePin(STEER_PWM_PIN_GPIO_Port, STEER_PWM_PIN_Pin, GPIO_PIN_RESET);
+       // HAL_GPIO_WritePin(STEER_PWM_GPIO_Port, STEER_PWM_Pin, GPIO_PIN_RESET);
 
     }
 }
 
-int _write (int file, char *ptr, int len)
-{
-    int DataIdx;
-
-    for (DataIdx = 0; DataIdx < len; DataIdx++)
-    {
-        /*__io_putchar(*ptr++);*/
-        ITM_SendChar(*ptr++);
-
-    }
-    return len;
-}
 /* USER CODE END 4 */
 
 /* USER CODE BEGIN Header_StartDefaultTask */
@@ -625,23 +619,27 @@ int _write (int file, char *ptr, int len)
  * @retval None
  */
 /* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask (void const * argument)
+void StartDefaultTask (void const *argument)
 {
-    
+
     /* USER CODE BEGIN 5 */
     /* Infinite loop */
 #if DEBUG_LOG == 0
-    steer_init( );
+
 #endif
 
     for (;;)
     {
 #if DEBUG_LOG == 0
+        //set_green_led();
+        //set_red_led();
+        //set_orange_led();
+        //set_blue_led();
         osDelay(3000);
-        brake_test( );
-        throttle_test( );
-        steer_test( );
-        hcsr04( );
+        //brake_test( );
+        //throttle_test( );
+        // steer_test( );
+        //hcsr04( );
 #endif
 #if DEBUG_LOG
         _write(0, "Debug", 5);
@@ -652,12 +650,11 @@ void StartDefaultTask (void const * argument)
             uint16_t val;
             uint8_t val2;
             parse_steer_msg(&b, &val2, &val);
-            sprintf(a.generic_msg.msg, "%d %d",val, val2);
+            sprintf(a.generic_msg.msg, "%d %d", val, val2);
             communication_send_msg(&a);
         }
         osDelay(1);
 #endif
-
     }
     /* USER CODE END 5 */
 }
@@ -815,7 +812,7 @@ void Error_Handler (void)
     /* USER CODE END Error_Handler_Debug */
 }
 
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.
@@ -824,11 +821,11 @@ void Error_Handler (void)
   * @retval None
   */
 void assert_failed(uint8_t *file, uint32_t line)
-{ 
-  /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
+{
+    /* USER CODE BEGIN 6 */
+    /* User can add his own implementation to report the file name and line number,
      tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-  /* USER CODE END 6 */
+    /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
 

@@ -37,7 +37,7 @@ void steer_set_value (int val)
     {
         return;
     }
-    HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_1);
+    HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_3);
     HAL_TIM_Base_Stop(&htim3);     //check it
     if (position > val)
     {
@@ -53,7 +53,7 @@ void steer_set_value (int val)
     TIM3->ARR = 2 * abs_val - 1;
     position = val;
 
-    HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+    HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3);
     HAL_TIM_Base_Start_IT(&htim3);
     //enable pwm and timer
 }

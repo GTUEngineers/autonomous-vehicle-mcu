@@ -19,34 +19,36 @@
 /*------------------------------< Variables >----------------------------------*/
 std::shared_ptr<spdlog::logger> m_logger;
 /*------------------------------< Namespaces >--------------------------------*/
-namespace uart_msg {
-void reverse(uart_req& req);
+namespace uart_msg
+{
+void reverse(uint8_t *msg);
 
 void init_uartmessagebuilder_logger()
 {
     m_logger = spdlog::get("UARTMessageBuilder");
-    if (m_logger == nullptr) {
+    if (m_logger == nullptr)
+    {
         m_logger = spdlog::stdout_color_mt("UARTMessageBuilder");
     }
 }
-void reverse(uart_req& req)
+void reverse(uint8_t *msg)
 {
-    uint8_t l = req.req.msg[1];
-    req.req.msg[1] = req.req.msg[0];
-    req.req.msg[0] = l;
+    uint8_t l = msg[1];
+    msg[1] = msg[0];
+    msg[0] = l;
 }
 
-uart_req create_steer_msg(const uart::steering_enum dir, const uint16_t& val)
+uart_req create_steer_msg(const uart::steering_enum dir, const uint16_t &val)
 {
     uart_req req;
     memcpy(&req.req_uint16, &val, sizeof(uint16_t));
-    reverse(req);
+    reverse(req.req.msg);
     uint8_t header = 0b00010000 | ((uint8_t)dir << 2);
     req.req.msg[0] = (req.req.msg[0] & 0b00000011) | header;
     return req;
 }
 
-uart_req create_throttle_msg(const uint8_t& val)
+uart_req create_throttle_msg(const uint8_t &val)
 {
     uart_req req;
     memcpy(&req.req.msg[1], &val, sizeof(uint8_t));
@@ -89,17 +91,25 @@ uart_req create_gps_msg()
     return req;
 }
 
-uart::stateWorking_enum parse_state_msg(const uart_rep& msg)
+uint16_t parse_steering_msg(uart_rep &msg)
+{
+    reverse(msg.rep.msg);
+    uint16_t retVal;
+    memcpy(&retVal, msg.rep.msg, sizeof(uint16_t));
+    return retVal;
+}
+
+uart::stateWorking_enum parse_state_msg(const uart_rep &msg)
 {
 }
-std::string parse_hcsr4_msg(const uart_rep& msg)
+std::string parse_hcsr4_msg(const uart_rep &msg)
 {
 }
-gps parse_gps_msg(const uart_rep& msg)
+gps parse_gps_msg(const uart_rep &msg)
 {
 }
-bool parse_general_rep_msg(const uart_rep& msg)
+bool parse_general_rep_msg(const uart_rep &msg)
 {
     return (bool)msg.rep_uint16.msg;
 }
-}
+} // namespace uart_msg
