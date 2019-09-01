@@ -111,11 +111,11 @@ void CommunicationMechanism::zmq_listener_task()
         {
             m_logger->critical("Invalid Topic: {}", topic);
         }
-        /*if (!uart_reqrep(uart_msg, uart_rep))
+        if (!uart_reqrep(uart_msg, uart_rep))
         {
             reinit_uart();
             m_logger->critical("UART ERROR");
-        }*/
+        }
     }
 }
 
