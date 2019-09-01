@@ -6,5 +6,5 @@ void set_red_led();
 void set_blue_led();
 void set_green_led();
 void set_orange_led();
-
+void emergency_stop();
 #endif
