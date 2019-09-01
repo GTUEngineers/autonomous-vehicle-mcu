@@ -160,6 +160,7 @@ int main (void)
     throttle_set_value(SPEED_0);
     throttle_set_lock(THROTTLE_LOCK);
     uart_init( );
+    steer_init( );
     communication_init( );
     /* USER CODE END RTOS_THREADS */
 
@@ -375,7 +376,7 @@ static void MX_TIM2_Init (void)
         Error_Handler( );
     }
     sConfigOC.OCMode = TIM_OCMODE_PWM1;
-    sConfigOC.Pulse = 50;
+    sConfigOC.Pulse = 60;
     sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
     sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
     if (HAL_TIM_PWM_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_3) != HAL_OK)
@@ -527,7 +528,7 @@ static void MX_GPIO_Init (void)
     /*Configure GPIO pin : B1_Pin */
     GPIO_InitStruct.Pin = B1_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_EVT_RISING;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Pull = GPIO_PULLDOWN;
     HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
     /*Configure GPIO pins : BRAKE_RELAY_1_Pin BRAKE_RELAY_2_Pin */
@@ -555,6 +556,12 @@ static void MX_GPIO_Init (void)
     GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
     GPIO_InitStruct.Pull = GPIO_PULLDOWN;
     HAL_GPIO_Init(START_BUTTON_GPIO_Port, &GPIO_InitStruct);
+
+    /*Configure GPIO pin : EMERGENCY_STOP_Pin */
+    GPIO_InitStruct.Pin = EMERGENCY_STOP_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+    GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+    HAL_GPIO_Init(EMERGENCY_STOP_GPIO_Port, &GPIO_InitStruct);
 
     /*Configure GPIO pin : STEER_DIR_Pin */
     GPIO_InitStruct.Pin = STEER_DIR_Pin;
@@ -611,7 +618,7 @@ void StartDefaultTask (void const *argument)
     /* USER CODE BEGIN 5 */
     /* Infinite loop */
 #if DEBUG_LOG == 0
-    steer_init( );
+
 #endif
 
     for (;;)
@@ -624,7 +631,7 @@ void StartDefaultTask (void const *argument)
         osDelay(3000);
         //brake_test( );
         //throttle_test( );
-        steer_test( );
+        // steer_test( );
         //hcsr04( );
 #endif
 #if DEBUG_LOG

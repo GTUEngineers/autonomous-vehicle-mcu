@@ -20,8 +20,8 @@
 static StaticSemaphore_t xSemaphoreBuffer;
 static SemaphoreHandle_t xSemaphore;
 
-BrakePosition brake_current_position = BRAKE_RELEASE;
-BrakePosition brake_next_position = BRAKE_RELEASE;
+BrakePosition brake_current_position = BRAKE_STOP;
+BrakePosition brake_next_position = BRAKE_STOP;
 
 osThreadId brakeTaskHandle;
 uint32_t brakeTaskBuffer[512];

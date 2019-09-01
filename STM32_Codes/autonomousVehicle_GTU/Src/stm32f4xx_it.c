@@ -25,6 +25,7 @@
 #include "task.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "Controllers/BrakeController.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -191,6 +192,7 @@ void EXTI9_5_IRQHandler(void)
 
   /* USER CODE END EXTI9_5_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_7);
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_8);
   /* USER CODE BEGIN EXTI9_5_IRQn 1 */
 
   /* USER CODE END EXTI9_5_IRQn 1 */
@@ -232,6 +234,11 @@ void HAL_GPIO_EXTI_Callback (uint16_t GPIO_Pin)
         case GPIO_PIN_7:
         {
             is_started = 1;
+            break;
+        }
+        case GPIO_PIN_8:
+        {
+            brake_set_value (BRAKE_LOCK);
             break;
         }
     }
