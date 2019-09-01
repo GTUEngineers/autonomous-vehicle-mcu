@@ -6,8 +6,8 @@
 
 int main()
 {
-    HeartbeatsMechanism smy("10.42.0.251", 5557, 5556, false);
-    sleep(1000);
+    HeartbeatsMechanism heartbeat_station("10.42.0.251", 5557, 5556, false);
+    heartbeat_station.waitUntilFinish();
 
     return 0;
 }

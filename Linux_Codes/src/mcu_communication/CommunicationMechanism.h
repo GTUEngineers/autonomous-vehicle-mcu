@@ -25,6 +25,10 @@
 #define THROTTLE_CONTROL_TOPIC ("control/throttle")
 #define STARTSTOP_CONTROL_TOPIC ("control/startstop")
 #define STATEWORK_CONTROL_TOPIC ("control/statework")
+#define PORT (5555)
+#define IP ("127.0.0.1")
+#define MCU_SUB_PROC_CONN ("mcu_communication_sub")
+#define MCU_PUB_PROC_CONN ("mcu_communication_pub")
 /*------------------------------< Typedefs >----------------------------------*/
 
 /*------------------------------< Class  >------------------------------------*/
@@ -33,7 +37,7 @@ class CommunicationMechanism
 {
 public:
     CommunicationMechanism(); /* Constructor */
-    ~CommunicationMechanism();
+    //  ~CommunicationMechanism();
     void waitUntilFinish();
 
 private:
