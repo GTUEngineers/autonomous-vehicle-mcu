@@ -1,10 +1,12 @@
 #ifndef HELPER_H_
 #define HELPER_H_
-
-int _write(int file, char *ptr, int len);
-void set_red_led();
-void set_blue_led();
-void set_green_led();
-void set_orange_led();
-void emergency_stop();
+#include "main.h"
+#include "stm32f4xx_hal_gpio.h"
+int _write (int file, char *ptr, int len);
+void set_red_led (GPIO_PinState PinState);
+void set_blue_led (GPIO_PinState PinState);
+void set_green_led (GPIO_PinState PinState);
+void set_orange_led (GPIO_PinState PinState);
+void emergency_stop ( );
+void start_system ( );
 #endif
