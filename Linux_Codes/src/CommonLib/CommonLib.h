@@ -12,8 +12,10 @@
 /*------------------------------< Includes >----------------------------------*/
 #include "process.pb.h"
 #include "station_car.pb.h"
+#include "lidar_comm.pb.h"
 #include <iostream>
 #include <stdlib.h>
+#include <vector>
 /*------------------------------< Defines >-----------------------------------*/
 
 /*------------------------------< Typedefs >----------------------------------*/
@@ -47,6 +49,16 @@ std::string create_hcsr4_dis_msg(double distance);
 std::string create_location_msg(float latitude, float longitude);
 std::string create_statework_msg(uart::stateWorking_enum active_or_inactive);
 } // namespace pubsub
+
+namespace lidar
+{
+std::string create_lidar_req(float x1, float y1, float x2, float y2);
+std::string create_lidar_rep(float x, float y, float z, float width, float height);
+std::string create_clusters(std::vector<float[5]> clusterdata);
+bool parse_lidar_req(std::string &req, float &x1, float &y1, float &x2, float &y2);
+bool parse_lidar_rep(std::string &rep, float &x, float &y, float &z, float &width, float &height);
+bool parse_clusters(std::string &subdata, std::vector<std::vector<float>> &clusterdata);
+} // namespace lidar
 } // namespace Common
 
 #endif /* COMMON_H_ */
