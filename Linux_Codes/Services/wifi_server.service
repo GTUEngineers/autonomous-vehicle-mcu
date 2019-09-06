@@ -1,11 +1,14 @@
 [Unit]
 Description=Wifi Server
+Before=HeartbeatMechanism_car.service  HeartbeatMechanism_station.service
+Requires=lidar_communication.service
+After=lidar_communication.service
 
 [Service]
 Type=simple
 ExecStart=/usr/bin/server_test
 Restart=always
-RestartSec=1sec
+#RestartSec=1sec
 
 [Install]
 WantedBy=multi-user.target
