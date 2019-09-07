@@ -10,10 +10,11 @@
 #define SRC_HEARTBEATMECHANISM_HEARTBEATMECHANISM_H_
 
 /*------------------------------< Includes >----------------------------------*/
+#include "CommonLib.h"
 #include "comBase.h"
 #include "publisher.h"
 #include "subscriber.h"
-#include "CommonLib.h"
+#include <chrono>
 #include <exception>
 #include <spdlog/spdlog.h>
 #include <thread>
@@ -24,10 +25,10 @@
 
 /*------------------------------< Class  >------------------------------------*/
 
-class HeartbeatsMechanism
-{
+class HeartbeatsMechanism {
 public:
     HeartbeatsMechanism(std::string ipNum, int portNumSub, int portNumPub, bool isServer);
+    void waitUntilFinish();
 
 private:
     void listen();

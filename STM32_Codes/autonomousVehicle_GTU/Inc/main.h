@@ -24,8 +24,7 @@
 #define __MAIN_H
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
@@ -41,8 +40,10 @@ extern "C"
 extern DAC_HandleTypeDef hdac;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
-extern uint8_t is_started;
+extern TIM_HandleTypeDef htim4;
+extern volatile uint8_t is_started;
 extern UART_HandleTypeDef huart2;
+extern volatile void(*it_callback)();
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
@@ -55,10 +56,10 @@ extern UART_HandleTypeDef huart2;
 
 /* USER CODE END EM */
 
-void HAL_TIM_MspPostInit (TIM_HandleTypeDef *htim);
+void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 
 /* Exported functions prototypes ---------------------------------------------*/
-void Error_Handler (void);
+void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
 
@@ -100,6 +101,9 @@ void Error_Handler (void);
 #define START_BUTTON_Pin GPIO_PIN_7
 #define START_BUTTON_GPIO_Port GPIOE
 #define START_BUTTON_EXTI_IRQn EXTI9_5_IRQn
+#define EMERGENCY_STOP_Pin GPIO_PIN_8
+#define EMERGENCY_STOP_GPIO_Port GPIOE
+#define EMERGENCY_STOP_EXTI_IRQn EXTI9_5_IRQn
 #define STEER_DIR_Pin GPIO_PIN_9
 #define STEER_DIR_GPIO_Port GPIOE
 #define STEER_PWM_Pin GPIO_PIN_10

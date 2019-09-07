@@ -34,7 +34,7 @@ enum type {
 class Cli {
 public:
     Cli(bool isServer = false);
-    Cli(std::string ipNum, int portNumPub, bool isServer);
+    //Cli(std::string ipNum, int portNumPub, bool isServer);
     void cli_start();
 
 private:

@@ -61,14 +61,19 @@ SPI_HandleTypeDef hspi1;
 
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
+TIM_HandleTypeDef htim4;
 
 UART_HandleTypeDef huart2;
 
 osThreadId defaultTaskHandle;
 uint32_t defaultTaskBuffer[512];
 osStaticThreadDef_t defaultTaskControlBlock;
+osThreadId ControlHandle;
+uint32_t ControlBuffer[512];
+osStaticThreadDef_t ControlControlBlock;
 /* USER CODE BEGIN PV */
-uint8_t is_started;
+volatile uint8_t is_started;
+volatile void (*it_callback) ( ) = NULL;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -80,7 +85,9 @@ static void MX_DAC_Init (void);
 static void MX_TIM2_Init (void);
 static void MX_TIM3_Init (void);
 static void MX_USART2_UART_Init (void);
-void StartDefaultTask (void const *argument);
+static void MX_TIM4_Init (void);
+void StartDefaultTask (void const * argument);
+void ControlTask (void const * argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -125,11 +132,12 @@ int main (void)
     MX_TIM2_Init( );
     MX_TIM3_Init( );
     MX_USART2_UART_Init( );
+    MX_TIM4_Init( );
     /* USER CODE BEGIN 2 */
     HAL_DAC_Start(&hdac, DAC_CHANNEL_1);
     HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3);
     HAL_TIM_Base_Start_IT(&htim3);
-
+    HAL_TIM_Base_Start_IT(&htim4);
     /* USER CODE END 2 */
 
     /* USER CODE BEGIN RTOS_MUTEX */
@@ -154,12 +162,18 @@ int main (void)
             &defaultTaskControlBlock);
     defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
+    /* definition and creation of Control */
+    osThreadStaticDef(Control, ControlTask, osPriorityAboveNormal, 0, 512, ControlBuffer,
+            &ControlControlBlock);
+    ControlHandle = osThreadCreate(osThread(Control), NULL);
+
     /* USER CODE BEGIN RTOS_THREADS */
     /* add threads, ... */
     brake_init( );
     throttle_set_value(SPEED_0);
     throttle_set_lock(THROTTLE_LOCK);
     uart_init( );
+    steer_init( );
     communication_init( );
     /* USER CODE END RTOS_THREADS */
 
@@ -257,6 +271,7 @@ static void MX_DAC_Init (void)
     /* USER CODE BEGIN DAC_Init 2 */
 
     /* USER CODE END DAC_Init 2 */
+
 }
 
 /**
@@ -290,6 +305,7 @@ static void MX_I2C1_Init (void)
     /* USER CODE BEGIN I2C1_Init 2 */
 
     /* USER CODE END I2C1_Init 2 */
+
 }
 
 /**
@@ -327,6 +343,7 @@ static void MX_SPI1_Init (void)
     /* USER CODE BEGIN SPI1_Init 2 */
 
     /* USER CODE END SPI1_Init 2 */
+
 }
 
 /**
@@ -375,7 +392,7 @@ static void MX_TIM2_Init (void)
         Error_Handler( );
     }
     sConfigOC.OCMode = TIM_OCMODE_PWM1;
-    sConfigOC.Pulse = 50;
+    sConfigOC.Pulse = 60;
     sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
     sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
     if (HAL_TIM_PWM_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_3) != HAL_OK)
@@ -386,6 +403,7 @@ static void MX_TIM2_Init (void)
 
     /* USER CODE END TIM2_Init 2 */
     HAL_TIM_MspPostInit(&htim2);
+
 }
 
 /**
@@ -432,6 +450,52 @@ static void MX_TIM3_Init (void)
     /* USER CODE BEGIN TIM3_Init 2 */
 
     /* USER CODE END TIM3_Init 2 */
+
+}
+
+/**
+ * @brief TIM4 Initialization Function
+ * @param None
+ * @retval None
+ */
+static void MX_TIM4_Init (void)
+{
+
+    /* USER CODE BEGIN TIM4_Init 0 */
+
+    /* USER CODE END TIM4_Init 0 */
+
+    TIM_ClockConfigTypeDef sClockSourceConfig = { 0 };
+    TIM_MasterConfigTypeDef sMasterConfig = { 0 };
+
+    /* USER CODE BEGIN TIM4_Init 1 */
+
+    /* USER CODE END TIM4_Init 1 */
+    htim4.Instance = TIM4;
+    htim4.Init.Prescaler = 52500;
+    htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
+    htim4.Init.Period = 400;
+    htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+    htim4.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+    if (HAL_TIM_Base_Init(&htim4) != HAL_OK)
+    {
+        Error_Handler( );
+    }
+    sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+    if (HAL_TIM_ConfigClockSource(&htim4, &sClockSourceConfig) != HAL_OK)
+    {
+        Error_Handler( );
+    }
+    sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+    sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+    if (HAL_TIMEx_MasterConfigSynchronization(&htim4, &sMasterConfig) != HAL_OK)
+    {
+        Error_Handler( );
+    }
+    /* USER CODE BEGIN TIM4_Init 2 */
+
+    /* USER CODE END TIM4_Init 2 */
+
 }
 
 /**
@@ -464,6 +528,7 @@ static void MX_USART2_UART_Init (void)
     /* USER CODE BEGIN USART2_Init 2 */
 
     /* USER CODE END USART2_Init 2 */
+
 }
 
 /**
@@ -527,7 +592,7 @@ static void MX_GPIO_Init (void)
     /*Configure GPIO pin : B1_Pin */
     GPIO_InitStruct.Pin = B1_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_EVT_RISING;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Pull = GPIO_PULLDOWN;
     HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
     /*Configure GPIO pins : BRAKE_RELAY_1_Pin BRAKE_RELAY_2_Pin */
@@ -550,11 +615,11 @@ static void MX_GPIO_Init (void)
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(BOOT1_GPIO_Port, &GPIO_InitStruct);
 
-    /*Configure GPIO pin : START_BUTTON_Pin */
-    GPIO_InitStruct.Pin = START_BUTTON_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+    /*Configure GPIO pins : START_BUTTON_Pin EMERGENCY_STOP_Pin */
+    GPIO_InitStruct.Pin = START_BUTTON_Pin | EMERGENCY_STOP_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
     GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-    HAL_GPIO_Init(START_BUTTON_GPIO_Port, &GPIO_InitStruct);
+    HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
     /*Configure GPIO pin : STEER_DIR_Pin */
     GPIO_InitStruct.Pin = STEER_DIR_Pin;
@@ -580,6 +645,7 @@ static void MX_GPIO_Init (void)
     /* EXTI interrupt init*/
     HAL_NVIC_SetPriority(EXTI9_5_IRQn, 5, 0);
     HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
+
 }
 
 /* USER CODE BEGIN 4 */
@@ -587,12 +653,19 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
 {
     if (htim->Instance == TIM3)
     {
-        //HAL_GPIO_TogglePin(BRAKE_RELAY_PIN_1_GPIO_Port, BRAKE_RELAY_PIN_1_Pin);     //For test
-
         HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_3);
         HAL_TIM_Base_Stop(&htim3);
-        HAL_GPIO_WritePin(STEER_PWM_GPIO_Port, STEER_PWM_Pin, GPIO_PIN_RESET);
+        // HAL_GPIO_WritePin(STEER_PWM_GPIO_Port, STEER_PWM_Pin, GPIO_PIN_RESET);
 
+    }
+    else if (htim->Instance == TIM4)
+    {
+
+        HAL_TIM_Base_Stop(&htim4);
+        if (it_callback != NULL)
+        {
+            (*it_callback)( );
+        }
     }
 }
 
@@ -605,13 +678,13 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
  * @retval None
  */
 /* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask (void const *argument)
+void StartDefaultTask (void const * argument)
 {
-
+    
     /* USER CODE BEGIN 5 */
     /* Infinite loop */
 #if DEBUG_LOG == 0
-    steer_init( );
+
 #endif
 
     for (;;)
@@ -624,7 +697,7 @@ void StartDefaultTask (void const *argument)
         osDelay(3000);
         //brake_test( );
         //throttle_test( );
-        steer_test( );
+        // steer_test( );
         //hcsr04( );
 #endif
 #if DEBUG_LOG
@@ -645,6 +718,147 @@ void StartDefaultTask (void const *argument)
     /* USER CODE END 5 */
 }
 
+/* USER CODE BEGIN Header_ControlTask */
+/**
+ * @brief Function implementing the Control thread.
+ * @param argument: Not used
+ * @retval None
+ */
+/* USER CODE END Header_ControlTask */
+void ControlTask (void const * argument)
+{
+    /* USER CODE BEGIN ControlTask */
+    /* Infinite loop */
+    uart_message_req req;
+
+    uint8_t msg_header;
+    for (;;)
+    {
+
+        if (communication_get_msg(&req) == OK)
+        {
+            msg_header = (req.req.msg[0] & 0b11110000) >> 4;
+            switch (msg_header)
+            {
+                case 0x0:
+                {
+                    uint8_t val = 0;
+                    uart_message_rep rep = { 0 };
+                    parse_startstop_msg(&req, &val);
+                    is_started = val;
+                    create_general_rep_msg(&rep, 1);
+                    communication_send_msg(&rep);
+                    break;
+                }
+                case 0x1:
+                {
+                    if (is_started == 1)
+                    {
+                        uint8_t dir;
+                        int16_t val;
+                        uart_message_rep rep = { 0 };
+                        parse_steer_msg(&req, &dir, &val);
+                        if (dir == 0)
+                        {
+                            val = val * 7;
+                        }
+                        else
+                        {
+                            val = val * 7 * -1;
+                        }
+                        steer_set_value(val);
+                        create_general_rep_msg(&rep, 1);
+                        communication_send_msg(&rep);
+                    }
+                    break;
+                }
+                case 0x2:
+                {
+                    if (is_started == 1)
+                    {
+                        uint8_t val;
+                        uart_message_rep rep = { 0 };
+                        parse_throttle_msg(&req, &val);
+                        switch (val)
+                        {
+                            case 0:
+                            {
+                                throttle_set_value(SPEED_0);
+                                break;
+                            }
+                            case 5:
+                            {
+                                throttle_set_value(SPEED_5);
+                                break;
+                            }
+                            case 10:
+                            {
+                                throttle_set_value(SPEED_10);
+                                break;
+                            }
+                            case 15:
+                            {
+                                throttle_set_value(SPEED_15);
+                                break;
+                            }
+                            case 20:
+                            {
+                                throttle_set_value(SPEED_20);
+                                break;
+                            }
+                            default:
+                            {
+                                throttle_set_value(SPEED_0);
+                                break;
+                            }
+
+                        }
+                        create_general_rep_msg(&rep, 1);
+                        communication_send_msg(&rep);
+                    }
+                    break;
+                }
+                case 0x3:
+                {
+                    if (is_started == 1)
+                    {
+                        uint8_t val;
+                        uart_message_rep rep = { 0 };
+                        parse_brake_msg(&req, &val);
+                        if (val == 0)
+                        {
+                            brake_set_value(BRAKE_RELEASE);
+                        }
+                        else
+                        {
+                            brake_set_value(BRAKE_LOCK);
+                        }
+                        create_general_rep_msg(&rep, 1);
+                        communication_send_msg(&rep);
+                    }
+                    break;
+                }
+                case 0x4:
+                {
+
+                    break;
+                }
+                default:
+                {
+                    //LOGGER
+                    break;
+                }
+            }
+        }
+        else
+        {
+        }
+
+        osDelay(1);
+    }
+    /* USER CODE END ControlTask */
+}
+
 /**
  * @brief  This function is executed in case of error occurrence.
  * @retval None
@@ -657,7 +871,7 @@ void Error_Handler (void)
     /* USER CODE END Error_Handler_Debug */
 }
 
-#ifdef USE_FULL_ASSERT
+#ifdef  USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.
@@ -666,11 +880,11 @@ void Error_Handler (void)
   * @retval None
   */
 void assert_failed(uint8_t *file, uint32_t line)
-{
-    /* USER CODE BEGIN 6 */
+{ 
+  /* USER CODE BEGIN 6 */
     /* User can add his own implementation to report the file name and line number,
      tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-    /* USER CODE END 6 */
+  /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
 
