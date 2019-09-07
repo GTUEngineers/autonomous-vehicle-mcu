@@ -1,0 +1,12 @@
+[Unit]
+Description=Steering Process
+#Before=
+#After=
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/steering_process_main.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
