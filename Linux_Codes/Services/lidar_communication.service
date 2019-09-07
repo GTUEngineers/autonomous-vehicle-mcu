@@ -5,7 +5,7 @@ After=MCU_Communication.service
 
 [Service]
 Type=simple
-ExecStart#bellidegil
+ExecStart=/usr/bin//usr/bin/lidar
 Restart=always
 
 [Install]

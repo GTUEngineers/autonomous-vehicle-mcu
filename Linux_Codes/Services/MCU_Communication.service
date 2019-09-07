@@ -1,6 +1,6 @@
 [Unit]
 Description=MCU Communication Service
-Before=HeartbeatMechanism_car.service wifi_server.service HeartbeatMechanism_station.service lidar_communication.service
+Before=HeartbeatMechanism_car.service wifi_server.service lidar_communication.service light_sign_detection.service lane_detection.service linux_control.service
 
 [Service]
 Type=simple

@@ -1,6 +1,6 @@
 [Unit]
 Description=Wifi Server
-Before=HeartbeatMechanism_car.service  HeartbeatMechanism_station.service
+Before=HeartbeatMechanism_car.service 
 After=lidar_communication.service
 
 [Service]

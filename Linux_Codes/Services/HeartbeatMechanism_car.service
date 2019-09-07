@@ -1,13 +1,12 @@
 [Unit]
 Description=Heartbeat Mechanism Car
-Before=HeartbeatMechanism_station.service
+Before=lane_detection.service
 After=wifi_server.service 
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/heartbeatMechanism_test_car
+ExecStart=/usr/bin/heartbeatMechanism_main_car
 Restart=always
-
 
 [Install]
 WantedBy=multi-user.target

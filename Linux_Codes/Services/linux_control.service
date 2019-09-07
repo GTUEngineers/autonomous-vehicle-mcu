@@ -1,0 +1,11 @@
+[Unit]
+Description=Linux Control Service
+After=light_sign_detection.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/linux_control
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

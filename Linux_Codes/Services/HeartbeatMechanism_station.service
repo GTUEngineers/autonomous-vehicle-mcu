@@ -1,11 +1,10 @@
 [Unit]
 Description=Heartbeat Mechanism Station
-After=HeartbeatMechanism_car.service
-
+After=wifi_client.service
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/heartbeatMechanism_test_station
+ExecStart=/usr/bin/heartbeatMechanism_main_station
 Restart=always
 
 [Install]
