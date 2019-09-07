@@ -1,6 +1,5 @@
 [Unit]
 Description=Heartbeat Mechanism Station
-Requires=HeartbeatMechanism_car.service 
 After=HeartbeatMechanism_car.service
 
 
@@ -8,7 +7,6 @@ After=HeartbeatMechanism_car.service
 Type=simple
 ExecStart=/usr/bin/heartbeatMechanism_test_station
 Restart=always
-#RestartSec=1sec
 
 [Install]
 WantedBy=multi-user.target

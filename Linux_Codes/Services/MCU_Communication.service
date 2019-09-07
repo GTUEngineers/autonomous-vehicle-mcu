@@ -6,7 +6,6 @@ Before=HeartbeatMechanism_car.service wifi_server.service HeartbeatMechanism_sta
 Type=simple
 ExecStart=/usr/bin/MCU_Communication
 Restart=always
-#RestartSec=1sec
 
 [Install]
 WantedBy=multi-user.target

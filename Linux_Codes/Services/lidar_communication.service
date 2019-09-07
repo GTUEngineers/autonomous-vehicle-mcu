@@ -1,14 +1,12 @@
 [Unit]
 Description=Lidar Communication Service
 Before=wifi_server.service
-Requires=MCU_Communication.service
 After=MCU_Communication.service
 
 [Service]
 Type=simple
-ExecStart=/usr/bin//usr/bin/MCU_Communication #TEMPLATE
+ExecStart#bellidegil
 Restart=always
-#RestartSec=1sec
 
 [Install]
 WantedBy=multi-user.target
