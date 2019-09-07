@@ -10,27 +10,32 @@ class LidarReq(object):
 		self.subscription.connect(Client.PROC.format("ControlSub"))
 		self.subscription.subscribe("lidardata");
 
-		self.lastdata = []
-	#	self.requester = Client()
-	#	requester.connect(Client.PROC.format("ControlReq"))
+		self.requester = Client()
+		requester.connect(Client.PROC.format("ControlReq"))
 
-	
-	#def request(x1, y1, x2, y2):
-	#	request = self.__create_request(x1, y1, x2, y2)
-	#	reply = requester.reqrep(request);
-	#	if(reply != None and self.__parse_response(reply, ) != None):
+		self.sub_thread = threading.Thread(target = self.subThreadFunc);
+		self.last_data = []
 
+	def request(x1, y1, x2, y2):
+		request = create_lidar_req(x1, y1, x2, y2)
+		reply = requester.reqrep(request);
+		if(reply != None):
+			return self.parse_lidar_rep(reply)
 
-	def substhread(self):
+	def subThreadFunc(self):
 		while(True):
 			top, msg = self.recv()
 			if(top == "lidardata"):
-				self.lastdata = commonlib.parse_clusters(msg)
+				self.last_data = commonlib.parse_clusters(msg)
 
 	def run(self):
-		thread.start_new_thread(self.substhread)
+		sub_thread.start()
+
+	def getPublished(self):
+		return self.last_data;
 
 	def __del__(self):
-	#	requester.disconnect()
+		self.sub_thread.join()
+		self.requester.disconnect()
 		self.subscription.unsubscribe("lidardata")
 		self.subscription.disconnect()
