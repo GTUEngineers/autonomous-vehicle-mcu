@@ -68,6 +68,8 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define CS_I2C_SPI_Pin GPIO_PIN_3
 #define CS_I2C_SPI_GPIO_Port GPIOE
+#define STEER_DIR_Pin GPIO_PIN_4
+#define STEER_DIR_GPIO_Port GPIOE
 #define PC14_OSC32_IN_Pin GPIO_PIN_14
 #define PC14_OSC32_IN_GPIO_Port GPIOC
 #define PC15_OSC32_OUT_Pin GPIO_PIN_15
@@ -104,8 +106,6 @@ void Error_Handler(void);
 #define EMERGENCY_STOP_Pin GPIO_PIN_8
 #define EMERGENCY_STOP_GPIO_Port GPIOE
 #define EMERGENCY_STOP_EXTI_IRQn EXTI9_5_IRQn
-#define STEER_DIR_Pin GPIO_PIN_9
-#define STEER_DIR_GPIO_Port GPIOE
 #define STEER_PWM_Pin GPIO_PIN_10
 #define STEER_PWM_GPIO_Port GPIOB
 #define LD4_Pin GPIO_PIN_12
