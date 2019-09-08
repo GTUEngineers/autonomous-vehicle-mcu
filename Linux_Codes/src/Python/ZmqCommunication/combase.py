@@ -5,7 +5,7 @@ import zmq
 
 class ComBase():
     TCP = "tcp://{}:{}"
-    PROC = "inproc://{}"
+    PROC = "ipc:///tmp/{}"
 
     def __init__(self, socket_type, is_server):
         self.context = zmq.Context().instance()
