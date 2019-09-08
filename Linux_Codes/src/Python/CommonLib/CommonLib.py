@@ -7,16 +7,13 @@ from ProtoOut.lidar_comm_pb2 import *
 def create_clusters(cluster_list):
     data = pub_sub()
     for sublist in cluster_list:
-        data.clusters.add()
-        data.clusters = Cluster()
-        #data.clusters.center = Position()
-        data.clusters.center.x = sublist[0]
-        data.clusters.center.y = sublist[1]
-        data.clusters.center.z = sublist[2]
-        #data.clusters.size = Size()
-        data.clusters.size.width = sublist[3]
-        data.clusters.size.height = sublist[4]
-    return data.SerializeToStringD()
+        data_new = data.clusters.add()
+        data_new.center.x = sublist[0]
+        data_new.center.y = sublist[1]
+        data_new.center.z = sublist[2]
+        data_new.size.width = sublist[3]
+        data_new.size.height = sublist[4]
+    return data.SerializeToString()
 
 def parse_clusters(msg):
     cluster_list = []
