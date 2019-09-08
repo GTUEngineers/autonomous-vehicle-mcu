@@ -1,11 +1,11 @@
 [Unit]
 Description=MCU Communication Service
+Before=HeartbeatMechanism_car.service wifi_server.service lidar_communication.service light_sign_detection.service lane_detection.service linux_control.service
 
 [Service]
 Type=simple
 ExecStart=/usr/bin/MCU_Communication
 Restart=always
-RestartSec=1sec
 
 [Install]
 WantedBy=multi-user.target

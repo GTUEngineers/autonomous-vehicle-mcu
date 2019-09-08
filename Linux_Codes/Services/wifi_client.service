@@ -1,0 +1,11 @@
+[Unit]
+Description=Wifi Client
+Before=HeartbeatMechanism_station.service 
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/server_client
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
