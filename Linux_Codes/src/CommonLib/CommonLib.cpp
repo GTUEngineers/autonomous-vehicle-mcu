@@ -339,7 +339,7 @@ namespace lidar {
             cluster_size->set_width(clusterdata[i][3]);
             cluster_size->set_height(clusterdata[i][4]);
 
-            std::unique_ptr<LidarComm::Cluster> subdata(pubsub.add_clusters());
+            LidarComm::Cluster* subdata = pubsub.add_clusters();
             subdata->set_allocated_center(cluster_position.release());
             subdata->set_allocated_size(cluster_size.release());
         }
