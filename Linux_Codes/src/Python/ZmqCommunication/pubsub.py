@@ -32,4 +32,4 @@ class Subscriber(ComBase):
             topic, message = self.socket.recv_multipart()
 
             return topic, message
-        return None
+        return None, None
