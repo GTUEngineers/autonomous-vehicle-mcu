@@ -4,8 +4,9 @@ import "common.proto";
 package wifi;
 
 enum startstop_enum {
-  START= 0;//Ok
-  STOP = 1;//Not Ok  
+
+  STOP = 0;//Not Ok  
+  START= 1;//Ok
 }
   
 message StartStop_req {
