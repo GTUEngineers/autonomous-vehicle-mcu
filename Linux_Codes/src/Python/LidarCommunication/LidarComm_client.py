@@ -7,11 +7,12 @@ from ZmqCommunication.pubsub import Subscriber
 from CommonLib.CommonLib import *
 import threading
 import logging
-logging.basicConfig(filename='lidar_comm_client.log', filemode='w', format='%(asctime)s - %(name)s - %(levelname)s - %(lineno)s - %(funcName)s - %(message)s')
+import time
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(lineno)s - %(funcName)s - %(message)s',level=logging.DEBUG)
 
 TOPIC_TO_SUBSCRIBE = "lidar/data"
-PROC_CONNECT_SUBSCRIBE = "ControlSub"
-PROC_CONNECT_CLIENT = "ControlReq"
+PROC_CONNECT_SUBSCRIBE = "lidar_pub"
+PROC_CONNECT_CLIENT = "lidar_req_rep"
 
 class LidarCommClient(object):
 	def __init__(self):
@@ -21,6 +22,7 @@ class LidarCommClient(object):
 		self.sub_lock = threading.Lock()
 
 		self.subscription = Subscriber(False)
+		print(Subscriber.PROC.format(PROC_CONNECT_SUBSCRIBE))
 		self.subscription.connect(Subscriber.PROC.format(PROC_CONNECT_SUBSCRIBE))
 		self.subscription.subscribe(TOPIC_TO_SUBSCRIBE)
 
@@ -37,8 +39,8 @@ class LidarCommClient(object):
 
 	def subThreadFunc(self):
 		while(self.thread_stop == False):
-			top, msg = self.recv()
-			logging.debug("Published data received: {}".format(msg))
+			top, msg = self.subscription.recv()
+			logging.debug("Published data received: {} {} ".format(msg,top))
 			if(top == TOPIC_TO_SUBSCRIBE):
 				self.sub_lock.acquire()
 				self.last_data = commonlib.parse_clusters(msg)
