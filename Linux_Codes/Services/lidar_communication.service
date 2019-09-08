@@ -1,0 +1,12 @@
+[Unit]
+Description=Lidar Communication Service
+Before=wifi_server.service
+After=MCU_Communication.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin//usr/bin/lidar
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
