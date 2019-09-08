@@ -6,7 +6,7 @@ Before=light_sign_detection.service
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/lane_detection
+ExecStart=/usr/bin/python3 /usr/bin/steering_process_main.py
 Restart=always
 
 [Install]
