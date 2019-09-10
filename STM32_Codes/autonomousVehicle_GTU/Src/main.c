@@ -158,15 +158,15 @@ int main (void)
 
     /* Create the thread(s) */
     /* definition and creation of defaultTask */
-    /*
-     osThreadStaticDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 512, defaultTaskBuffer,
-     &defaultTaskControlBlock);
-     defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
-     */
+
+   /* osThreadStaticDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 512, defaultTaskBuffer,
+            &defaultTaskControlBlock);
+    defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+*/
     /* definition and creation of Control */
-    osThreadStaticDef(Control, ControlTask, osPriorityNormal, 0, 512, ControlBuffer,
-            &ControlControlBlock);
-    ControlHandle = osThreadCreate(osThread(Control), NULL);
+     osThreadStaticDef(Control, ControlTask, osPriorityNormal, 0, 512, ControlBuffer,
+     &ControlControlBlock);
+     ControlHandle = osThreadCreate(osThread(Control), NULL);
 
     /* USER CODE BEGIN RTOS_THREADS */
     /* add threads, ... */
@@ -696,8 +696,8 @@ void StartDefaultTask (void const * argument)
         //set_orange_led();
         //set_blue_led();
         osDelay(3000);
-        brake_test( );
-        //throttle_test( );
+        //brake_test( );
+        throttle_test( );
         //   steer_test( );
         //hcsr04( );
 #endif
@@ -802,9 +802,19 @@ void ControlTask (void const * argument)
                                 throttle_set_value(SPEED_5);
                                 break;
                             }
+                            case 8:
+                            {
+                                throttle_set_value(SPEED_8);
+                                break;
+                            }
                             case 10:
                             {
                                 throttle_set_value(SPEED_10);
+                                break;
+                            }
+                            case 13:
+                            {
+                                throttle_set_value(SPEED_13);
                                 break;
                             }
                             case 15:
