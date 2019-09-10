@@ -47,7 +47,7 @@ void emergency_stop ( )
 
 void start_system ( )
 {
-    if (HAL_GPIO_ReadPin(EMERGENCY_STOP_GPIO_Port, EMERGENCY_STOP_Pin) == GPIO_PIN_RESET)
+    if (HAL_GPIO_ReadPin(EMERGENCY_STOP_GPIO_Port, EMERGENCY_STOP_Pin) == GPIO_PIN_SET)
     {
         brake_set_value(BRAKE_RELEASE);
         is_started = 1;

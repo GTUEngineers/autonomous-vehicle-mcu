@@ -265,7 +265,7 @@ void HAL_GPIO_EXTI_Callback (uint16_t GPIO_Pin)
         case GPIO_PIN_8:
         {
 
-            if (HAL_GPIO_ReadPin(EMERGENCY_STOP_GPIO_Port, EMERGENCY_STOP_Pin) == GPIO_PIN_SET)
+            if (HAL_GPIO_ReadPin(EMERGENCY_STOP_GPIO_Port, EMERGENCY_STOP_Pin) == GPIO_PIN_RESET)
             {
                 it_callback = &emergency_stop;
                 HAL_TIM_Base_Start_IT(&htim4);

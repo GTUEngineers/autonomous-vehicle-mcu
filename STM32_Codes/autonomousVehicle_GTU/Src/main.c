@@ -158,12 +158,13 @@ int main (void)
 
     /* Create the thread(s) */
     /* definition and creation of defaultTask */
-    osThreadStaticDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 512, defaultTaskBuffer,
-            &defaultTaskControlBlock);
-    defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
-
+    /*
+     osThreadStaticDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 512, defaultTaskBuffer,
+     &defaultTaskControlBlock);
+     defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+     */
     /* definition and creation of Control */
-    osThreadStaticDef(Control, ControlTask, osPriorityAboveNormal, 0, 512, ControlBuffer,
+    osThreadStaticDef(Control, ControlTask, osPriorityNormal, 0, 512, ControlBuffer,
             &ControlControlBlock);
     ControlHandle = osThreadCreate(osThread(Control), NULL);
 
@@ -655,7 +656,7 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
     {
         HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_3);
         HAL_TIM_Base_Stop(&htim3);
-        // HAL_GPIO_WritePin(STEER_PWM_GPIO_Port, STEER_PWM_Pin, GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(STEER_PWM_GPIO_Port, STEER_PWM_Pin, GPIO_PIN_RESET);
 
     }
     else if (htim->Instance == TIM4)
@@ -695,9 +696,9 @@ void StartDefaultTask (void const * argument)
         //set_orange_led();
         //set_blue_led();
         osDelay(3000);
-        //brake_test( );
+        brake_test( );
         //throttle_test( );
-        // steer_test( );
+        //   steer_test( );
         //hcsr04( );
 #endif
 #if DEBUG_LOG
@@ -746,6 +747,16 @@ void ControlTask (void const * argument)
                     uart_message_rep rep = { 0 };
                     parse_startstop_msg(&req, &val);
                     is_started = val;
+                    if (is_started == 1)
+                    {
+                        set_red_led(GPIO_PIN_RESET);
+                        set_green_led(GPIO_PIN_SET);
+                    }
+                    else
+                    {
+                        set_red_led(GPIO_PIN_RESET);
+                        set_green_led(GPIO_PIN_RESET);
+                    }
                     create_general_rep_msg(&rep, 1);
                     communication_send_msg(&rep);
                     break;

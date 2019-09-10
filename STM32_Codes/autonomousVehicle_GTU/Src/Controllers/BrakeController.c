@@ -57,7 +57,7 @@ void brake_task (void const * argument)
                     break;
                 case BRAKE_RELEASE:
                     brake_release( );
-                    osDelay(1550);     //TODO fix it
+                    osDelay(1150);     //TODO fix it
                     brake_stop( );
                     break;
                 case BRAKE_HALF:
@@ -65,7 +65,7 @@ void brake_task (void const * argument)
                     break;
                 case BRAKE_LOCK:
                     brake_lock( );
-                    osDelay(2050);
+                    osDelay(1600);
                     brake_stop( );
                     break;
                 default:
@@ -127,13 +127,13 @@ void brake_test ( )
 {
     // lock the brake 1 seconds
     brake_set_value(BRAKE_LOCK);
-    osDelay(1000);
+    osDelay(2000);
     //  wait for 5 seconds
     brake_set_value(BRAKE_STOP);
     osDelay(3000);
     // release the brake 1 seconds
     brake_set_value(BRAKE_RELEASE);
-    osDelay(1000);
+    osDelay(2000);
     //  wait for 5 seconds
     brake_set_value(BRAKE_STOP);
     osDelay(3000);
