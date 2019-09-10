@@ -26,7 +26,13 @@
 static bool flag = false;
 
 Cli::Cli(bool isServer)
-    : cli_msg(""), user_selection(type::dflt), steering_angle(-1), steering_dir(uart::steering_enum::LEFT), throttle_value(-1), start_stop_value(uart::startstop_enum::STOP), cli_publisher(isServer)
+    : cli_msg("")
+    , user_selection(type::dflt)
+    , steering_angle(-1)
+    , steering_dir(uart::steering_enum::LEFT)
+    , throttle_value(-1)
+    , start_stop_value(uart::startstop_enum::STOP)
+    , cli_publisher(isServer)
 {
     cli_logger = spdlog::stdout_color_mt("CommandLineInterface");
     cli_logger->set_level(spdlog::level::debug);
@@ -72,8 +78,7 @@ void Cli::cli_start()
     std::string msg_type;
     std::cin >> msg_type;
 
-    if (msg_type == "1")
-    {
+    if (msg_type == "1") {
         std::string input_throttle_val;
         user_selection = type::_throttle;
         std::cout << "Enter the throttle value(int)" << std::endl;
@@ -83,84 +88,61 @@ void Cli::cli_start()
         this->create_message();
         cli_publisher.publish(THROTTLE_CONTROL_TOPIC, cli_msg);
         cli_logger->info("Throttle message published.");
-    }
-    else if (msg_type == "2")
-    {
+    } else if (msg_type == "2") {
         std::string input_brake_val;
         user_selection = type::_break;
-        while (input_brake_val != "1" && input_brake_val != "0")
-        {
-            std::cout << "Enter the break value(0(LOCK) or 1(RELEASE))" << std::endl;
+        while (input_brake_val != "1" && input_brake_val != "0") {
+            std::cout << "Enter the break value(0(RELEASE) or 1(LOCK))" << std::endl;
             std::cin >> input_brake_val;
-            if (input_brake_val == "0")
-            {
-                brake_value = uart::brake_enum::LOCK;
-            }
-            else if (input_brake_val == "1")
-            {
+            if (input_brake_val == "0") {
                 brake_value = uart::brake_enum::RELEASE;
+            } else if (input_brake_val == "1") {
+                brake_value = uart::brake_enum::LOCK;
             }
         }
         this->create_message();
         cli_publisher.publish(BRAKE_CONTROL_TOPIC, cli_msg);
         cli_logger->info("Brake message published.");
-    }
-    else if (msg_type == "3")
-    {
+    } else if (msg_type == "3") {
         std::string input_dir_val;
         int input_steering_angle = -1;
         user_selection = type::_steer;
-        while (input_dir_val != "left" && input_dir_val != "right")
-        {
+        while (input_dir_val != "left" && input_dir_val != "right") {
             std::cout << "Enter the steering tendency(\"left\" or \"right\")" << std::endl;
             std::cin >> input_dir_val;
-            if (input_dir_val == "left")
-            {
+            if (input_dir_val == "left") {
                 steering_dir = uart::steering_enum::LEFT;
-            }
-            else if (input_dir_val == "right")
-            {
+            } else if (input_dir_val == "right") {
                 steering_dir = uart::steering_enum::RIGHT;
             }
         }
-        while (input_steering_angle > 360 || input_steering_angle < 0)
-        {
-            std::cout << "Enter the steering angle(enter the range 0-360)" << std::endl;
+        while (input_steering_angle > 1023 || input_steering_angle < 0) {
+            std::cout << "Enter the steering angle(enter the range 0-1023)" << std::endl;
             std::cin >> input_steering_angle;
             steering_angle = input_steering_angle;
         }
         this->create_message();
         cli_publisher.publish(STEERING_CONTROL_TOPIC, cli_msg);
         cli_logger->info("Steering message published.");
-    }
-    else if (msg_type == "4")
-    {
+    } else if (msg_type == "4") {
         std::string input_startstop_val;
         user_selection = type::_start_stop;
-        while (input_startstop_val != "0" && input_startstop_val != "1")
-        {
-            std::cout << "Enter the start_stop value(0(START) or 1(STOP))" << std::endl;
+        while (input_startstop_val != "0" && input_startstop_val != "1") {
+            std::cout << "Enter the start_stop value(0(STOP) or 1(START))" << std::endl;
             std::cin >> input_startstop_val;
-            if (input_startstop_val == "0")
-            {
+            if (input_startstop_val == "1") {
                 start_stop_value = uart::startstop_enum::START;
-            }
-            else if (input_startstop_val == "1")
-            {
+            } else if (input_startstop_val == "0") {
                 start_stop_value = uart::startstop_enum::STOP;
             }
         }
         this->create_message();
         cli_publisher.publish(STARTSTOP_CONTROL_TOPIC, cli_msg);
         cli_logger->info("Start_stop message published.");
-    }
-    else if (msg_type == "5")
-    {
+    } else if (msg_type == "5") {
         cli_logger->info("Exited menu.");
         flag = true;
-    }
-    else
-    {
+    } else {
         cli_logger->warn("Type error in cli_start();");
     }
 }
@@ -170,32 +152,23 @@ bool Cli::create_message()
     cli_logger->info("message created.");
 
     bool retVal = true;
-    if (get_user_selection() == type::_throttle)
-    {
+    if (get_user_selection() == type::_throttle) {
         cli_msg = Common::pubsub::create_throttle_msg(get_throttle_value());
-        std::string message((char *)cli_msg.data(), cli_msg.size());
+        std::string message((char*)cli_msg.data(), cli_msg.size());
         cli_logger->debug("Type:{} Topic:{} Message:{}", "Throttle", THROTTLE_CONTROL_TOPIC, message);
-    }
-    else if (get_user_selection() == type::_break)
-    {
+    } else if (get_user_selection() == type::_break) {
         cli_msg = Common::pubsub::create_brake_msg(get_brake_value());
-        std::string message((char *)cli_msg.data(), cli_msg.size());
+        std::string message((char*)cli_msg.data(), cli_msg.size());
         cli_logger->debug("Type:{} Topic:{} Message:{}", "Break", BRAKE_CONTROL_TOPIC, message);
-    }
-    else if (get_user_selection() == type::_steer)
-    {
+    } else if (get_user_selection() == type::_steer) {
         cli_msg = Common::pubsub::create_steering_msg(steering_dir, steering_angle);
-        std::string message((char *)cli_msg.data(), cli_msg.size());
+        std::string message((char*)cli_msg.data(), cli_msg.size());
         cli_logger->debug("Type:{} Topic:{} Message:{}", "Steer", STEERING_CONTROL_TOPIC, message);
-    }
-    else if (get_user_selection() == type::_start_stop)
-    {
+    } else if (get_user_selection() == type::_start_stop) {
         cli_msg = Common::pubsub::create_startstop_msg(start_stop_value);
-        std::string message((char *)cli_msg.data(), cli_msg.size());
+        std::string message((char*)cli_msg.data(), cli_msg.size());
         cli_logger->debug("Type:{} Topic:{} Message:{}", "Start_stop", STARTSTOP_CONTROL_TOPIC, message);
-    }
-    else
-    {
+    } else {
         cli_logger->warn("Type error in create_message();");
         retVal = false;
     }
@@ -222,8 +195,7 @@ int main()
 
     Cli cli_process;
     //Cli cli_process;
-    while (!flag)
-    {
+    while (!flag) {
         cli_process.cli_start();
     }
 }
