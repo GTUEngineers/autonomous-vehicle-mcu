@@ -158,15 +158,15 @@ int main (void)
 
     /* Create the thread(s) */
     /* definition and creation of defaultTask */
-
-   /* osThreadStaticDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 512, defaultTaskBuffer,
-            &defaultTaskControlBlock);
-    defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
-*/
+    /*
+     osThreadStaticDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 512, defaultTaskBuffer,
+     &defaultTaskControlBlock);
+     defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+     */
     /* definition and creation of Control */
-     osThreadStaticDef(Control, ControlTask, osPriorityNormal, 0, 512, ControlBuffer,
-     &ControlControlBlock);
-     ControlHandle = osThreadCreate(osThread(Control), NULL);
+    osThreadStaticDef(Control, ControlTask, osPriorityNormal, 0, 512, ControlBuffer,
+            &ControlControlBlock);
+    ControlHandle = osThreadCreate(osThread(Control), NULL);
 
     /* USER CODE BEGIN RTOS_THREADS */
     /* add threads, ... */
@@ -655,6 +655,7 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
     if (htim->Instance == TIM3)
     {
         HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_3);
+        HAL_TIM_Base_Stop(&htim2);
         HAL_TIM_Base_Stop(&htim3);
         HAL_GPIO_WritePin(STEER_PWM_GPIO_Port, STEER_PWM_Pin, GPIO_PIN_RESET);
 
@@ -697,8 +698,8 @@ void StartDefaultTask (void const * argument)
         //set_blue_led();
         osDelay(3000);
         //brake_test( );
-        throttle_test( );
-        //   steer_test( );
+        // throttle_test( );
+        steer_test( );
         //hcsr04( );
 #endif
 #if DEBUG_LOG
@@ -749,11 +750,11 @@ void ControlTask (void const * argument)
                     is_started = val;
                     if (is_started == 1)
                     {
-                        start_system();
+                        start_system( );
                     }
                     else
                     {
-                        emergency_stop();
+                        emergency_stop( );
                     }
                     create_general_rep_msg(&rep, 1);
                     communication_send_msg(&rep);
