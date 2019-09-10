@@ -749,13 +749,11 @@ void ControlTask (void const * argument)
                     is_started = val;
                     if (is_started == 1)
                     {
-                        set_red_led(GPIO_PIN_RESET);
-                        set_green_led(GPIO_PIN_SET);
+                        start_system();
                     }
                     else
                     {
-                        set_red_led(GPIO_PIN_RESET);
-                        set_green_led(GPIO_PIN_RESET);
+                        emergency_stop();
                     }
                     create_general_rep_msg(&rep, 1);
                     communication_send_msg(&rep);
