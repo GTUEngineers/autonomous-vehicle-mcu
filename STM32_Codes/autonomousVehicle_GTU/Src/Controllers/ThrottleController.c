@@ -60,7 +60,11 @@ void throttle_test ( )
     osDelay(2000);
     throttle_set_value(SPEED_5);
     osDelay(3000);
+    throttle_set_value(SPEED_8);
+    osDelay(3000);
     throttle_set_value(SPEED_10);
+    osDelay(3000);
+    throttle_set_value(SPEED_13);
     osDelay(3000);
     throttle_set_value(SPEED_15);
     osDelay(3000);
