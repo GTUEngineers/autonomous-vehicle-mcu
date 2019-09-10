@@ -18,10 +18,10 @@ extern "C" {     /* Make sure we have C-declarations in C++ programs */
 /*------------------------------< Defines >-----------------------------------*/
 //Throttle Voltage Values
 #define SPEED_0                     (600)
-#define SPEED_5                     (900)
-#define SPEED_10                    (1300)
-#define SPEED_15                    (1700)
-#define SPEED_20                    (2100)
+#define SPEED_5                     (1000)//7
+#define SPEED_10                    (1100)//10
+#define SPEED_15                    (1250)//17
+#define SPEED_20                    (1700)
 #define SPEED_25                    (2700)
 #define THROTTLE_VOLTAGE_MIN_VAL    SPEED_0
 #define THROTTLE_VOLTAGE_MAX_VAL    SPEED_25

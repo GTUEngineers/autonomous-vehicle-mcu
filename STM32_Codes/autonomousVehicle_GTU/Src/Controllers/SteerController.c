@@ -39,6 +39,7 @@ void steer_set_value (int val)
     }
     HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_3);
     HAL_TIM_Base_Stop(&htim3);     //check it
+    HAL_GPIO_WritePin(STEER_PWM_GPIO_Port, STEER_PWM_Pin, GPIO_PIN_RESET);
     if (position > val)
     {
         HAL_GPIO_WritePin(STEER_DIR_GPIO_Port, STEER_DIR_Pin, GPIO_PIN_SET);
