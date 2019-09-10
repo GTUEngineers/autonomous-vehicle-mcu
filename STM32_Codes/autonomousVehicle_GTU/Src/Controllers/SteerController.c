@@ -73,13 +73,13 @@ void steer_test ( )
     steer_set_value(5000);
     osDelay(3000);
 
-    steer_set_value(7000);
+    steer_set_value(6800);
     osDelay(3000);
 
     steer_set_value(-3500);
     osDelay(5000);
 
-    steer_set_value(-7000);
+    steer_set_value(-6800);
     osDelay(3000);
 
     steer_set_value(0);
