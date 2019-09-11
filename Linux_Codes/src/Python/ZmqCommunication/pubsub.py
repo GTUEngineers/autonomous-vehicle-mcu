@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import zmq
-from .combase import ComBase
+from combase import ComBase
 import time
 
 
@@ -11,7 +11,7 @@ class Publisher(ComBase):
 
     def publish(self, topic, msg):
         self.socket.send_multipart(
-            [topic.encode("UTF-8"), msg.encode("UTF-8")])
+            [topic.encode("UTF-8"), msg])
 
 
 class Subscriber(ComBase):
