@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import zmq
-from .combase import ComBase
+from combase import ComBase
 import time
 
 
