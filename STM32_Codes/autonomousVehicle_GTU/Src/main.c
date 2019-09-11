@@ -55,10 +55,6 @@
 /* Private variables ---------------------------------------------------------*/
 DAC_HandleTypeDef hdac;
 
-I2C_HandleTypeDef hi2c1;
-
-SPI_HandleTypeDef hspi1;
-
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
@@ -79,8 +75,6 @@ volatile void (*it_callback) ( ) = NULL;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config (void);
 static void MX_GPIO_Init (void);
-static void MX_I2C1_Init (void);
-static void MX_SPI1_Init (void);
 static void MX_DAC_Init (void);
 static void MX_TIM2_Init (void);
 static void MX_TIM3_Init (void);
@@ -126,15 +120,13 @@ int main (void)
 
     /* Initialize all configured peripherals */
     MX_GPIO_Init( );
-    MX_I2C1_Init( );
-    MX_SPI1_Init( );
     MX_DAC_Init( );
     MX_TIM2_Init( );
     MX_TIM3_Init( );
     MX_USART2_UART_Init( );
     MX_TIM4_Init( );
     /* USER CODE BEGIN 2 */
-    HAL_DAC_Start(&hdac, DAC_CHANNEL_1);
+    HAL_DAC_Start(&hdac, DAC_CHANNEL_2);
     HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3);
     HAL_TIM_Base_Start_IT(&htim3);
     HAL_TIM_Base_Start_IT(&htim4);
@@ -158,13 +150,12 @@ int main (void)
 
     /* Create the thread(s) */
     /* definition and creation of defaultTask */
-    /*
-     osThreadStaticDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 512, defaultTaskBuffer,
-     &defaultTaskControlBlock);
-     defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
-     */
+    osThreadStaticDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 512, defaultTaskBuffer,
+            &defaultTaskControlBlock);
+    defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+
     /* definition and creation of Control */
-    osThreadStaticDef(Control, ControlTask, osPriorityNormal, 0, 512, ControlBuffer,
+    osThreadStaticDef(Control, ControlTask, osPriorityAboveNormal, 0, 512, ControlBuffer,
             &ControlControlBlock);
     ControlHandle = osThreadCreate(osThread(Control), NULL);
 
@@ -261,89 +252,17 @@ static void MX_DAC_Init (void)
     {
         Error_Handler( );
     }
-    /** DAC channel OUT1 config
+    /** DAC channel OUT2 config
      */
     sConfig.DAC_Trigger = DAC_TRIGGER_NONE;
     sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_ENABLE;
-    if (HAL_DAC_ConfigChannel(&hdac, &sConfig, DAC_CHANNEL_1) != HAL_OK)
+    if (HAL_DAC_ConfigChannel(&hdac, &sConfig, DAC_CHANNEL_2) != HAL_OK)
     {
         Error_Handler( );
     }
     /* USER CODE BEGIN DAC_Init 2 */
 
     /* USER CODE END DAC_Init 2 */
-
-}
-
-/**
- * @brief I2C1 Initialization Function
- * @param None
- * @retval None
- */
-static void MX_I2C1_Init (void)
-{
-
-    /* USER CODE BEGIN I2C1_Init 0 */
-
-    /* USER CODE END I2C1_Init 0 */
-
-    /* USER CODE BEGIN I2C1_Init 1 */
-
-    /* USER CODE END I2C1_Init 1 */
-    hi2c1.Instance = I2C1;
-    hi2c1.Init.ClockSpeed = 100000;
-    hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
-    hi2c1.Init.OwnAddress1 = 0;
-    hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
-    hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
-    hi2c1.Init.OwnAddress2 = 0;
-    hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
-    hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
-    if (HAL_I2C_Init(&hi2c1) != HAL_OK)
-    {
-        Error_Handler( );
-    }
-    /* USER CODE BEGIN I2C1_Init 2 */
-
-    /* USER CODE END I2C1_Init 2 */
-
-}
-
-/**
- * @brief SPI1 Initialization Function
- * @param None
- * @retval None
- */
-static void MX_SPI1_Init (void)
-{
-
-    /* USER CODE BEGIN SPI1_Init 0 */
-
-    /* USER CODE END SPI1_Init 0 */
-
-    /* USER CODE BEGIN SPI1_Init 1 */
-
-    /* USER CODE END SPI1_Init 1 */
-    /* SPI1 parameter configuration*/
-    hspi1.Instance = SPI1;
-    hspi1.Init.Mode = SPI_MODE_MASTER;
-    hspi1.Init.Direction = SPI_DIRECTION_2LINES;
-    hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
-    hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
-    hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
-    hspi1.Init.NSS = SPI_NSS_SOFT;
-    hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
-    hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
-    hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
-    hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
-    hspi1.Init.CRCPolynomial = 10;
-    if (HAL_SPI_Init(&hspi1) != HAL_OK)
-    {
-        Error_Handler( );
-    }
-    /* USER CODE BEGIN SPI1_Init 2 */
-
-    /* USER CODE END SPI1_Init 2 */
 
 }
 
@@ -559,16 +478,14 @@ static void MX_GPIO_Init (void)
     HAL_GPIO_WritePin(GPIOE, CS_I2C_SPI_Pin | STEER_DIR_Pin, GPIO_PIN_RESET);
 
     /*Configure GPIO pin Output Level */
-    HAL_GPIO_WritePin(HCSR04_TRIG_GPIO_Port, HCSR04_TRIG_Pin, GPIO_PIN_RESET);
-
-    /*Configure GPIO pin Output Level */
-    HAL_GPIO_WritePin(GPIOA, BRAKE_RELAY_1_Pin | BRAKE_RELAY_2_Pin, GPIO_PIN_RESET);
-
-    /*Configure GPIO pin Output Level */
     HAL_GPIO_WritePin(THROTTLE_LOCK_GPIO_Port, THROTTLE_LOCK_Pin, GPIO_PIN_SET);
 
     /*Configure GPIO pin Output Level */
-    HAL_GPIO_WritePin(GPIOD, LD4_Pin | LD3_Pin | LD5_Pin | LD6_Pin | Audio_RST_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOD, LD4_Pin | LD3_Pin | LD5_Pin | LD6_Pin | Audio_RST_Pin | BRAKE_RELAY_2_Pin,
+            GPIO_PIN_RESET);
+
+    /*Configure GPIO pin Output Level */
+    HAL_GPIO_WritePin(BRAKE_RELAY_1_GPIO_Port, BRAKE_RELAY_1_Pin, GPIO_PIN_RESET);
 
     /*Configure GPIO pin : CS_I2C_SPI_Pin */
     GPIO_InitStruct.Pin = CS_I2C_SPI_Pin;
@@ -577,25 +494,18 @@ static void MX_GPIO_Init (void)
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(CS_I2C_SPI_GPIO_Port, &GPIO_InitStruct);
 
-    /*Configure GPIO pin : STEER_DIR_Pin */
-    GPIO_InitStruct.Pin = STEER_DIR_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    /*Configure GPIO pin : START_BUTTON_Pin */
+    GPIO_InitStruct.Pin = START_BUTTON_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
     GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    HAL_GPIO_Init(STEER_DIR_GPIO_Port, &GPIO_InitStruct);
+    HAL_GPIO_Init(START_BUTTON_GPIO_Port, &GPIO_InitStruct);
 
-    /*Configure GPIO pin : HCSR04_TRIG_Pin */
-    GPIO_InitStruct.Pin = HCSR04_TRIG_Pin;
+    /*Configure GPIO pin : THROTTLE_LOCK_Pin */
+    GPIO_InitStruct.Pin = THROTTLE_LOCK_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    HAL_GPIO_Init(HCSR04_TRIG_GPIO_Port, &GPIO_InitStruct);
-
-    /*Configure GPIO pin : HCSR04_ECHO_Pin */
-    GPIO_InitStruct.Pin = HCSR04_ECHO_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(HCSR04_ECHO_GPIO_Port, &GPIO_InitStruct);
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+    HAL_GPIO_Init(THROTTLE_LOCK_GPIO_Port, &GPIO_InitStruct);
 
     /*Configure GPIO pin : B1_Pin */
     GPIO_InitStruct.Pin = B1_Pin;
@@ -603,31 +513,18 @@ static void MX_GPIO_Init (void)
     GPIO_InitStruct.Pull = GPIO_PULLDOWN;
     HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
-    /*Configure GPIO pins : BRAKE_RELAY_1_Pin BRAKE_RELAY_2_Pin */
-    GPIO_InitStruct.Pin = BRAKE_RELAY_1_Pin | BRAKE_RELAY_2_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-    GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-    /*Configure GPIO pin : THROTTLE_LOCK_Pin */
-    GPIO_InitStruct.Pin = THROTTLE_LOCK_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-    GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    HAL_GPIO_Init(THROTTLE_LOCK_GPIO_Port, &GPIO_InitStruct);
-
     /*Configure GPIO pin : BOOT1_Pin */
     GPIO_InitStruct.Pin = BOOT1_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(BOOT1_GPIO_Port, &GPIO_InitStruct);
 
-    /*Configure GPIO pins : START_BUTTON_Pin EMERGENCY_STOP_Pin */
-    GPIO_InitStruct.Pin = START_BUTTON_Pin | EMERGENCY_STOP_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
+    /*Configure GPIO pin : STEER_DIR_Pin */
+    GPIO_InitStruct.Pin = STEER_DIR_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
     GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-    HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
+    HAL_GPIO_Init(STEER_DIR_GPIO_Port, &GPIO_InitStruct);
 
     /*Configure GPIO pins : LD4_Pin LD3_Pin LD5_Pin LD6_Pin
      Audio_RST_Pin */
@@ -636,6 +533,26 @@ static void MX_GPIO_Init (void)
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+    /*Configure GPIO pin : BRAKE_RELAY_2_Pin */
+    GPIO_InitStruct.Pin = BRAKE_RELAY_2_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
+    HAL_GPIO_Init(BRAKE_RELAY_2_GPIO_Port, &GPIO_InitStruct);
+
+    /*Configure GPIO pin : EMERGENCY_STOP_Pin */
+    GPIO_InitStruct.Pin = EMERGENCY_STOP_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
+    GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+    HAL_GPIO_Init(EMERGENCY_STOP_GPIO_Port, &GPIO_InitStruct);
+
+    /*Configure GPIO pin : BRAKE_RELAY_1_Pin */
+    GPIO_InitStruct.Pin = BRAKE_RELAY_1_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
+    HAL_GPIO_Init(BRAKE_RELAY_1_GPIO_Port, &GPIO_InitStruct);
 
     /*Configure GPIO pin : MEMS_INT2_Pin */
     GPIO_InitStruct.Pin = MEMS_INT2_Pin;
@@ -698,8 +615,8 @@ void StartDefaultTask (void const * argument)
         //set_blue_led();
         osDelay(3000);
         //brake_test( );
-        // throttle_test( );
-        steer_test( );
+        throttle_test( );
+        //steer_test( );
         //hcsr04( );
 #endif
 #if DEBUG_LOG

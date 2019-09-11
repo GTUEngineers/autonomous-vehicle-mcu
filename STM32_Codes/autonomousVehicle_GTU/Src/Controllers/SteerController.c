@@ -48,7 +48,10 @@ void steer_set_value (int val)
     {
         HAL_GPIO_WritePin(STEER_DIR_GPIO_Port, STEER_DIR_Pin, GPIO_PIN_RESET);
     }
-
+    int i = 0;
+    while(i<1000){
+        ++i;
+    }
     uint32_t abs_val = abs(position - val);
 
     TIM3->ARR = 2 * abs_val - 1;
