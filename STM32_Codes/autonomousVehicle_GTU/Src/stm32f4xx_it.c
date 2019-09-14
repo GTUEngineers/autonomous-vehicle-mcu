@@ -193,8 +193,8 @@ void EXTI9_5_IRQHandler(void)
   /* USER CODE BEGIN EXTI9_5_IRQn 0 */
 
   /* USER CODE END EXTI9_5_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_5);
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_7);
-  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_8);
   /* USER CODE BEGIN EXTI9_5_IRQn 1 */
 
   /* USER CODE END EXTI9_5_IRQn 1 */
@@ -247,7 +247,7 @@ void HAL_GPIO_EXTI_Callback (uint16_t GPIO_Pin)
 {
     switch (GPIO_Pin)
     {
-        case GPIO_PIN_7:
+        case START_BUTTON_Pin:
         {
             if (HAL_GPIO_ReadPin(START_BUTTON_GPIO_Port, START_BUTTON_Pin) == GPIO_PIN_SET)
             {
@@ -262,7 +262,7 @@ void HAL_GPIO_EXTI_Callback (uint16_t GPIO_Pin)
 
             break;
         }
-        case GPIO_PIN_8:
+        case EMERGENCY_STOP_Pin:
         {
 
             if (HAL_GPIO_ReadPin(EMERGENCY_STOP_GPIO_Port, EMERGENCY_STOP_Pin) == GPIO_PIN_RESET)
