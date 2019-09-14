@@ -28,7 +28,7 @@ void DWT_Delay(uint32_t us) ;
 
 uint32_t hcsr04_read ( )
 {
-    local_time = 0;
+    /*local_time = 0;
     HAL_GPIO_WritePin(HCSR04_TRIG_GPIO_Port, HCSR04_TRIG_Pin, GPIO_PIN_RESET);     //Pull the trigger pin low
     DWT_Delay(2);     //Wait for 2us
 
@@ -45,7 +45,7 @@ uint32_t hcsr04_read ( )
         local_time++;     //Increase local time
         DWT_Delay(1);     //every 1us
     }
-    return local_time * 2;
+    return local_time * 2;*/
 }
 
 void hcsr04 ( )
