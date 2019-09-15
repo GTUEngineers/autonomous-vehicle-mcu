@@ -30,7 +30,7 @@ uint32_t throttle_get_value ( )
 
 void throttle_set_value (uint32_t val)
 {
-    if (val < THROTTLE_VOLTAGE_MIN_VAL || val > THROTTLE_VOLTAGE_MAX_VAL)
+    if (val < THROTTLE_VOLTAGE_MIN_VAL || val > THROTTLE_VOLTAGE_MAX_VAL || brake_get_value() == BRAKE_LOCK)
     {
         return;
     }
@@ -54,7 +54,6 @@ void throttle_test ( )
 {
     brake_set_value(BRAKE_RELEASE);
     osDelay(2000);
-    brake_set_value(BRAKE_STOP);
     throttle_set_lock(THROTTLE_RELEASE);
     throttle_set_value(SPEED_0);
     osDelay(2000);

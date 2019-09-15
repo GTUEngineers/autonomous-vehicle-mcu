@@ -33,17 +33,16 @@
 
 /*------------------------------< Class  >------------------------------------*/
 
-class CommunicationMechanism
-{
+class CommunicationMechanism {
 public:
-    CommunicationMechanism(); /* Constructor */
+    CommunicationMechanism(std::string uart_port); /* Constructor */
     //  ~CommunicationMechanism();
     void waitUntilFinish();
 
 private:
     void zmq_listener_task();
     void uart_periodic_req_task();
-    bool uart_reqrep(uart_req &req, uart_rep &rep);
+    bool uart_reqrep(uart_req& req, uart_rep& rep);
     void reinit_uart();
     std::unique_ptr<UARTCommunication> uartcom;
     std::mutex m_uartmutex;
@@ -52,6 +51,7 @@ private:
     std::shared_ptr<spdlog::logger> m_logger;
     pubsub::Publisher publisher;
     pubsub::Subscriber subscriber;
+    std::string uart_port;
     //	UARTCommunication communication;
 };
 

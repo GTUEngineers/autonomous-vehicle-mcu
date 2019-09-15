@@ -90,7 +90,7 @@ bool UARTCommunication::configure_termios()
     tty.c_oflag &= ~OPOST; // Prevent special interpretation of output bytes (e.g. newline chars)
     tty.c_oflag &= ~ONLCR; // Prevent conversion of newline to carriage return/line feed
         //-------------------------c_cc---------------////
-    tty.c_cc[VTIME] = 7; // Wait for up to 1s (10 deciseconds),
+    tty.c_cc[VTIME] = 8; // Wait for up to 1s (10 deciseconds),
     tty.c_cc[VMIN] = 0; // returning as soon as 2 byte data is received.
     // Set in/out baud rate to be 115200
     cfsetispeed(&tty, B115200);
@@ -121,7 +121,8 @@ void UARTCommunication::close_fd()
 bool UARTCommunication::receive(uart_rep& message)
 {
     ssize_t n = read(m_fd, &message.rep.msg, UART_REP_SIZE);
-    m_logger->debug("read: {}", n);
+    m_logger->info("read: {} {}", message.rep_uint16.msg, n);
+
     // Error Handling
     if (n <= 0) {
         // Read was unsuccessful

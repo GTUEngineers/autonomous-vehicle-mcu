@@ -14,9 +14,9 @@
 #include <iostream>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/syslog_sink.h>
-
+#include <unistd.h>
 /*------------------------------< Defines >-----------------------------------*/
-#define RETRY_UART (2)
+#define RETRY_UART (3)
 #define LOGGER_NAME ("CommunicationMechanism")
 /*------------------------------< Typedefs >----------------------------------*/
 
@@ -24,14 +24,14 @@
 
 /*------------------------------< Functions >--------------------------------*/
 
-CommunicationMechanism::CommunicationMechanism()
+CommunicationMechanism::CommunicationMechanism(std::string uart_port)
     : publisher(true), subscriber(true), uartcom{nullptr}
 {
 
     m_logger = spdlog::stdout_color_mt(LOGGER_NAME);
     m_logger->set_level(spdlog::level::debug);
-
-    uartcom.reset(new UARTCommunication(UART_PORT)); //TODO Fix
+    this->uart_port = uart_port;
+    uartcom.reset(new UARTCommunication(uart_port)); //TODO Fix
     zmq_listener_thread = std::thread(&CommunicationMechanism::zmq_listener_task, this);
     //uart_periodic_req_thread = std::thread(&CommunicationMechanism::uart_periodic_req_task, this);
 
@@ -116,6 +116,7 @@ void CommunicationMechanism::zmq_listener_task()
             reinit_uart();
             m_logger->critical("UART ERROR");
         }
+        uart_rep.rep_uint16.msg = 0;
     }
 }
 
@@ -129,8 +130,9 @@ bool CommunicationMechanism::uart_reqrep(uart_req &req, uart_rep &rep)
         uartcom->transmit(req); //stateworking
         ret = uartcom->receive(rep);
         ++try_counter;
+        usleep(100);
     } while (!ret && try_counter < RETRY_UART);
-    if (!ret && try_counter > RETRY_UART)
+    if (!ret && try_counter >= RETRY_UART)
     {
         return false;
     }
@@ -141,7 +143,7 @@ void CommunicationMechanism::reinit_uart()
 {
     std::unique_lock<std::mutex> lock(m_uartmutex);
     uartcom->close_fd();
-    uartcom.reset(new UARTCommunication(UART_PORT));
+    uartcom.reset(new UARTCommunication(this->uart_port));
 
     return;
 }

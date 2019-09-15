@@ -77,7 +77,7 @@ void communication_receive_task (void const * argument)
         {
             //TODO error
         }
-        osDelay(50);
+        //osDelay(1);
     }
 }
 
@@ -94,7 +94,7 @@ void communication_transmit_task (void const * argument)
         {
             uart_transmit(data.generic_msg.msg, REP_SIZE);
         }
-        osDelay(10);
+       // osDelay(1);
     }
 }
 
