@@ -481,8 +481,8 @@ static void MX_GPIO_Init (void)
     HAL_GPIO_WritePin(THROTTLE_LOCK_GPIO_Port, THROTTLE_LOCK_Pin, GPIO_PIN_SET);
 
     /*Configure GPIO pin Output Level */
-    HAL_GPIO_WritePin(GPIOD, LD4_Pin | LD3_Pin | LD5_Pin | LD6_Pin | Audio_RST_Pin | BRAKE_RELAY_2_Pin,
-            GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOD,
+    LD4_Pin | LD3_Pin | LD5_Pin | LD6_Pin | Audio_RST_Pin | BRAKE_RELAY_2_Pin, GPIO_PIN_RESET);
 
     /*Configure GPIO pin Output Level */
     HAL_GPIO_WritePin(BRAKE_RELAY_1_GPIO_Port, BRAKE_RELAY_1_Pin, GPIO_PIN_RESET);
@@ -651,30 +651,39 @@ void ControlTask (void const * argument)
     uart_message_req req;
 
     uint8_t msg_header;
+    uint8_t alperenbulut = 0;
+    uint8_t ret_val = 0;
     for (;;)
     {
+        uart_message_rep rep = { 0 };
 
         if (communication_get_msg(&req) == OK)
         {
+            ++alperenbulut;
             msg_header = (req.req.msg[0] & 0b11110000) >> 4;
             switch (msg_header)
             {
                 case 0x0:
                 {
                     uint8_t val = 0;
-                    uart_message_rep rep = { 0 };
+
                     parse_startstop_msg(&req, &val);
-                    is_started = val;
-                    if (is_started == 1)
+
+                    if (val == 1)
                     {
-                        start_system( );
+                        if (HAL_GPIO_ReadPin(EMERGENCY_STOP_GPIO_Port, EMERGENCY_STOP_Pin)
+                                == GPIO_PIN_SET)
+                        {
+                            start_system( );
+                            ret_val = 1;
+                        }
+
                     }
-                    else
+                    else if (val == 0)
                     {
                         emergency_stop( );
                     }
-                    create_general_rep_msg(&rep, 1);
-                    communication_send_msg(&rep);
+
                     break;
                 }
                 case 0x1:
@@ -683,7 +692,6 @@ void ControlTask (void const * argument)
                     {
                         uint8_t dir;
                         int16_t val;
-                        uart_message_rep rep = { 0 };
                         parse_steer_msg(&req, &dir, &val);
                         if (dir == 0)
                         {
@@ -694,8 +702,11 @@ void ControlTask (void const * argument)
                             val = val * 7 * -1;
                         }
                         steer_set_value(val);
-                        create_general_rep_msg(&rep, 1);
-                        communication_send_msg(&rep);
+                        ret_val = 1;
+                    }
+                    else
+                    {
+                        ret_val = 0;
                     }
                     break;
                 }
@@ -704,7 +715,6 @@ void ControlTask (void const * argument)
                     if (is_started == 1)
                     {
                         uint8_t val;
-                        uart_message_rep rep = { 0 };
                         parse_throttle_msg(&req, &val);
                         switch (val)
                         {
@@ -745,13 +755,17 @@ void ControlTask (void const * argument)
                             }
                             default:
                             {
+
                                 throttle_set_value(SPEED_0);
                                 break;
                             }
 
                         }
-                        create_general_rep_msg(&rep, 1);
-                        communication_send_msg(&rep);
+                        ret_val = 1;
+                    }
+                    else
+                    {
+                        ret_val = 0;
                     }
                     break;
                 }
@@ -760,7 +774,6 @@ void ControlTask (void const * argument)
                     if (is_started == 1)
                     {
                         uint8_t val;
-                        uart_message_rep rep = { 0 };
                         parse_brake_msg(&req, &val);
                         if (val == 0)
                         {
@@ -770,14 +783,17 @@ void ControlTask (void const * argument)
                         {
                             brake_set_value(BRAKE_LOCK);
                         }
-                        create_general_rep_msg(&rep, 1);
-                        communication_send_msg(&rep);
+                        ret_val = 1;
+                    }
+                    else
+                    {
+                        ret_val = 0;
                     }
                     break;
                 }
                 case 0x4:
                 {
-
+                    ret_val = is_started;
                     break;
                 }
                 default:
@@ -786,12 +802,15 @@ void ControlTask (void const * argument)
                     break;
                 }
             }
+
         }
         else
         {
         }
-
+        create_general_rep_msg(&rep, ret_val);
+        communication_send_msg(&rep);
         osDelay(1);
+
     }
     /* USER CODE END ControlTask */
 }
