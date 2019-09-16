@@ -150,10 +150,10 @@ int main (void)
 
     /* Create the thread(s) */
     /* definition and creation of defaultTask */
-    osThreadStaticDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 512, defaultTaskBuffer,
+   /* osThreadStaticDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 512, defaultTaskBuffer,
             &defaultTaskControlBlock);
     defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
-
+*/
     /* definition and creation of Control */
     osThreadStaticDef(Control, ControlTask, osPriorityAboveNormal, 0, 512, ControlBuffer,
             &ControlControlBlock);
@@ -651,7 +651,6 @@ void ControlTask (void const * argument)
     uart_message_req req;
 
     uint8_t msg_header;
-    uint8_t alperenbulut = 0;
     uint8_t ret_val = 0;
     for (;;)
     {
@@ -659,7 +658,6 @@ void ControlTask (void const * argument)
 
         if (communication_get_msg(&req) == OK)
         {
-            ++alperenbulut;
             msg_header = (req.req.msg[0] & 0b11110000) >> 4;
             switch (msg_header)
             {
