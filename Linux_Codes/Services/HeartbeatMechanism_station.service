@@ -6,6 +6,7 @@ After=wifi_client.service
 Type=simple
 ExecStart=/usr/bin/heartbeatMechanism_main_station
 Restart=always
+User=gtu-hazine
 
 [Install]
 WantedBy=multi-user.target
