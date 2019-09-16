@@ -31,6 +31,13 @@ CommunicationMechanism::CommunicationMechanism(std::string uart_port)
     m_logger = spdlog::stdout_color_mt(LOGGER_NAME);
     m_logger->set_level(spdlog::level::debug);
     this->uart_port = uart_port;
+    std::string addr;
+    addr.clear();
+    addr.resize(50);
+    sprintf(&addr.front(), zmqbase::PROC_CONNECTION.c_str(), MCU_PUB_PROC_CONN);
+
+    publisher.connect(addr);
+    m_logger->info("Publisher addr:{}", addr);
     uartcom.reset(new UARTCommunication(uart_port)); //TODO Fix
     zmq_listener_thread = std::thread(&CommunicationMechanism::zmq_listener_task, this);
     //uart_periodic_req_thread = std::thread(&CommunicationMechanism::uart_periodic_req_task, this);
@@ -91,12 +98,16 @@ void CommunicationMechanism::zmq_listener_task()
                 uart_msg = uart_msg::create_startstop_msg(pubsub.startstop().cmd());
                 m_logger->debug("StartStop:{}", pubsub.startstop().cmd());
             }
-        } /* else if (topic == "info/stateworking") {
+        }
+        else if (topic == STATEWORK_CONTROL_TOPIC)
+        {
             pubsub.ParseFromArray(msg.data(), msg.size());
-            if (pubsub.msg_type() == uart::pub_sub_message::STATE_WORKING_MSG) {
+            if (pubsub.msg_type() == uart::pub_sub_message::STATE_WORKING_MSG)
+            {
                 uart_msg = uart_msg::create_state_msg();
             }
-        } else if (topic == "info/hcsr04") {
+            m_logger->debug("Stateworking:{}", pubsub.statework().cmd());
+        } /* else if (topic == "info/hcsr04") {
             pubsub.ParseFromArray(msg.data(), msg.size());
             if (pubsub.msg_type() == uart::pub_sub_message::HCSR4_MSG) {
                 uart_msg = uart_msg::create_hcsr4_msg();
@@ -110,11 +121,25 @@ void CommunicationMechanism::zmq_listener_task()
         else
         {
             m_logger->critical("Invalid Topic: {}", topic);
+            continue;
         }
         if (!uart_reqrep(uart_msg, uart_rep))
         {
             reinit_uart();
             m_logger->critical("UART ERROR");
+        }
+        if (topic == STATEWORK_CONTROL_TOPIC)
+        {
+            std::string msg;
+            if (uart_rep.rep_uint16.msg == 0)
+            {
+                msg = Common::pubsub::create_statework_msg(uart::stateWorking_enum::INACTIVE);
+            }
+            else
+            {
+                msg = Common::pubsub::create_statework_msg(uart::stateWorking_enum::ACTIVE);
+            }
+            publisher.publish(STATEWORK_INFO_TOPIC, msg);
         }
         uart_rep.rep_uint16.msg = 0;
     }

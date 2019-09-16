@@ -15,8 +15,8 @@ enum steering_enum {
 }
 
 enum stateWorking_enum {
-  ACTIVE = 0;
-  INACTIVE = 1;
+  INACTIVE = 0;
+  ACTIVE = 1;
   ERROR = 2;
 }
 
