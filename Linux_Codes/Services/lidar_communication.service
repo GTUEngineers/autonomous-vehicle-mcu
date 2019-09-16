@@ -2,11 +2,14 @@
 Description=Lidar Communication Service
 Before=wifi_server.service
 After=MCU_Communication.service
+User=gtu-hazine
 
 [Service]
 Type=simple
-ExecStart=/usr/bin//usr/bin/lidar
+ExecStart=/bin/sh /home/gtu-hazine/Desktop/AllRepos_15.09.2019/autonomous-vehicle/Linux_Codes/Services/lidar_launch.sh
 Restart=always
+RestartSec=1
+ExecStop=/bin/sh /home/gtu-hazine/Desktop/AllRepos_15.09.2019/autonomous-vehicle/Linux_Codes/Services/lidar_kill.sh
 
 [Install]
 WantedBy=multi-user.target

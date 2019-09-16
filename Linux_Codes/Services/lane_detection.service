@@ -3,11 +3,12 @@ Description=Lane Detection Service
 After=HeartbeatMechanism_car.service
 Before=light_sign_detection.service
 
-
 [Service]
 Type=simple
-ExecStart=/usr/bin/python3 /usr/bin/steering_process_main.py
+ExecStart=/usr/bin/python3 /home/gtu-hazine/Desktop/AllRepos_15.09.2019/autonomous-vehicle-ai/src/mainControl/steering_process_main.py
 Restart=always
+RestartSec=1
+User=gtu-hazine
 
 [Install]
 WantedBy=multi-user.target

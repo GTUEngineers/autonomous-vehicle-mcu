@@ -5,8 +5,10 @@ Before=linux_control.service
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/sign_light_main.py
+ExecStart=/usr/bin/python3 /home/gtu-hazine/Desktop/AllRepos_15.09.2019/autonomous-vehicle-ai/src/mainControl/sign_light_main.py
 Restart=always
+RestartSec=1
+User=gtu-hazine
 
 [Install]
 WantedBy=multi-user.target

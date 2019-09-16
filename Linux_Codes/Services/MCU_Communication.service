@@ -4,8 +4,10 @@ Before=HeartbeatMechanism_car.service wifi_server.service lidar_communication.se
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/MCU_Communication
+ExecStart=/home/gtu-hazine/Desktop/AllRepos_15.09.2019/autonomous-vehicle/Linux_Codes/local_build/Output/MCU_Communication/MCU_Communication
 Restart=always
+RestartSec=1
+User=gtu-hazine
 
 [Install]
 WantedBy=multi-user.target
