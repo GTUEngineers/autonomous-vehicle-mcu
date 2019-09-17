@@ -1,12 +1,14 @@
 [Unit]
 Description=Linux Control Service
 After=light_sign_detection.service
+StartLimitInterval=60
+StartLimitBurst=10
 
 [Service]
 Type=simple
 ExecStart=/usr/bin/python3 /home/gtu-hazine/Desktop/AllRepos_15.09.2019/autonomous-vehicle-ai/src/mainControl/control_main.py
 Restart=always
-RestartSec=1
+RestartSec=2
 User=gtu-hazine
 
 [Install]
