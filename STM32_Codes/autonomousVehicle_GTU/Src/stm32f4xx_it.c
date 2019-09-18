@@ -62,6 +62,7 @@
 /* External variables --------------------------------------------------------*/
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
+extern TIM_HandleTypeDef htim7;
 extern UART_HandleTypeDef huart2;
 /* USER CODE BEGIN EV */
 
@@ -242,6 +243,20 @@ void USART2_IRQHandler(void)
   /* USER CODE END USART2_IRQn 1 */
 }
 
+/**
+  * @brief This function handles TIM7 global interrupt.
+  */
+void TIM7_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM7_IRQn 0 */
+
+  /* USER CODE END TIM7_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim7);
+  /* USER CODE BEGIN TIM7_IRQn 1 */
+
+  /* USER CODE END TIM7_IRQn 1 */
+}
+
 /* USER CODE BEGIN 1 */
 void HAL_GPIO_EXTI_Callback (uint16_t GPIO_Pin)
 {
@@ -253,7 +268,6 @@ void HAL_GPIO_EXTI_Callback (uint16_t GPIO_Pin)
             if (HAL_GPIO_ReadPin(START_BUTTON_GPIO_Port, START_BUTTON_Pin) == GPIO_PIN_SET)
             {
                 it_callback = &start_system;
-                HAL_TIM_Base_Stop(&htim4);
                 TIM4->ARR=300;
                 HAL_TIM_Base_Start_IT(&htim4);
                 set_orange_led(GPIO_PIN_SET);
@@ -272,15 +286,15 @@ void HAL_GPIO_EXTI_Callback (uint16_t GPIO_Pin)
 
             if (HAL_GPIO_ReadPin(EMERGENCY_STOP_GPIO_Port, EMERGENCY_STOP_Pin) == GPIO_PIN_RESET)
             {
-                it_callback = &emergency_stop;
-                HAL_TIM_Base_Stop(&htim4);
-                HAL_TIM_Base_Start_IT(&htim4);
+                it_callback_2 = &emergency_stop;
+                TIM7->ARR=300;
+                HAL_TIM_Base_Start_IT(&htim7);
                 set_blue_led(GPIO_PIN_SET);
             }
             else
             {
-                HAL_TIM_Base_Stop(&htim4);
-                it_callback = NULL;
+                HAL_TIM_Base_Stop(&htim7);
+                it_callback_2 = NULL;
                 set_blue_led(GPIO_PIN_RESET);
             }
 

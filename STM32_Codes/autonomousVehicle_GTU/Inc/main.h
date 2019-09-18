@@ -41,9 +41,11 @@ extern DAC_HandleTypeDef hdac;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
+extern TIM_HandleTypeDef htim7;
 extern volatile uint8_t is_started;
 extern UART_HandleTypeDef huart2;
 extern volatile void(*it_callback)();
+extern volatile void(*it_callback_2)();
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
