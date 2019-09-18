@@ -58,6 +58,7 @@ DAC_HandleTypeDef hdac;
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
+TIM_HandleTypeDef htim7;
 
 UART_HandleTypeDef huart2;
 
@@ -70,6 +71,7 @@ osStaticThreadDef_t ControlControlBlock;
 /* USER CODE BEGIN PV */
 volatile uint8_t is_started;
 volatile void (*it_callback) ( ) = NULL;
+volatile void (*it_callback_2) ( ) = NULL;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -80,6 +82,7 @@ static void MX_TIM2_Init (void);
 static void MX_TIM3_Init (void);
 static void MX_USART2_UART_Init (void);
 static void MX_TIM4_Init (void);
+static void MX_TIM7_Init (void);
 void StartDefaultTask (void const * argument);
 void ControlTask (void const * argument);
 
@@ -125,11 +128,14 @@ int main (void)
     MX_TIM3_Init( );
     MX_USART2_UART_Init( );
     MX_TIM4_Init( );
+    MX_TIM7_Init( );
     /* USER CODE BEGIN 2 */
     HAL_DAC_Start(&hdac, DAC_CHANNEL_2);
     HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3);
     HAL_TIM_Base_Start_IT(&htim3);
     HAL_TIM_Base_Start_IT(&htim4);
+    HAL_TIM_Base_Start_IT(&htim7);
+
     /* USER CODE END 2 */
 
     /* USER CODE BEGIN RTOS_MUTEX */
@@ -150,10 +156,10 @@ int main (void)
 
     /* Create the thread(s) */
     /* definition and creation of defaultTask */
-   /* osThreadStaticDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 512, defaultTaskBuffer,
-            &defaultTaskControlBlock);
-    defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
-*/
+    /*
+     osThreadStaticDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 512, defaultTaskBuffer, &defaultTaskControlBlock);
+     defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+     */
     /* definition and creation of Control */
     osThreadStaticDef(Control, ControlTask, osPriorityAboveNormal, 0, 512, ControlBuffer,
             &ControlControlBlock);
@@ -394,7 +400,7 @@ static void MX_TIM4_Init (void)
     htim4.Instance = TIM4;
     htim4.Init.Prescaler = 52500;
     htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-    htim4.Init.Period = 300;
+    htim4.Init.Period = 350;
     htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     htim4.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
     if (HAL_TIM_Base_Init(&htim4) != HAL_OK)
@@ -406,7 +412,7 @@ static void MX_TIM4_Init (void)
     {
         Error_Handler( );
     }
-    sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+    sMasterConfig.MasterOutputTrigger = TIM_TRGO_ENABLE;
     sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
     if (HAL_TIMEx_MasterConfigSynchronization(&htim4, &sMasterConfig) != HAL_OK)
     {
@@ -415,6 +421,44 @@ static void MX_TIM4_Init (void)
     /* USER CODE BEGIN TIM4_Init 2 */
 
     /* USER CODE END TIM4_Init 2 */
+
+}
+
+/**
+ * @brief TIM7 Initialization Function
+ * @param None
+ * @retval None
+ */
+static void MX_TIM7_Init (void)
+{
+
+    /* USER CODE BEGIN TIM7_Init 0 */
+
+    /* USER CODE END TIM7_Init 0 */
+
+    TIM_MasterConfigTypeDef sMasterConfig = { 0 };
+
+    /* USER CODE BEGIN TIM7_Init 1 */
+
+    /* USER CODE END TIM7_Init 1 */
+    htim7.Instance = TIM7;
+    htim7.Init.Prescaler = 52500;
+    htim7.Init.CounterMode = TIM_COUNTERMODE_UP;
+    htim7.Init.Period = 400;
+    htim7.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+    if (HAL_TIM_Base_Init(&htim7) != HAL_OK)
+    {
+        Error_Handler( );
+    }
+    sMasterConfig.MasterOutputTrigger = TIM_TRGO_ENABLE;
+    sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+    if (HAL_TIMEx_MasterConfigSynchronization(&htim7, &sMasterConfig) != HAL_OK)
+    {
+        Error_Handler( );
+    }
+    /* USER CODE BEGIN TIM7_Init 2 */
+
+    /* USER CODE END TIM7_Init 2 */
 
 }
 
@@ -481,8 +525,8 @@ static void MX_GPIO_Init (void)
     HAL_GPIO_WritePin(THROTTLE_LOCK_GPIO_Port, THROTTLE_LOCK_Pin, GPIO_PIN_SET);
 
     /*Configure GPIO pin Output Level */
-    HAL_GPIO_WritePin(GPIOD,
-    LD4_Pin | LD3_Pin | LD5_Pin | LD6_Pin | Audio_RST_Pin | BRAKE_RELAY_2_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOD, LD4_Pin | LD3_Pin | LD5_Pin | LD6_Pin | Audio_RST_Pin | BRAKE_RELAY_2_Pin,
+            GPIO_PIN_RESET);
 
     /*Configure GPIO pin Output Level */
     HAL_GPIO_WritePin(BRAKE_RELAY_1_GPIO_Port, BRAKE_RELAY_1_Pin, GPIO_PIN_RESET);
@@ -577,6 +621,16 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
         HAL_TIM_Base_Stop(&htim3);
         HAL_GPIO_WritePin(STEER_PWM_GPIO_Port, STEER_PWM_Pin, GPIO_PIN_RESET);
 
+    }
+    else if (htim->Instance == TIM7)
+    {
+
+        HAL_TIM_Base_Stop(&htim7);
+        if (it_callback_2 != NULL)
+        {
+            (*it_callback_2)( );
+
+        }
     }
     else if (htim->Instance == TIM4)
     {
