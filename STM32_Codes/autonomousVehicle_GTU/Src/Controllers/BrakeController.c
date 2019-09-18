@@ -48,8 +48,10 @@ void brake_task (void const * argument)
 
     while (1)
     {
-        if (osSemaphoreWait(xSemaphore, osWaitForever) >= 0)
+        if (osSemaphoreWait(xSemaphore, 2000) >= 0)
         {
+            if(brake_next_position == brake_current_position)
+                continue;
             switch (brake_next_position)
             {
                 case BRAKE_STOP:
@@ -94,7 +96,6 @@ void brake_set_value (BrakePosition val)
     }
     brake_next_position = val;
     osSemaphoreRelease(xSemaphore);
-
 }
 
 void brake_lock ( )

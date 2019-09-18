@@ -245,6 +245,7 @@ void USART2_IRQHandler(void)
 /* USER CODE BEGIN 1 */
 void HAL_GPIO_EXTI_Callback (uint16_t GPIO_Pin)
 {
+
     switch (GPIO_Pin)
     {
         case START_BUTTON_Pin:
@@ -252,12 +253,16 @@ void HAL_GPIO_EXTI_Callback (uint16_t GPIO_Pin)
             if (HAL_GPIO_ReadPin(START_BUTTON_GPIO_Port, START_BUTTON_Pin) == GPIO_PIN_SET)
             {
                 it_callback = &start_system;
+                HAL_TIM_Base_Stop(&htim4);
+                TIM4->ARR=300;
                 HAL_TIM_Base_Start_IT(&htim4);
+                set_orange_led(GPIO_PIN_SET);
             }
             else
             {
                 HAL_TIM_Base_Stop(&htim4);
                 it_callback = NULL;
+                set_orange_led(GPIO_PIN_RESET);
             }
 
             break;
@@ -268,17 +273,21 @@ void HAL_GPIO_EXTI_Callback (uint16_t GPIO_Pin)
             if (HAL_GPIO_ReadPin(EMERGENCY_STOP_GPIO_Port, EMERGENCY_STOP_Pin) == GPIO_PIN_RESET)
             {
                 it_callback = &emergency_stop;
+                HAL_TIM_Base_Stop(&htim4);
                 HAL_TIM_Base_Start_IT(&htim4);
+                set_blue_led(GPIO_PIN_SET);
             }
             else
             {
                 HAL_TIM_Base_Stop(&htim4);
                 it_callback = NULL;
+                set_blue_led(GPIO_PIN_RESET);
             }
 
             break;
         }
     }
+
 }
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

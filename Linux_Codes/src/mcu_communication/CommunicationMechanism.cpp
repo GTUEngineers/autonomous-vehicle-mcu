@@ -96,7 +96,7 @@ void CommunicationMechanism::zmq_listener_task()
             if (pubsub.msg_type() == uart::pub_sub_message::START_STOP_MSG)
             {
                 uart_msg = uart_msg::create_startstop_msg(pubsub.startstop().cmd());
-                m_logger->debug("StartStop:{}", pubsub.startstop().cmd());
+                m_logger->critical("StartStop:{}", pubsub.startstop().cmd());
             }
         }
         else if (topic == STATEWORK_CONTROL_TOPIC)

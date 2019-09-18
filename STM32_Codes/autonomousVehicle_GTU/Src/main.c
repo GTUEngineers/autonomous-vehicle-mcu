@@ -394,7 +394,7 @@ static void MX_TIM4_Init (void)
     htim4.Instance = TIM4;
     htim4.Init.Prescaler = 52500;
     htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-    htim4.Init.Period = 400;
+    htim4.Init.Period = 300;
     htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     htim4.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
     if (HAL_TIM_Base_Init(&htim4) != HAL_OK)
@@ -569,6 +569,7 @@ static void MX_GPIO_Init (void)
 /* USER CODE BEGIN 4 */
 void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
 {
+    taskDISABLE_INTERRUPTS();
     if (htim->Instance == TIM3)
     {
         HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_3);
@@ -584,8 +585,11 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
         if (it_callback != NULL)
         {
             (*it_callback)( );
+
         }
     }
+
+    taskENABLE_INTERRUPTS();
 }
 
 /* USER CODE END 4 */
@@ -807,7 +811,6 @@ void ControlTask (void const * argument)
         }
         create_general_rep_msg(&rep, ret_val);
         communication_send_msg(&rep);
-        osDelay(1);
 
     }
     /* USER CODE END ControlTask */
