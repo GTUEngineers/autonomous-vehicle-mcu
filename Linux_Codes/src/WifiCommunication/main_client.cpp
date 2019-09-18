@@ -48,7 +48,7 @@ int main()
 
         std::string reply;
         //if connection is not broken
-        if (client->reqrep(request, reply, 3))
+        if (client->reqrep(request, reply, 10000))
         {
             ReturnCode retCode;
             Common::seqreqrep::parse_startstop_rep(reply, retCode);
@@ -64,7 +64,7 @@ int main()
             //reconnects
             connect_tcp_soc(client);
         }
-        }
+    }
 
     return 0;
 }

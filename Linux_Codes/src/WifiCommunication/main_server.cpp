@@ -49,7 +49,7 @@ int main()
         {
             wifi::startstop_enum start_or_stop;
             Common::seqreqrep::parse_startstop_req(request, start_or_stop);
-            m_logger->debug("Clint Req: {}", start_or_stop);
+            m_logger->debug("Clint Req START STOP: {}", start_or_stop);
 
             //  publish recieved message
             publisher.publish(STARTSTOP_CONTROL_TOPIC, Common::pubsub::create_startstop_msg((uart::startstop_enum)start_or_stop)); //Linux create startstop
