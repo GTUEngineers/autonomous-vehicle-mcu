@@ -835,7 +835,7 @@ void ControlTask (void const * argument)
                         {
                             brake_set_value(BRAKE_RELEASE);
                         }
-                        else
+                        else if (val == 1)
                         {
                             brake_set_value(BRAKE_LOCK);
                         }
