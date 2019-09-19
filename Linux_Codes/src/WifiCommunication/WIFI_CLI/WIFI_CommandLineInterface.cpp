@@ -18,7 +18,10 @@
 /*------------------------------< Functions >--------------------------------*/
 
 Wifi_Cli::Wifi_Cli()
-    : cli_msg(""), user_selection(type::dflt), start_stop_value(wifi::startstop_enum::STOP), client(new seqreqrep::Client)
+    : cli_msg("")
+    , user_selection(type::dflt)
+    , start_stop_value(wifi::startstop_enum::STOP)
+    , client(new seqreqrep::Client)
 {
     cli_logger = spdlog::stdout_color_mt("WIFI_CommandLineInterface");
     cli_logger->set_level(spdlog::level::debug);
@@ -31,7 +34,10 @@ Wifi_Cli::Wifi_Cli()
 }
 
 Wifi_Cli::Wifi_Cli(std::string ipNumb, int portNum)
-    : cli_msg(""), user_selection(type::dflt), start_stop_value(wifi::startstop_enum::STOP), client(new seqreqrep::Client)
+    : cli_msg("")
+    , user_selection(type::dflt)
+    , start_stop_value(wifi::startstop_enum::STOP)
+    , client(new seqreqrep::Client)
 {
     cli_logger = spdlog::stdout_color_mt("WIFI_CommandLineInterface");
     cli_logger->set_level(spdlog::level::debug);
@@ -46,19 +52,15 @@ Wifi_Cli::Wifi_Cli(std::string ipNumb, int portNum)
 void Wifi_Cli::main_menu()
 {
     std::string msg_type;
-    while (msg_type != "1" && msg_type != "2")
-    {
+    while (msg_type != "1" && msg_type != "2") {
         std::cout << "\nSelect the message type:" << std::endl;
         std::cout << "(1)-Start_stop message." << std::endl;
         std::cout << "(2)-Quit menu." << std::endl;
         std::cin >> msg_type;
     }
-    if (msg_type == "1")
-    {
+    if (msg_type == "1") {
         user_selection = type::_start_stop;
-    }
-    else if (msg_type == "2")
-    {
+    } else if (msg_type == "2") {
         cli_logger->info("Exited.");
         exit(0);
     }
@@ -68,30 +70,21 @@ void Wifi_Cli::main_menu()
 
 void Wifi_Cli::sub_menu()
 {
-    if (user_selection == type::_start_stop)
-    {
+    if (user_selection == type::_start_stop) {
         std::string input_startstop_val;
-        while (input_startstop_val != "0" && input_startstop_val != "1")
-        {
+        while (input_startstop_val != "0" && input_startstop_val != "1") {
             std::cout << ">Enter the start_stop value(0(STOP) or 1(START))" << std::endl;
             std::cin >> input_startstop_val;
-            if (input_startstop_val == std::to_string(wifi::startstop_enum::START))
-            {
+            if (input_startstop_val == std::to_string(wifi::startstop_enum::START)) {
                 start_stop_value = wifi::startstop_enum::START;
-            }
-            else if (input_startstop_val == std::to_string(wifi::startstop_enum::STOP))
-            {
+            } else if (input_startstop_val == std::to_string(wifi::startstop_enum::STOP)) {
                 start_stop_value = wifi::startstop_enum::STOP;
-            }
-            else
-            {
+            } else {
                 cli_logger->warn("Invalid selection.");
             }
         }
         cli_logger->info("start_stop value selected.");
-    }
-    else
-    {
+    } else {
         cli_logger->warn("Invalid user selection.");
     }
 }
@@ -104,8 +97,7 @@ bool Wifi_Cli::create_message()
     std::string reply;
 
     //if connection is not failed.
-    if (client->reqrep(request, reply, 1000))
-    {
+    if (client->reqrep(request, reply, 3000)) {
         ReturnCode retCode;
         Common::seqreqrep::parse_startstop_rep(reply, retCode);
 
@@ -114,8 +106,7 @@ bool Wifi_Cli::create_message()
         cli_logger->info("Message Sent.");
     }
     //if it connection is failed.
-    else
-    {
+    else {
         cli_logger->critical("Message did not send!");
         retVal = false;
     }
@@ -143,8 +134,7 @@ int main()
     portNum = atoi(temp.c_str());
 
     Wifi_Cli cli(ipAddr, portNum);
-    while (true)
-    {
+    while (true) {
         cli.cli_start();
     }
     return 0;
