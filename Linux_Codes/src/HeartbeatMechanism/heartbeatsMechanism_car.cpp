@@ -7,6 +7,7 @@
  */
 
 /*------------------------------< Includes >----------------------------------*/
+#include "CommunicationMechanism.h"
 #include "heartbeatsMechanism.h"
 #include <iostream>
 #include <spdlog/sinks/stdout_color_sinks.h>
@@ -14,7 +15,7 @@
 #include <unistd.h>
 /*------------------------------< Defines >-----------------------------------*/
 #define MAX_COUNT (3)
-#define RECEIVE_TIMEOUT (1500)
+#define RECEIVE_TIMEOUT (2000)
 /*------------------------------< Typedefs >----------------------------------*/
 
 /*------------------------------< Namespaces >--------------------------------*/
@@ -75,7 +76,7 @@ void HeartbeatsMechanism::listen()
                     carstopped = true; //MCU uart stop req
 
                     std::string stop_msg = Common::pubsub::create_startstop_msg(uart::startstop_enum::STOP);
-                    m_proc_publisher.publish(CAR_HB_TOPIC, stop_msg);
+                    m_proc_publisher.publish(STARTSTOP_CONTROL_TOPIC, stop_msg);
                     m_logger->info("Car stopped.Stop message sent.");
                 }
             }
@@ -84,12 +85,12 @@ void HeartbeatsMechanism::listen()
                 counter = 0;
                 carstopped = false;
                 m_logger->info("Reconnected"); //Start car
-                std::string start_msg = Common::pubsub::create_startstop_msg(uart::startstop_enum::START);
-                m_proc_publisher.publish(CAR_HB_TOPIC, start_msg);
-                m_logger->info("Car startted.Start message sent.");
+                //std::string start_msg = Common::pubsub::create_startstop_msg(uart::startstop_enum::START);
+                //m_proc_publisher.publish(STARTSTOP_CONTROL_TOPIC, start_msg);
+                //m_logger->info("Car startted.Start message sent.");
 
-                std::string message((char*)msg.data(), msg.size());
-                m_logger->debug("Topic:{} Message:{}", topic, message);
+                //std::string message((char*)msg.data(), msg.size());
+                //m_logger->debug("Topic:{} Message:{}", topic, message);
             } else {
                 counter = 0;
                 std::string message((char*)msg.data(), msg.size());
