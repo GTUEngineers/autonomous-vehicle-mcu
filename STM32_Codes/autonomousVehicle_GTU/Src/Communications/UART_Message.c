@@ -49,9 +49,9 @@ void create_general_rep_msg (uart_message_rep* rep, const uint8_t val)
 
 void parse_startstop_msg (const uart_message_req* req, uint8_t* val)
 {
-#define STARTSTOP_MASK (0b00000001)
-    *val = (req->req.msg[1] & STARTSTOP_MASK);
-#undef STARTSTOP_MASK
+
+    *val = (req->req.msg[1] );
+
 }
 
 void parse_steer_msg (const uart_message_req* req, uint8_t* dir, int16_t* val)
@@ -77,7 +77,7 @@ void parse_throttle_msg (const uart_message_req* req, uint8_t* val)
 
 void parse_brake_msg (const uart_message_req* req, uint8_t* val)
 {
-#define BRAKE_MASK (0b00000001)
-    *val = (req->req.msg[1] & BRAKE_MASK);
-#undef BRAKE_MASK
+
+    *val = (req->req.msg[1] );
+
 }
