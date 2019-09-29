@@ -837,6 +837,7 @@ void ControlTask (void const * argument)
                         }
                         else if (val == 1)
                         {
+                            throttle_set_lock(THROTTLE_LOCK);
                             brake_set_value(BRAKE_LOCK);
                         }
                         ret_val = 1;
