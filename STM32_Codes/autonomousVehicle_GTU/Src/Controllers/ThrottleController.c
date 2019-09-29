@@ -34,6 +34,7 @@ void throttle_set_value (uint32_t val)
     {
         return;
     }
+    throttle_set_lock(THROTTLE_RELEASE);
     throttle_current_value = val;
     HAL_DAC_SetValue(&hdac, DAC_CHANNEL_2, DAC_ALIGN_12B_R, val);
 }
