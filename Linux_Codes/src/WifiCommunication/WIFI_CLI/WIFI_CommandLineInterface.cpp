@@ -97,7 +97,7 @@ bool Wifi_Cli::create_message()
     std::string reply;
 
     //if connection is not failed.
-    if (client->reqrep(request, reply, 3000)) {
+    if (client->reqrep(request, reply, 5000)) {
         ReturnCode retCode;
         Common::seqreqrep::parse_startstop_rep(reply, retCode);
 

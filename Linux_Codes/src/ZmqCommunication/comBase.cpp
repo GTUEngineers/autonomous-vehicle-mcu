@@ -23,7 +23,7 @@ ComBase::ComBase(int s_type, bool is_server)
     , m_socket(new zmq::socket_t(*m_context, s_type))
     , m_is_server(is_server)
 {
-    m_socket->setsockopt(ZMQ_LINGER, 0);
+    m_socket->setsockopt(ZMQ_LINGER, 5);
 }
 
 ComBase::~ComBase()
