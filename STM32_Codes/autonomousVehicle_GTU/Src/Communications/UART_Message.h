@@ -18,59 +18,61 @@ extern "C" {     /* Make sure we have C-declarations in C++ programs */
 /*------------------------------< Defines >-----------------------------------*/
 
 /*------------------------------< Typedefs >----------------------------------*/
+#define UART_REQ_SIZE (3)
+#define UART_REP_SIZE (3)
 
-struct UART_message_req
-{
-    uint8_t msg[2];
-}__attribute__((packed, aligned(1)));
-
-struct UART_message_req_uint16
-{
-    uint16_t msg;
-}__attribute__((packed, aligned(1)));
-
-union u_UART_message_req
-{
-    struct UART_message_req req;
-    struct UART_message_req_uint16 req_uint16;
+enum HEADERS {
+	START_STOP_REQ = 0,
+	STEERING_REQ = 1,
+	THROTTLE_REQ = 2,
+	BRAKE_REQ = 3,
+	GENERIC_REP = 4,
+	STATE_REQ = 5,
+	STATE_REP = 6
 };
 
-struct UART_generic_message_rep
-{
-    uint8_t msg[9];
+struct UART_req {
+	uint8_t msg[UART_REQ_SIZE];
 }__attribute__((packed, aligned(1)));
-
-struct UART_gps_message_rep
-{
-    uint8_t header;
-    float latitude;
-    float longitude;
+struct UART_req_packed {
+	uint8_t header;
+	uint16_t data;
 }__attribute__((packed, aligned(1)));
-
-union u_uart_message_rep
-{
-    struct UART_generic_message_rep generic_msg;
-    struct UART_gps_message_rep gps_msg;
+union UART_req_un {
+	struct UART_req req;
+	struct UART_req_packed req_packed;
 };
 
+struct UART_rep {
+	uint8_t msg[UART_REP_SIZE];
+}__attribute__((packed, aligned(1)));
+struct UART_rep_packed {
+	uint8_t header;
+	uint16_t data;
+}__attribute__((packed, aligned(1)));
+union UART_rep_un {
+	struct UART_rep rep;
+	struct UART_rep_packed rep_packed;
+};
 enum STATE{
-    RUNNING = 0,
-    STOP = 1,
+    STOPPED = 0,
+    RUNNING = 1,
     STATE_ERROR = 2
 };
 
-typedef union u_uart_message_rep uart_message_rep;
-typedef union u_UART_message_req uart_message_req;
+/*------------------------------< Typedefs >----------------------------------*/
+typedef union UART_req_un uart_req;
+typedef union UART_rep_un uart_rep;
 /*------------------------------< Constants >---------------------------------*/
 
 /*------------------------------< Prototypes >--------------------------------*/
-void create_state_rep_msg(uart_message_rep* rep, enum STATE val);
-void create_steer_rep_msg(uart_message_rep* rep, const uint16_t val);
-void create_general_rep_msg(uart_message_rep* rep, const uint8_t val);
-void parse_steer_msg(const uart_message_req* req, uint8_t* dir, int16_t* val);
-void parse_throttle_msg(const uart_message_req* req, uint8_t* val);
-void parse_brake_msg(const uart_message_req* req, uint8_t* val);
-void parse_startstop_msg(const uart_message_req* msg, uint8_t* val);
+void create_state_rep_msg(uart_rep* rep, enum STATE val);
+void create_steer_rep_msg(uart_rep* rep, const uint16_t val);
+void create_general_rep_msg(uart_rep* rep, const uint8_t val);
+void parse_steer_msg(const uart_req* req, uint8_t* dir, int16_t* val);
+void parse_throttle_msg(const uart_req* req, uint8_t* val);
+void parse_brake_msg(const uart_req* req, uint8_t* val);
+void parse_startstop_msg(const uart_req* msg, uint8_t* val);
 #if defined(__cplusplus)
 }                /* Make sure we have C-declarations in C++ programs */
 #endif

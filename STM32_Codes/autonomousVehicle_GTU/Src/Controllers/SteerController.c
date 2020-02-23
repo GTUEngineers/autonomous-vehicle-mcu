@@ -1,7 +1,13 @@
 /**
  * \file        SteerController.c
- * \brief       A brief description one line.
+ * \brief       Direksiyonun hareket ettirebilmesi için bir adet step motor ve bu motoru sürebilmek için bir adet step motor sürücüsü
+ *              aracın üzerine koyulmuş bulunmaktadır.
+ *              Bu motor sürücü pwm ile çalışmaktadır. PWM i üretebilmek için bir thread le high low seklinde ilerlemek cok ilkelce olacağı için
+ *              STM32 nin pwm üreticisini kullandık.
+ *              Bu PWM i bi yerde durdurmak gerekiyor. Gerekli adım atıldığında durması gerek bunun içinde ikinci bir timer kullanıldı.
+ *              Bu timerla aslında pwmin kaç adım attığı tutuluyor bu timerin süresi dolduğunda pwm durduruluyor.
  *
+ *  Detaylı bilgi için Ahmet Alperen BULUT https://www.linkedin.com/in/ahmetalperenbulut
  * \author      ahmet.alperen.bulut
  * \date        6 Tem 2019
  */
@@ -50,11 +56,12 @@ void steer_set_value (int val)
         HAL_GPIO_WritePin(STEER_DIR_GPIO_Port, STEER_DIR_Pin, GPIO_PIN_RESET);
     }
     int i = 0;
-    while(i<1000){
+    while (i < 750)//for delay
+    {
         ++i;
     }
     uint32_t abs_val = abs(position - val);
-
+    TIM3->CNT = 0;
     TIM3->ARR = 2 * abs_val - 1;
     position = val;
 

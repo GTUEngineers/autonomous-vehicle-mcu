@@ -1,7 +1,13 @@
 /**
  * \file        BrakeController.c
- * \brief       A brief description one line.
+ * \brief       Aracın fren mekanizmasında bir adet dc motor bulunmaktadır.
+ * Bu motora +12v uygulanırsa bir yöne dönüyor yani kitliyor olarak düşünebilirsiniz.
+ * Eğer -12v uygulanırsa freni bırakıyor.
+ * Bu işlemi gerçekleştirebilmek için Motordan 12v geliyor ve bir röleye gidiyor.
+ * Rölede bir switch mekanizması yaptık. Rölenin girişleri aynı olursa frendeki motor hiç bir şekilde hareket etmeyecektir.
+ * Eğer rölenin girişleri farklı olursa (1 0 veya 0 1) Motor hareket etmeye başlayacaktır.
  *
+ *  Detaylı bilgi için Ahmet Alperen BULUT https://www.linkedin.com/in/ahmetalperenbulut
  * \author      ahmet.alperen.bulut
  * \date        Jul 5, 2019
  */
@@ -36,8 +42,10 @@ void brake_stop ( );
 void brake_init ( )
 {
     brake_stop( );     // set GPIO pin initial value
-    xSemaphore = xSemaphoreCreateCountingStatic(1, 0, &xSemaphoreBuffer);
-
+    xSemaphore = xSemaphoreCreateCountingStatic(1, 0, &xSemaphoreBuffer);//Mutex gibi davranmasını sağlamak için kullanıldı.
+// Initial valuesi 0 olarak başlayacak ve brake threadi bu locki almak için bekleyecek.
+    // UARTTAN yada control mekanizmasından yeni bir fren pozisyonu geldiğinde semaphore 1 artıralacak ve brakethreadi semaphoreu alıp
+    // yeni değeri için gerekli işlemi yapacak.
     osThreadStaticDef(BrakeTask, brake_task, osPriorityNormal, 0, 512, brakeTaskBuffer,
             &brakeTaskControlBlock);
     brakeTaskHandle = osThreadCreate(osThread(BrakeTask), NULL);
@@ -59,15 +67,15 @@ void brake_task (void const * argument)
                     break;
                 case BRAKE_RELEASE:
                     brake_release( );
-                    osDelay(1150);     //TODO fix it
+                    osDelay(1150);     //Frenin bırakılabilmesi için beklenmesi gereken süre.
                     brake_stop( );
                     break;
                 case BRAKE_HALF:
-
+//TODO implement it
                     break;
                 case BRAKE_LOCK:
                     brake_lock( );
-                    osDelay(1600);
+                    osDelay(1600);//Frenin çekilebilmesi için beklenmesi gereken süre.
                     brake_stop( );
                     break;
                 default:
@@ -98,6 +106,9 @@ void brake_set_value (BrakePosition val)
     osSemaphoreRelease(xSemaphore);
 }
 
+/**
+ * Rölenin 1 - 0 yapıp fren motoru freni sıkmaya başlayacak.
+ * */
 void brake_lock ( )
 {
     //Brake motor lock to brake
@@ -105,6 +116,9 @@ void brake_lock ( )
     HAL_GPIO_WritePin(BRAKE_RELAY_2_GPIO_Port, BRAKE_RELAY_2_Pin, GPIO_PIN_RESET);
 }
 
+/**
+ * Rölenin 0 - 1 yapıp fren motoru freni bırakmaya başlayacak.
+ * */
 void brake_release ( )
 {
     //Brake motor release to brake
@@ -112,6 +126,9 @@ void brake_release ( )
     HAL_GPIO_WritePin(BRAKE_RELAY_2_GPIO_Port, BRAKE_RELAY_2_Pin, GPIO_PIN_SET);
 }
 
+/*
+ * Fren çekilmeye başlandığında veya bırakılmaya başlandığında durdurmak için kullanılır.
+ * */
 void brake_stop ( )
 {
     //Brake motor stop current position

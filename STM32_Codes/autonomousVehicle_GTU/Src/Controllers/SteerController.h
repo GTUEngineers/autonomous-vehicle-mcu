@@ -1,6 +1,6 @@
 /**
  * \file        SteerController.h
- * \brief       A brief description one line.
+ * \brief       Detaylı bilgiyi SteerController.c de bulunmaktadır.
  *
  * \author      ahmet.alperen.bulut
  * \date        6 Tem 2019

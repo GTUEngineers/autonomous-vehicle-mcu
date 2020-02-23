@@ -1,7 +1,10 @@
 /**
  * \file        Communication_Mechanism.c
- * \brief       A brief description one line.
+ * \brief       Communication Mekanizmasında iki thread bulunmaktadır.
+ * 				Bunların birtanesi Transmit edilecek veriyi gönderir.
+ * 				Diğeri ise Gelen verileri queue koyar.
  *
+ * *  Detaylı bilgi için Ahmet Alperen BULUT https://www.linkedin.com/in/ahmetalperenbulut
  * \author      ahmet.alperen.bulut
  * \date        Aug 17, 2019
  */
@@ -14,11 +17,10 @@
 
 /*------------------------------< Defines >-----------------------------------*/
 #define QUEUE_LENGTH        (10) // 10
-#define REQ_ITEM_SIZE       (sizeof(uart_message_req)) //2 byte
-#define REP_ITEM_SIZE       (sizeof(uart_message_rep)) //9 byte
+#define REQ_ITEM_SIZE       (sizeof(uart_req)) //3 byte
+#define REP_ITEM_SIZE       (sizeof(uart_rep)) //3byte
 #define QUEUE_SEND_TIMEOUT  (200)
-#define REQ_SIZE            (2)
-#define REP_SIZE            (9)
+
 /*------------------------------< Typedefs >----------------------------------*/
 
 /*------------------------------< Constants >---------------------------------*/
@@ -62,16 +64,16 @@ void communication_init ( )
 
 void communication_receive_task (void const * argument)
 {
-    uart_message_req data;
+    uart_req req;
     if (xQueue_receive == NULL)
     {
         //error
     }
     while (1)
     {
-        if (uart_receive(data.req.msg, REQ_SIZE) == OK)
+        if (uart_receive(req.req.msg, UART_REQ_SIZE) == OK)
         {
-            xQueueSend(xQueue_receive, &data, QUEUE_SEND_TIMEOUT);
+            xQueueSend(xQueue_receive, &req, QUEUE_SEND_TIMEOUT);
         }
         else
         {
@@ -83,22 +85,22 @@ void communication_receive_task (void const * argument)
 
 void communication_transmit_task (void const * argument)
 {
-    uart_message_rep data;
+    uart_rep rep;
     if (xQueue_transmit == NULL)
     {
         //TODO error
     }
     while (1)
     {
-        if (xQueueReceive(xQueue_transmit, &(data), (TickType_t) portMAX_DELAY) == pdTRUE)
+        if (xQueueReceive(xQueue_transmit, &(rep), (TickType_t) portMAX_DELAY) == pdTRUE)
         {
-            uart_transmit(data.generic_msg.msg, REP_SIZE);
+            uart_transmit(rep.rep.msg, UART_REP_SIZE);
         }
        // osDelay(1);
     }
 }
 
-Return_Status communication_get_msg (uart_message_req* msg)
+Return_Status communication_get_msg (uart_req* msg)
 {
     if (xQueueReceive(xQueue_receive, msg, (TickType_t) portMAX_DELAY) == pdTRUE)
     {
@@ -113,7 +115,7 @@ uint8_t communication_get_queue_length ( )
     return uxQueueMessagesWaiting(xQueue_receive);
 }
 
-Return_Status communication_send_msg (uart_message_rep* msg)
+Return_Status communication_send_msg (uart_rep* msg)
 {
     if(xQueueSend(xQueue_transmit, msg, QUEUE_SEND_TIMEOUT) == pdTRUE)
     {

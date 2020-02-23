@@ -1,6 +1,6 @@
 /**
  * \file        BrakeController.h
- * \brief       A brief description one line.
+ * \brief       Detaylı bilgiyi BrakeController.c de bulunmaktadır.
  *
  * \author      ahmet.alperen.bulut
  * \date        Jul 5, 2019
@@ -16,8 +16,8 @@ extern "C" {     /* Make sure we have C-declarations in C++ programs */
 /*------------------------------< Includes >----------------------------------*/
 #include "autonomousVehicle_conf.h"
 /*------------------------------< Defines >-----------------------------------*/
-//Connect BRAKE_RELAY_PIN_1_Pin to Relay in 1
-//Connect BRAKE_RELAY_PIN_2_Pin to Relay in 2
+//Connect BRAKE_RELAY_1_Pin to Relay in 1
+//Connect BRAKE_RELAY_2_Pin to Relay in 2
 /*------------------------------< Typedefs >----------------------------------*/
 
 /*------------------------------< Constants >---------------------------------*/

@@ -1,21 +1,20 @@
 /**
- * \file        ThrottleController.h
- * \brief       ThrottleController.c de gerekli bilgi yazmaktadır.
+ * \file        MainController.h
+ * \brief       A brief description one line.
  *
  * \author      ahmet.alperen.bulut
- * \date        Jul 5, 2019
+ * \date        Oct 5, 2019
  */
 
-#ifndef CONTROLLERS_THROTTLECONTROLLER_H_
-#define CONTROLLERS_THROTTLECONTROLLER_H_
+#ifndef CONTROLLERS_MAINCONTROLLER_H_
+#define CONTROLLERS_MAINCONTROLLER_H_
 
 #if defined(__cplusplus)
 extern "C" {     /* Make sure we have C-declarations in C++ programs */
 #endif
 
 /*------------------------------< Includes >----------------------------------*/
-#include <stdint.h>
-#include "autonomousVehicle_conf.h"
+
 /*------------------------------< Defines >-----------------------------------*/
 
 /*------------------------------< Typedefs >----------------------------------*/
@@ -24,14 +23,10 @@ extern "C" {     /* Make sure we have C-declarations in C++ programs */
 
 /*------------------------------< Prototypes >--------------------------------*/
 
-uint32_t throttle_get_value ( );
-void throttle_set_value (uint32_t val);
-
-void throttle_set_lock (ThrottleLockPosition val);
-void throttle_test ( );
+void main_controller_init ( );
 
 #if defined(__cplusplus)
 }                /* Make sure we have C-declarations in C++ programs */
 #endif
 
-#endif /* CONTROLLERS_THROTTLECONTROLLER_H_ */
+#endif /* CONTROLLERS_MAINCONTROLLER_H_ */

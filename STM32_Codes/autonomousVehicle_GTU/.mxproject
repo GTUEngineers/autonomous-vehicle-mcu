@@ -1,7 +1,7 @@
 [PreviousGenFiles]
-HeaderPath=A:/ahmet.alperen/Documents/autonomous-vehicle/STM32_Codes/autonomousVehicle_GTU/Inc
+HeaderPath=B:/ahmet.alperen/Documents/MCU/autonomousVehicle_GTU/Inc
 HeaderFiles=usb_host.h;usbh_conf.h;usbh_platform.h;stm32f4xx_it.h;stm32f4xx_hal_conf.h;main.h;FreeRTOSConfig.h;
-SourcePath=A:/ahmet.alperen/Documents/autonomous-vehicle/STM32_Codes/autonomousVehicle_GTU/Src
+SourcePath=B:/ahmet.alperen/Documents/MCU/autonomousVehicle_GTU/Src
 SourceFiles=usb_host.c;usbh_conf.c;usbh_platform.c;stm32f4xx_it.c;stm32f4xx_hal_msp.c;main.c;freertos.c;
 
 [PreviousLibFiles]

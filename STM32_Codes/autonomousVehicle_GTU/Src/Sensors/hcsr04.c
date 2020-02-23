@@ -46,6 +46,7 @@ uint32_t hcsr04_read ( )
         DWT_Delay(1);     //every 1us
     }
     return local_time * 2;*/
+    return 0;
 }
 
 void hcsr04 ( )

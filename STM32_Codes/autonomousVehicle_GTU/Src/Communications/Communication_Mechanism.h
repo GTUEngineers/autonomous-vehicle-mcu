@@ -25,9 +25,9 @@ extern "C" {     /* Make sure we have C-declarations in C++ programs */
 /*------------------------------< Prototypes >--------------------------------*/
 
 void communication_init ( );
-Return_Status communication_get_msg (uart_message_req* msg);
+Return_Status communication_get_msg (uart_req* msg);
 uint8_t communication_get_queue_length ( );
-Return_Status communication_send_msg (uart_message_rep* msg);
+Return_Status communication_send_msg (uart_rep* msg);
 
 #if defined(__cplusplus)
 }                /* Make sure we have C-declarations in C++ programs */
